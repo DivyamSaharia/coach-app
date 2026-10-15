@@ -1,6 +1,6 @@
 // Offline support: the app shell is cached so the app opens at the gym without signal.
 // Pages are fetched fresh when online (so updates arrive) and fall back to the cache offline.
-const CACHE = 'coach-v2';
+const CACHE = 'coach-v3';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-180.png', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {

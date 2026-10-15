@@ -8,8 +8,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Coach">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="theme-color" content="#edf1f8" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0d1322" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f1f4ff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0e1322" media="(prefers-color-scheme: dark)">
 <meta name="format-detection" content="telephone=no">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -22,10 +22,10 @@
    Colour comes from competition plates: 20 kg blue for actions, 15 kg yellow for XP, 25 kg red for PRs,
    10 kg green for "go". The rank badge is a bumper plate in the tier's colour. */
 :root{
-  --bg:#edf1f8; --surface:#ffffff; --raised:#f6f8fc; --sunk:#e1e7f2; --ink:#0e1630; --muted:#56627e; --line:#cdd5e4;
-  --accent:#2454e6; --accent-soft:#dde6ff; --on-accent:#ffffff;
-  --xp:#f0b400; --xp-ink:#7f5d00; --xp-soft:#fff2c7;
-  --pr:#d92d3a; --pr-soft:#ffe1e3;
+  --bg:#f1f4ff; --surface:#ffffff; --raised:#f8f9ff; --sunk:#e1e7fb; --ink:#0e1530; --muted:#505c7c; --line:#ccd5f2;
+  --accent:#0779a6; --accent2:#6d3cf0; --accent-soft:#d8f3ff; --on-accent:#ffffff;
+  --xp:#f0b400; --xp-ink:#7a5a00; --xp-soft:#fff3c4;
+  --pr:#e5246b; --pr-soft:#ffe1ec;
   --go:#17804a; --go-soft:#d8f0e3; --hold:#9a6208; --hold-soft:#f8ead0; --stop:#b92c2c; --stop-soft:#f8dcdc;
   --hub:#0e1630;
   --plate-25:#d92d3a; --plate-20:#2454e6; --plate-15:#f0b400; --plate-10:#17804a; --plate-5:#f4f4f2; --plate-2:#9aa3ad;
@@ -37,22 +37,22 @@
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#0d1322; --surface:#151d30; --raised:#1a2338; --sunk:#1c2640; --ink:#e9eefb; --muted:#8f9bb8; --line:#27324d;
-    --accent:#5b84ff; --accent-soft:#1d2b55; --on-accent:#ffffff;
-    --xp:#f6c445; --xp-ink:#f6c445; --xp-soft:#33290d;
-    --pr:#ff5964; --pr-soft:#3b1a22;
-    --go:#39d08a; --go-soft:#123326; --hold:#f2b544; --hold-soft:#3a2c14; --stop:#ff6b6b; --stop-soft:#3d1c22;
-    --hub:#0d1322; --shadow:0 1px 0 rgba(0,0,0,.25),0 10px 24px -14px rgba(0,0,0,.7);
+    --bg:#0e1322; --surface:#161d31; --raised:#1b243c; --sunk:#1f2944; --ink:#eef3ff; --muted:#9ea9c8; --line:#2b3657;
+    --accent:#5ee7ff; --accent2:#9b6bff; --accent-soft:#123448; --on-accent:#04141c;
+    --xp:#ffd34d; --xp-ink:#ffd34d; --xp-soft:#352c0e;
+    --pr:#ff5c8a; --pr-soft:#3f1730;
+    --go:#34d399; --go-soft:#0f3328; --hold:#f2b544; --hold-soft:#3a2c14; --stop:#ff6b6b; --stop-soft:#3d1c22;
+    --hub:#0e1322; --shadow:0 1px 0 rgba(0,0,0,.25),0 10px 24px -14px rgba(0,0,0,.7);
     color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#0d1322; --surface:#151d30; --raised:#1a2338; --sunk:#1c2640; --ink:#e9eefb; --muted:#8f9bb8; --line:#27324d;
-  --accent:#5b84ff; --accent-soft:#1d2b55; --on-accent:#ffffff;
-  --xp:#f6c445; --xp-ink:#f6c445; --xp-soft:#33290d;
-  --pr:#ff5964; --pr-soft:#3b1a22;
-  --go:#39d08a; --go-soft:#123326; --hold:#f2b544; --hold-soft:#3a2c14; --stop:#ff6b6b; --stop-soft:#3d1c22;
-  --hub:#0d1322; --shadow:0 1px 0 rgba(0,0,0,.25),0 10px 24px -14px rgba(0,0,0,.7);
+  --bg:#0e1322; --surface:#161d31; --raised:#1b243c; --sunk:#1f2944; --ink:#eef3ff; --muted:#9ea9c8; --line:#2b3657;
+  --accent:#5ee7ff; --accent2:#9b6bff; --accent-soft:#123448; --on-accent:#04141c;
+  --xp:#ffd34d; --xp-ink:#ffd34d; --xp-soft:#352c0e;
+  --pr:#ff5c8a; --pr-soft:#3f1730;
+  --go:#34d399; --go-soft:#0f3328; --hold:#f2b544; --hold-soft:#3a2c14; --stop:#ff6b6b; --stop-soft:#3d1c22;
+  --hub:#0e1322; --shadow:0 1px 0 rgba(0,0,0,.25),0 10px 24px -14px rgba(0,0,0,.7);
   color-scheme:dark;
 }
 *{box-sizing:border-box}
@@ -100,7 +100,7 @@ p{margin:0}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .spread{display:flex;gap:10px;justify-content:space-between;align-items:flex-start;flex-wrap:wrap}
 .btn{appearance:none;border:1px solid var(--line);background:var(--raised);color:var(--ink);font:600 1rem/1.1 var(--body);padding:11px 16px;border-radius:var(--r-sm);min-height:44px;cursor:pointer;text-align:center}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent);box-shadow:0 8px 18px -10px var(--accent)}
+.btn.primary{background:linear-gradient(100deg,var(--accent),var(--accent2));border-color:transparent;color:var(--on-accent);box-shadow:0 10px 22px -12px var(--accent2)}
 .btn.danger{border-color:var(--stop);color:var(--stop)}
 .btn.block{width:100%}
 .btn:disabled{opacity:.5;cursor:not-allowed}
@@ -135,7 +135,7 @@ textarea{min-height:80px;resize:vertical}
 .xpbar{position:relative;height:10px;border-radius:999px;background:var(--sunk);overflow:hidden}
 .xpbar>i{position:absolute;inset:0 auto 0 0;width:0;border-radius:inherit;background:linear-gradient(90deg,color-mix(in srgb,var(--xp) 70%,#fff 0%),var(--xp));box-shadow:0 0 12px -2px var(--xp)}
 .xpbar.thin{height:6px}
-.xpbar.blue>i{background:var(--accent);box-shadow:none}
+.xpbar.blue>i{background:linear-gradient(90deg,var(--accent),var(--accent2));box-shadow:none}
 .xpbar.go>i{background:var(--go);box-shadow:none}
 .hud-sub{font-size:.86rem;color:var(--muted);margin-top:6px}
 .hud-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
@@ -250,7 +250,10 @@ details.prep .prep-list{padding:0 16px 14px;display:flex;flex-direction:column;g
 .badge.got b::before{content:"";display:inline-block;width:.55em;height:.55em;border-radius:50%;background:var(--xp);margin-right:6px;vertical-align:.1em}
 .badge:not(.got){opacity:.75}
 .ladder{display:flex;flex-direction:column}
-.rung{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+.rung{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.rung.passed{opacity:.6}
+button.exbtn{appearance:none;background:none;border:0;border-top:1px solid var(--line);width:100%;text-align:left;color:inherit;font:inherit;cursor:pointer}
+button.exbtn:first-child{border-top:0}
 .rung:first-child{border-top:0}
 .rung .rx{font:600 .9rem/1 var(--display);color:var(--muted);font-variant-numeric:tabular-nums}
 .rung.here b{color:var(--accent)}
@@ -259,11 +262,41 @@ details.prep .prep-list{padding:0 16px 14px;display:flex;flex-direction:column;g
 .xptable tr:first-child td{border-top:0}
 .xptable td:last-child{text-align:right;font:600 .92rem/1.2 var(--display);color:var(--xp-ink);white-space:nowrap;padding-left:12px}
 
+/* Trends */
+button.trend{appearance:none;text-align:left;font:inherit;color:inherit;cursor:pointer;width:100%}
+button.trend:active{transform:scale(.99)}
+.mini-rank{display:inline-flex;align-items:center;gap:6px;font:600 .85rem/1 var(--display);color:var(--muted)}
+input[type=search]{font:500 1rem/1.3 var(--body);color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:var(--r-sm);padding:10px 12px;min-height:44px;width:100%;-webkit-appearance:none;appearance:none}
+input[type=search]:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.chart{display:flex;flex-direction:column;gap:6px}
+.tchart{width:100%;height:auto;display:block;touch-action:pan-y;outline-offset:4px}
+.tchart .grid{stroke:var(--line);stroke-width:1}
+.tchart .tick{fill:var(--muted);font:500 11px var(--body)}
+.tchart .line{fill:none;stroke:var(--accent);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.tchart .area{fill:var(--accent);fill-opacity:.1}
+.tchart .dot{fill:var(--accent);stroke:var(--surface);stroke-width:2}
+.tchart .dot.strong{fill:var(--surface);stroke:var(--accent);stroke-width:2}
+.tchart .dot.pr{fill:var(--pr)}
+.tchart .cross{stroke:var(--muted);stroke-width:1;stroke-dasharray:3 3}
+.tip{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;min-height:1.6rem}
+.tip b{font:700 1.35rem/1 var(--display);font-variant-numeric:tabular-nums}
+.legend{display:flex;gap:6px 14px;align-items:center;flex-wrap:wrap}
+.lk{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:-8px;vertical-align:middle}
+.lk.app{background:var(--accent)} .lk.strong{box-shadow:inset 0 0 0 2px var(--accent)} .lk.pr{background:var(--pr)}
+.tlist{display:flex;flex-direction:column}
+.trow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.trow:first-child{border-top:0}
+.tval{font:600 1rem/1.2 var(--display);text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:4px;font-variant-numeric:tabular-nums}
+.exrank{background:radial-gradient(120% 140% at 0% 0%,color-mix(in srgb,var(--tier) 26%,transparent),transparent 60%),var(--surface)}
+.exr-head{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center}
+.exr-name{font:700 1.5rem/1.1 var(--display)}
+.req{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;font-size:.9rem}
+.req .xpbar{grid-column:1/-1}
 /* History */
 .trends{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
 .trend{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;display:flex;flex-direction:column;gap:6px;min-width:0;box-shadow:var(--shadow)}
 .trend .big{font:700 1.5rem/1 var(--display);font-variant-numeric:tabular-nums}
-.trend svg{width:100%;height:auto;display:block;color:var(--accent)}
+.trend > svg{width:100%;height:auto;display:block;color:var(--accent)}
 .trend .axis{stroke:var(--line)}
 details.sess{background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
 details.sess summary{cursor:pointer;padding:12px 14px;list-style:none;display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
@@ -295,6 +328,7 @@ details.sess summary::-webkit-details-marker{display:none}
 .tab{appearance:none;background:none;border:0;padding:8px 2px 9px;font:600 .72rem/1 var(--body);color:var(--muted);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px}
 .tab svg{width:24px;height:24px}
 .tab[aria-current="page"]{color:var(--accent)}
+.tab[aria-current="page"] svg{filter:drop-shadow(0 0 6px color-mix(in srgb,var(--accent) 60%,transparent))}
 .rest{position:fixed;left:0;right:0;bottom:calc(60px + env(safe-area-inset-bottom,0px));z-index:11;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));pointer-events:none}
 .rest-in{display:flex;justify-content:flex-end}
 .rest-box{pointer-events:auto;position:relative;overflow:hidden;background:var(--ink);color:var(--bg);border-radius:999px;padding:8px 8px 8px 16px;display:flex;align-items:center;gap:10px;font:600 1rem var(--display);font-variant-numeric:tabular-nums}
@@ -366,6 +400,11 @@ const parseDay = s => { const [y, m, d] = String(s).slice(0, 10).split('-').map(
 const addDays = (s, n) => { const d = parseDay(s); d.setDate(d.getDate() + n); return todayStr(d); };
 const daysBetween = (a, b) => Math.round((parseDay(b) - parseDay(a)) / 86400000);
 const fmtDate = s => parseDay(s).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+/* Time of day a session started: morning before 12:00, afternoon 12:00-16:59, evening from 17:00. */
+const sessHour = s => { const d = typeof s === 'string' ? s : (s.startedAt || s.date || ''); const hh = Number(d.slice(11, 13)); return Number.isFinite(hh) && d.length >= 13 ? hh : null; };
+function todOf(s) { const hh = sessHour(s); if (hh == null) return null; return hh < 12 ? 'morning' : hh < 17 ? 'afternoon' : 'evening'; }
+function fmtTime(s) { const d = typeof s === 'string' ? s : (s.startedAt || s.date || ''); const hh = Number(d.slice(11, 13)), mm = d.slice(14, 16); if (!Number.isFinite(hh) || !mm) return ''; return `${((hh + 11) % 12) + 1}:${mm} ${hh < 12 ? 'am' : 'pm'}`; }
+function whenText(s) { const t = fmtTime(s), k = todOf(s); return t ? `${t}, ${k}` : ''; }
 const r05 = x => Math.round(x * 2) / 2;
 const num = v => { if (v === '' || v == null) return null; const n = parseFloat(v); return Number.isFinite(n) ? n : null; };
 const fmtNum = n => (n == null ? '' : Number.isInteger(n) ? String(n) : String(+Number(n).toFixed(2)));
@@ -642,19 +681,41 @@ const TIERS = [
   { key: 'titan', name: 'Titan', c1: '#d9a8ff', c2: '#6a28c2' },
 ];
 const LEGEND = { key: 'legend', name: 'Legend', c1: '#ff9aa0', c2: '#b0102d' };
-const XP = { finish: 100, set: 10, prepFull: 40, prepStep: 5, warmFull: 20, warmStep: 4, readiness: 10, honest: 25, up: 30, pr: 50, prMax: 3, morning: 15, placement: 150 };
-const STREAK_MIN = 3; // sessions in a week that keep the streak alive
+const XP = { finish: 100, set: 10, prepFull: 40, prepStep: 5, warmFull: 20, warmStep: 4, readiness: 10, honest: 25, up: 30, pr: 50, prMax: 3, morning: 15 };
+const STREAK_MIN = 3; // sessions in a week that keep a streak alive and count as an active week
 const DIVS = 3;
-function stepCost(n) { return Math.round(600 * Math.pow(1.18, n) / 10) * 10; }
-function rankOf(xp) {
-  let base = 0;
-  for (let n = 0; n < TIERS.length * DIVS; n++) {
-    const c = stepCost(n);
-    if (xp < base + c) return { n, tier: TIERS[Math.floor(n / DIVS)], div: (n % DIVS) + 1, into: xp - base, need: c, base, legend: false };
-    base += c;
-  }
-  const c = stepCost(TIERS.length * DIVS); const k = Math.floor((xp - base) / c);
-  return { n: TIERS.length * DIVS + k, tier: LEGEND, div: k + 1, into: xp - base - k * c, need: c, base: base + k * c, legend: true };
+/* Tier starts are set from your real program: at 4 sessions a week a typical week earns about 2,200 XP
+   (5 a week about 2,700, 3 a week about 1,650). That puts Silver around week 3, Gold week 6,
+   Platinum at the end of the 12-week block, Diamond around 6 months, Titan 1 year, Legend 2 years. */
+const TIER_STARTS = [0, 2000, 6000, 13000, 26000, 57000, 114000];
+const LEGEND_START = 225000, LEGEND_STEP = 40000;
+const TYPICAL = ['Start', 'Week 1', 'Week 3', 'Week 6', 'Week 12', 'About 6 months', 'About 1 year', 'About 2 years']; // at 4 sessions a week
+/* Promotions also need time under the bar, so cramming sessions can't skip ahead. Index = tier (7 = Legend). */
+const PROMO = { 3: { weeks: 4 }, 4: { weeks: 9 }, 5: { block: true }, 6: { weeks: 36 }, 7: { weeks: 72 } };
+function divStart(n) {
+  if (n >= TIERS.length * DIVS) return LEGEND_START + (n - TIERS.length * DIVS) * LEGEND_STEP;
+  const t = Math.floor(n / DIVS), d = n % DIVS;
+  const a = TIER_STARTS[t], b = t + 1 < TIER_STARTS.length ? TIER_STARTS[t + 1] : LEGEND_START;
+  return a + Math.round((b - a) * d / DIVS / 100) * 100;
+}
+function promoText(t) {
+  const r = PROMO[t]; if (!r) return '';
+  return r.block ? 'the 12-week block done' : `${r.weeks} weeks with ${STREAK_MIN}+ sessions`;
+}
+function promoMet(t, st) {
+  const r = PROMO[t]; if (!r || !st) return true;
+  if (r.weeks && (st.activeWeeks || 0) < r.weeks) return false;
+  if (r.block && !st.blockDone) return false;
+  return true;
+}
+function rankOf(xp, st) {
+  let n = 0; while (xp >= divStart(n + 1)) n++;
+  let blocked = null;
+  for (let t = 1; t <= TIERS.length; t++) if (n >= t * DIVS && !promoMet(t, st)) { n = t * DIVS - 1; blocked = t; break; }
+  const base = divStart(n), next = divStart(n + 1);
+  const legend = n >= TIERS.length * DIVS;
+  return { n, tier: legend ? LEGEND : TIERS[Math.floor(n / DIVS)], div: legend ? n - TIERS.length * DIVS + 1 : (n % DIVS) + 1,
+    base, need: next - base, into: Math.min(xp - base, next - base), legend, blocked };
 }
 function rankName(r) { return `${r.tier.name} ${r.div}`; }
 function nextRankName(r) {
@@ -662,7 +723,14 @@ function nextRankName(r) {
   const n = r.n + 1; if (n >= TIERS.length * DIVS) return 'Legend 1';
   return `${TIERS[Math.floor(n / DIVS)].name} ${(n % DIVS) + 1}`;
 }
-function rankStart(n) { let b = 0; for (let i = 0; i < n; i++) b += stepCost(i); return b; }
+function rankSub(r, st) {
+  if (r.blocked) {
+    const req = PROMO[r.blocked]; const nm = r.blocked >= TIERS.length ? 'Legend' : TIERS[r.blocked].name;
+    return req.block ? `XP is there. ${nm} unlocks when you finish the 12-week block.` : `XP is there. ${nm} unlocks after ${req.weeks} weeks with ${STREAK_MIN}+ sessions (${(st && st.activeWeeks) || 0} so far).`;
+  }
+  return `${fmtInt(r.need - r.into)} XP to ${nextRankName(r)}`;
+}
+function rankStart(n) { return divStart(n); }
 const fmtInt = n => Math.round(n).toLocaleString('en-IN');
 
 function weekStart(dateStr) { const d = parseDay(dateStr); return addDays(String(dateStr).slice(0, 10), -((d.getDay() + 6) % 7)); }
@@ -765,16 +833,17 @@ const LIFT_TIERS = [
 function computeGame(p, sessions, opts = {}) {
   const list = [...sessions].filter(Boolean).sort((a, b) => (a.date < b.date ? -1 : 1));
   const best = {}; const per = {}; const weeks = {};
-  let xp = 0, placement = 0, placementN = 0;
-  const st = { own: 0, prepFull: 0, honest: 0, prs: 0, sets: 0, tonnage: 0, legWeeks: 0, maxWeek: 0, bestStreak: 0, phase: p.phase || 1, deload: 0, block: 0 };
+  let xp = 0;
+  const st = { own: 0, prepFull: 0, honest: 0, prs: 0, sets: 0, tonnage: 0, legWeeks: 0, maxWeek: 0, bestStreak: 0, activeWeeks: 0, blockDone: false, phase: p.phase || 1, deload: 0, block: 0 };
   for (const s of list) {
-    const wk = weekStart(s.date); const W = (weeks[wk] = weeks[wk] || { all: 0, own: [] }); W.all++;
-    if (s.source === 'strong') { placement += XP.placement; placementN++; }
-    else {
+    // Strong history sets the bar for PRs but earns no XP: everyone starts at Iron 1.
+    if (s.source !== 'strong') {
+      const wk = weekStart(s.date); const W = (weeks[wk] = weeks[wk] || { all: 0, own: [] }); W.all++;
       const r = sessionXP(p, s, best); per[s.id] = r; xp += r.xp; W.own.push(s);
       st.own++; if (r.prepFull) st.prepFull++; if (r.honest) st.honest++; st.prs += r.prs.length; st.sets += r.sets;
       for (const e of s.entries || []) if (!e.skipped) for (const x of e.sets || []) if (x.done && x.r > 0 && x.w > 0) { const ex = p.exercises[e.exId]; st.tonnage += Number(x.w) * Number(x.r) * (ex && ex.unit === 'kg each' ? 2 : 1); }
       if (s.week === 12) st.deload = 1;
+      if ((s.week || 0) >= 12) st.blockDone = true;
     }
     for (const e of s.entries || []) { if (e.skipped) continue; const b = entryBest(p, e); if (b) { const k = exKey(e); if (best[k] == null || b.v > best[k]) best[k] = b.v; } }
   }
@@ -786,8 +855,9 @@ function computeGame(p, sessions, opts = {}) {
     questXP[wk] = q; xp += q;
     if (W.own.some(s => s.dayKey === 'lowerA') && W.own.some(s => s.dayKey === 'lowerB')) st.legWeeks++;
     st.maxWeek = Math.max(st.maxWeek, W.own.length);
+    if (W.own.length >= STREAK_MIN) st.activeWeeks++;
   }
-  // streaks: weeks in a row with STREAK_MIN+ sessions (imported workouts count)
+  // streaks: weeks in a row with STREAK_MIN+ sessions in the app
   const keys = Object.keys(weeks).sort();
   let run = 0, last = null;
   for (const k of keys) {
@@ -797,7 +867,6 @@ function computeGame(p, sessions, opts = {}) {
   let streak = 0; let k = (weeks[thisWeek] && weeks[thisWeek].all >= STREAK_MIN) ? thisWeek : addDays(thisWeek, -7);
   while (weeks[k] && weeks[k].all >= STREAK_MIN) { streak++; k = addDays(k, -7); }
   if (p.startDate && weekNo(p) >= 13 && st.own >= 40) st.block = 1;
-  xp += placement;
   const tw = weeks[thisWeek] || { all: 0, own: [] };
   const lifts = LIFT_TIERS.map(L => {
     const ex = p.exercises[L.exId]; const bw = p.bodyweight || 0; const v = best[L.exId];
@@ -808,7 +877,7 @@ function computeGame(p, sessions, opts = {}) {
     return { ...L, name: ex.name, v, tier: TIERS[t], t, nextAt, nextTier: nextAt ? TIERS[t + 1] : null, frac: nextAt ? (v - from) / (nextAt - from) : 1 };
   }).filter(Boolean);
   const badges = BADGES.map(b => ({ ...b, have: Math.min(st[b.stat] || 0, b.goal), got: (st[b.stat] || 0) >= b.goal }));
-  return { xp, rank: rankOf(xp), per, best, placement, placementN, stats: st, streak, thisWeek, week: tw, quests: questState(p, tw.own), questXP, lifts, badges };
+  return { xp, rank: rankOf(xp, st), per, best, stats: st, streak, thisWeek, week: tw, quests: questState(p, tw.own), questXP, lifts, badges };
 }
 
 /* ---------- rank visuals ---------- */
@@ -858,7 +927,7 @@ function rankHud(g) {
       h('div', { style: 'min-width:0' },
         h('div', { class: 'rank-line' }, h('span', { class: 'rank-name', text: rankName(r) }), h('span', { class: 'rank-xp', text: `${fmtInt(g.xp)} XP` })),
         xpBar(r.into / r.need),
-        h('div', { class: 'hud-sub', text: `${fmtInt(r.need - r.into)} XP to ${nextRankName(r)}` }))),
+        h('div', { class: 'hud-sub', text: rankSub(r, g.stats) }))),
     h('div', { class: 'hud-row' }, streakChip(g), h('span', { class: 'pill', text: `This week: ${g.week.own.length} session${g.week.own.length === 1 ? '' : 's'}` })));
   return hud;
 }
@@ -1127,7 +1196,7 @@ function renderTop() {
   }
 }
 function setTab(t) {
-  S.tab = t; renderTop();
+  S.tab = t; S.trendKey = null; renderTop();
   for (const b of document.querySelectorAll('.tab')) b.toggleAttribute('aria-current', false), b.removeAttribute('aria-current');
   const btn = document.querySelector(`.tab[data-tab="${t}"]`); if (btn) btn.setAttribute('aria-current', 'page');
   renderMain(); window.scrollTo(0, 0);
@@ -1208,6 +1277,7 @@ function viewToday() {
     root.append(h('div', { class: 'card' },
       h('div', { class: 'eyebrow', text: 'Last session' }),
       h('h3', { text: `${lastOwn.dayName}, ${fmtDate(lastOwn.date)}` }),
+      h('p', { class: 'small muted', text: `Started ${whenText(lastOwn)}${lastOwn.durationMin ? `, ${lastOwn.durationMin} min` : ''}` }),
       verdictList(lastOwn.entries.filter(e => e.msg && !e.skipped).map(e => ({ name: e.name, verdict: e.verdict, msg: e.msg })))));
   }
   if (!ownSessions().length) {
@@ -1236,7 +1306,7 @@ function resultsBlock(sum) {
   const embWrap = h('div', {}, emblem((animate ? rB : rA).tier, (animate ? rB : rA).div, 52));
   const nameEl = h('span', { class: 'rank-name', text: rankName(animate ? rB : rA) });
   const bar = xpBar(animate ? rB.into / rB.need : rA.into / rA.need);
-  const sub = h('div', { class: 'hud-sub', text: `${fmtInt(rA.need - rA.into)} XP to ${nextRankName(rA)}` });
+  const sub = h('div', { class: 'hud-sub', text: rankSub(rA, G.after.stats) });
   box.append(h('div', { class: 'res-rank' }, embWrap, h('div', { class: 'grow' }, h('div', { class: 'rank-line' }, nameEl, h('span', { class: 'rank-xp', text: `${fmtInt(G.after.xp)} XP` })), bar, sub)));
   const upBadge = h('div', { class: 'rankup', text: `Rank up: ${rankName(rA)}` });
   if (rankedUp && !animate) box.append(upBadge);
@@ -1327,7 +1397,7 @@ function startSession(dayKey) {
   const p = S.program; const date = todayStr();
   const items = dayItems(p, dayKey, date);
   S.active = {
-    id: 's-' + nowIso().replace(/[-:T]/g, '').slice(0, 14), date: nowIso(), dayKey, dayName: p.days[dayKey].name,
+    id: 's-' + nowIso().replace(/[-:T]/g, '').slice(0, 14), date: nowIso(), startedAt: nowIso(), timeOfDay: todOf(nowIso()), dayKey, dayName: p.days[dayKey].name,
     phase: p.phase, week: weekNo(p, date), readiness: {}, prep: [], backPain: null, note: '',
     entries: items.map(it => {
       const ex = p.exercises[it.id]; const pr = prescription(p, ex, date);
@@ -1363,7 +1433,7 @@ function viewLogger() {
   const day = p.days[a.dayKey] || { prep: 6, name: a.dayName };
   const root = h('div', { class: 'stack' });
   root.append(h('div', {},
-    h('div', { class: 'eyebrow', text: `${fmtDate(a.date)}, Phase ${a.phase}, week ${a.week}` }),
+    h('div', { class: 'eyebrow', text: `${fmtDate(a.date)}, ${todOf(a) || ''} session started ${fmtTime(a)}. Phase ${a.phase}, week ${a.week}` }),
     h('h2', { text: a.dayName })));
   root.append(h('div', { class: 'card live', id: 'live' },
     h('div', { class: 'live-top' }, h('span', { class: 'small muted', id: 'live-sets' }), h('span', { class: 'live-xp', id: 'live-xp' })),
@@ -1561,6 +1631,8 @@ async function finishSession() {
     items.push({ name: ex.name, verdict: res.verdict, msg: res.msg });
   }
   sess.finishedAt = nowIso(); sess.source = 'app';
+  sess.startedAt = sess.startedAt || sess.date; sess.timeOfDay = todOf(sess.startedAt);
+  sess.durationMin = Math.max(0, Math.round((new Date(sess.finishedAt) - new Date(sess.startedAt)) / 60000));
   try {
     await put('sessions/' + sess.id, sess);
     S.program = prog; await saveProgram();
@@ -1578,7 +1650,7 @@ async function finishSession() {
     const mine = after.per[sess.id] || { parts: [], prs: [] };
     const wk = weekStart(sess.date);
     const qDone = (after.thisWeek === wk ? after.quests : []).filter(q => q.done && !(before.quests.find(b => b.id === q.id) || {}).done);
-    game = { gained: after.xp - before.xp, before: { xp: before.xp, rank: before.rank }, after: { xp: after.xp, rank: after.rank },
+    game = { gained: after.xp - before.xp, before: { xp: before.xp, rank: before.rank }, after: { xp: after.xp, rank: after.rank, stats: after.stats },
       parts: mine.parts, prs: mine.prs, quests: qDone, badges: after.badges.filter(b => b.got && !before.badges.find(x => x.id === b.id).got) };
   } catch (e) { game = null; }
   S.lastSummary = { id: sess.id, dayName: sess.dayName, items, game };
@@ -1696,12 +1768,12 @@ function viewRank() {
     h('div', { class: 'rank-name', text: rankName(r) }),
     h('div', { class: 'rank-xp', text: `${fmtInt(g.xp)} XP` }),
     xpBar(r.into / r.need),
-    h('div', { class: 'hud-sub', text: `${fmtInt(r.need - r.into)} XP to ${nextRankName(r)}` }),
+    h('div', { class: 'hud-sub', text: rankSub(r, g.stats) }),
     streakChip(g),
-    g.placementN ? h('p', { class: 'small muted', text: `Includes ${fmtInt(g.placement)} placement XP from your ${g.placementN} imported Strong workouts.` }) : null));
+    !g.stats.own ? h('p', { class: 'small muted', text: 'Everyone starts at Iron 1. Your first session gets you most of the way to Iron 2.' }) : null));
 
   if (g.lifts.length) {
-    const lc = h('div', { class: 'card' }, h('h3', { text: 'Lift tiers' }));
+    const lc = h('div', { class: 'card' }, h('h3', { text: 'Strength tiers' }));
     const box = h('div', { class: 'lifts' });
     for (const L of g.lifts) {
       box.append(h('div', { class: 'lift' }, emblem(L.tier, 0, 44, { noDiv: true }),
@@ -1712,6 +1784,19 @@ function viewRank() {
     lc.append(box, h('p', { class: 'small muted', text: `Your best estimated 1-rep max against your ${fmtNum(p.bodyweight)} kg bodyweight${g.lifts.some(L => L.total) ? ' (pull-ups count bodyweight plus the added weight)' : ''}. You climb these through the plan’s weight increases. There’s no need to test a max.` }));
     root.append(lc);
   }
+
+  const ranked = allTrends().map(t => ({ t, R: exerciseRank(t) })).filter(x => x.R).sort((a, b) => b.R.tier - a.R.tier || b.R.imp - a.R.imp);
+  const ec = h('div', { class: 'card' }, h('div', { class: 'spread' }, h('h3', { text: 'Exercise ranks' }), ranked.length ? h('span', { class: 'small muted', text: `${ranked.length} ranked` }) : null),
+    h('p', { class: 'small muted', text: 'Each exercise ranks up from the progress you make on it here: sessions logged and how far your best has risen since your first. Tap one to see what the next rank takes.' }));
+  if (!ranked.length) ec.append(h('p', { class: 'small', text: 'Finish a session to rank the exercises in it.' }));
+  else {
+    const list = h('div', { class: 'ladder' });
+    for (const { t, R } of ranked.slice(0, S.showAllEx ? 99 : 6)) list.append(h('button', { class: 'rung exbtn', type: 'button', onclick: () => { setTab('history'); S.trendKey = t.key; S.trendRange = 'all'; S.trendMetric = null; S.trendTod = 'any'; renderMain(); window.scrollTo(0, 0); } },
+      emblem(R.tierObj, 0, 30, { noDiv: true, label: R.tierObj.name }), h('div', { style: 'min-width:0' }, h('b', { text: t.name }), h('div', { class: 'small muted', text: R.next ? `${R.tierObj.name}. Next: ${R.nextObj.name}` : 'Titan, the top rank' })), h('span', { class: 'rx', text: R.n === 1 ? 'new' : `${R.imp >= 0 ? '+' : ''}${Math.round(R.imp * 100)}%` })));
+    ec.append(list);
+    if (ranked.length > 6) ec.append(h('button', { class: 'link', type: 'button', text: S.showAllEx ? 'Show fewer' : `Show all ${ranked.length}`, onclick: () => { S.showAllEx = !S.showAllEx; renderMain(); } }));
+  }
+  root.append(ec);
 
   const st = g.stats;
   root.append(h('div', { class: 'stats' },
@@ -1728,21 +1813,26 @@ function viewRank() {
     !b.got && b.goal > 1 && b.stat !== 'phase' ? h('span', { class: 'tnum', text: b.stat === 'tonnage' ? `${(b.have / 1000).toFixed(1)} of ${b.goal / 1000} t` : `${fmtInt(b.have)} of ${fmtInt(b.goal)}` }) : null));
   bc.append(bg); root.append(bc);
 
-  const lad = h('div', { class: 'card' }, h('h3', { text: 'The ladder' }), h('p', { class: 'small muted', text: 'Every tier has three divisions. Each division takes a little more XP than the last.' }));
+  const lad = h('div', { class: 'card' }, h('h3', { text: 'The ladder' }),
+    h('p', { class: 'small muted', text: `Each tier has three divisions. Timings are for 4 sessions a week on your program; at 5 a week you get there about 20% sooner, at 3 a week about a third later. From Gold up, a promotion also needs time under the bar, so piling on sessions can’t skip ahead.` }));
   const ll = h('div', { class: 'ladder' });
-  TIERS.forEach((t, i) => {
-    const here = !r.legend && Math.floor(r.n / DIVS) === i;
-    ll.append(h('div', { class: 'rung' + (here ? ' here' : '') }, emblem(t, here ? r.div : 0, 30, { noDiv: !here }), h('b', { text: here ? `${t.name} (you are here)` : t.name }), h('span', { class: 'rx', text: `${fmtInt(rankStart(i * DIVS))} XP` })));
+  [...TIERS, LEGEND].forEach((t, i) => {
+    const here = i === TIERS.length ? r.legend : !r.legend && Math.floor(r.n / DIVS) === i;
+    const passed = i < TIERS.length && !r.legend && Math.floor(r.n / DIVS) > i || (i < TIERS.length && r.legend);
+    ll.append(h('div', { class: 'rung' + (here ? ' here' : '') + (passed ? ' passed' : '') },
+      emblem(t, here ? r.div : 0, 34, { noDiv: !here }),
+      h('div', { style: 'min-width:0' }, h('b', { text: here ? `${t.name} (you're here)` : t.name }),
+        h('div', { class: 'small muted', text: [TYPICAL[i], PROMO[i] ? `needs ${promoText(i)}` : null].filter(Boolean).join(', ') })),
+      h('span', { class: 'rx', text: `${fmtInt(rankStart(i * DIVS))} XP` })));
   });
-  ll.append(h('div', { class: 'rung' + (r.legend ? ' here' : '') }, emblem(LEGEND, 1, 30), h('b', { text: r.legend ? 'Legend (you are here)' : 'Legend' }), h('span', { class: 'rx', text: `${fmtInt(rankStart(TIERS.length * DIVS))} XP` })));
   lad.append(ll); root.append(lad);
 
   const how = h('div', { class: 'card' }, h('h3', { text: 'How you earn XP' }));
   const rows = [['Finish a session', XP.finish], ['Each working set (up to the planned number)', XP.set], ['Full back prep', XP.prepFull], ['Full warm-up', XP.warmFull], ['Readiness check', XP.readiness],
     ['Rate every tracked pain (any number counts)', XP.honest], ['Each weight increase you earn', XP.up], [`Each PR (up to ${XP.prMax} a session)`, XP.pr], ['Next-morning back check', XP.morning],
-    ...QUESTS.map(q => [`Weekly quest: ${q.name.toLowerCase()}`, q.xp]), ['Each imported Strong workout (placement)', XP.placement]];
+    ...QUESTS.map(q => [`Weekly quest: ${q.name.toLowerCase()}`, q.xp])];
   how.append(h('table', { class: 'xptable' }, h('tbody', {}, rows.map(([a, b]) => h('tr', {}, h('td', { text: a }), h('td', { text: `+${b}` }))))));
-  how.append(h('p', { class: 'small muted', text: 'A high pain rating never costs XP, and extra sets beyond the plan earn nothing. Stopping an exercise that hurts is the right call.' }));
+  how.append(h('p', { class: 'small muted', text: 'A PR means beating your best estimated 1-rep max on that lift, your Strong history included. A high pain rating never costs XP, and extra sets beyond the plan earn nothing. Stopping an exercise that hurts is the right call.' }));
   root.append(how);
   return root;
 }
@@ -1750,11 +1840,11 @@ function viewRank() {
 function csvCell(v) { const t = v == null ? '' : String(v); return /[",\r\n]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t; }
 async function exportCsv() {
   const p = S.program;
-  const rows = [['date', 'session', 'exercise', 'set', 'weight_kg', 'unit', 'reps', 'done', 'last_set_rir', 'back_pain', 'shoulder_pain', 'source', 'note']];
+  const rows = [['date', 'start_time', 'time_of_day', 'duration_min', 'session', 'exercise', 'set', 'weight_kg', 'unit', 'reps', 'done', 'last_set_rir', 'back_pain', 'shoulder_pain', 'source', 'note']];
   for (const s of [...S.sessions].sort((a, b) => (a.date < b.date ? -1 : 1))) {
     for (const e of s.entries || []) {
       const ex = p.exercises[e.exId]; const unit = ex ? ex.unit : '';
-      const base = [s.date.replace('T', ' '), s.dayName || '', e.name];
+      const base = [s.date.slice(0, 10), (s.startedAt || s.date).slice(11, 16), todOf(s) || '', s.durationMin ?? '', s.dayName || '', e.name];
       if (e.skipped) { rows.push([...base, '', '', unit, '', 'skipped', '', e.pain ?? '', e.shoulderPain ?? '', s.source || 'app', e.note || '']); continue; }
       const sets = e.sets || [];
       sets.forEach((x, i) => rows.push([...base, i + 1, x.w ?? '', unit, x.r ?? '', x.done === false ? 'no' : 'yes', i === sets.length - 1 ? (e.rir ?? '') : '', e.pain ?? '', e.shoulderPain ?? '', s.source || 'app', i === 0 ? (e.note || '') : '']));
@@ -1808,34 +1898,253 @@ function sparkline(pts) {
   const dot = document.createElementNS(NS, 'circle'); dot.setAttribute('cx', x(pts.length - 1)); dot.setAttribute('cy', y(vs[vs.length - 1])); dot.setAttribute('r', '3.5'); dot.setAttribute('fill', 'currentColor'); svg.append(dot);
   return svg;
 }
-function viewHistory() {
-  const p = S.program; const root = h('div', { class: 'stack' });
-  root.append(h('div', {}, h('div', { class: 'eyebrow', text: 'Estimated 1-rep max from your best set each session' }), h('h2', { text: 'Trends' })));
-  const nameOf = id => (p.exercises[id] ? p.exercises[id].name : id);
-  const groups = [['u_bench'], ['u_pullup'], ['p_incline'], ['l_pulldown'], ['l_row'], ['p_machpress'],
-    ...Object.values(p.slots.squat.phases).map(id => [id]), ...Object.values(p.slots.hinge.phases).map(id => [id]), ...Object.values(p.slots.curl.phases).map(id => [id]),
-    ['a_legext', 'b_legext'], ['a_calf']].map(ids => [nameOf(ids[0]), ids]);
-  const grid = h('div', { class: 'trends' });
-  for (const [label, ids] of groups) {
-    const pts = trendData(ids); if (!pts.length) continue;
-    const last = pts[pts.length - 1], first = pts[0];
-    const ex = p.exercises[ids[0]];
-    const delta = last.v - first.v;
-    grid.append(h('div', { class: 'trend' },
-      h('div', { class: 'spread' }, h('b', { text: label }), h('span', { class: 'small muted', text: `${pts.length} session${pts.length > 1 ? 's' : ''}` })),
-      h('div', { class: 'row', style: 'align-items:baseline;gap:10px' }, h('span', { class: 'big', text: `${Math.round(last.v)} kg` }),
-        pts.length > 1 ? h('span', { class: 'small ' + (delta >= 0 ? '' : 'muted'), text: `${delta >= 0 ? '+' : '−'}${Math.abs(Math.round(delta))} since ${fmtDate(first.date)}` }) : null),
-      sparkline(pts),
-      h('span', { class: 'small muted', text: `Last: ${ex && ex.unit === 'kg added' ? '+' : ''}${fmtNum(last.w)} kg × ${last.r}, ${fmtDate(last.date)}${ex && ex.unit === 'kg added' ? ` · includes ${fmtNum(p.bodyweight || 0)} kg bodyweight` : ''}` })));
+/* ---------- trends: every logged exercise, searchable, with a detail view ---------- */
+function trendName(e) { const ex = S.program.exercises[e.exId]; return ex ? ex.name : e.name; }
+/* One point per session per exercise name (Lower A and Lower B versions of a lift merge). */
+function allTrends() {
+  const p = S.program; const by = new Map();
+  const sessions = [...S.sessions].sort((a, b) => (a.date < b.date ? -1 : 1));
+  for (const s of sessions) for (const e of s.entries || []) {
+    if (e.skipped) continue;
+    const name = trendName(e); const key = name.toLowerCase();
+    const ex = p.exercises[e.exId] || null;
+    const done = (e.sets || []).filter(x => x.done !== false && Number(x.r) > 0);
+    if (!done.length) continue;
+    let best = null, topW = null, vol = 0, reps = 0, maxR = 0;
+    for (const x of done) {
+      const r = Number(x.r), w = x.w == null ? null : Number(x.w);
+      reps += r; maxR = Math.max(maxR, r);
+      if (w != null && w > 0) { vol += w * r * (ex && ex.unit === 'kg each' ? 2 : 1); topW = topW == null ? w : Math.max(topW, w); }
+      const v = setE1(p, ex, w, r);
+      if (v != null && (!best || v > best.v)) best = { v, w, r };
+    }
+    let t = by.get(key);
+    if (!t) { t = { key, name, unit: ex ? ex.unit : (topW != null ? 'kg' : 'bw'), exIds: new Set(), pts: [] }; by.set(key, t); }
+    if (e.exId) t.exIds.add(e.exId);
+    const prev = t.pts.find(q => q.sid === s.id);
+    if (prev) continue;
+    t.pts.push({ sid: s.id, date: s.date, tod: todOf(s), time: fmtTime(s), src: s.source === 'strong' ? 'strong' : 'app', e1: best ? best.v : null, bw: best ? best.w : null, br: best ? best.r : null,
+      topW, vol, reps, maxR, sets: done.length, pain: e.pain, sh: e.shoulderPain, note: e.note || '' });
   }
-  if (!grid.children.length) root.append(h('p', { class: 'muted', text: 'Trends appear once a lift has been logged.' })); else root.append(grid);
+  const list = [...by.values()];
+  for (const t of list) {
+    t.hasLoad = t.pts.some(q => q.e1 != null);
+    let run = null;
+    for (const q of t.pts) { q.pr = false; if (q.e1 != null) { if (run != null && q.e1 > run + 0.5) q.pr = true; run = run == null ? q.e1 : Math.max(run, q.e1); } }
+    t.last = t.pts[t.pts.length - 1].date;
+  }
+  return list.sort((a, b) => (a.last < b.last ? 1 : -1));
+}
+const METRICS = {
+  e1: { label: 'Estimated 1-rep max', short: 'Est. 1RM', unit: 'kg', get: q => q.e1 },
+  top: { label: 'Heaviest set', short: 'Heaviest set', unit: 'kg', get: q => q.topW },
+  vol: { label: 'Volume (kg × reps)', short: 'Volume', unit: 'kg', get: q => (q.vol > 0 ? q.vol : null) },
+  reps: { label: 'Most reps in a set', short: 'Best reps', unit: 'reps', get: q => q.maxR },
+};
+function metricsFor(t) { return t.hasLoad ? ['e1', 'top', 'vol'] : ['reps']; }
+function fmtMetric(m, v, t) {
+  if (v == null) return '–';
+  if (m === 'reps') return `${Math.round(v)} reps`;
+  if (m === 'vol') return `${fmtInt(v)} kg`;
+  if (m === 'top' && t && t.unit === 'kg added') return `+${fmtNum(r05(v))} kg`;
+  return `${fmtNum(Math.round(v * 2) / 2)} kg`;
+}
+function setText(t, q) {
+  if (q.bw == null) return `${q.maxR} reps`;
+  return `${t.unit === 'kg added' ? '+' : ''}${fmtNum(q.bw)} kg × ${q.br}`;
+}
+function trendCard(t) {
+  const m = metricsFor(t)[0]; const vals = t.pts.map(q => METRICS[m].get(q)).filter(v => v != null);
+  const pts = t.pts.filter(q => METRICS[m].get(q) != null).map(q => ({ v: METRICS[m].get(q) }));
+  const last = t.pts[t.pts.length - 1]; const delta = vals.length > 1 ? vals[vals.length - 1] - vals[0] : null;
+  const card = h('button', { class: 'trend', type: 'button', 'data-name': t.name.toLowerCase(), 'aria-label': `${t.name}: open details`, onclick: () => { S.trendKey = t.key; S.trendRange = 'all'; S.trendMetric = null; S.trendTod = 'any'; renderMain(); window.scrollTo(0, 0); } },
+    h('div', { class: 'spread', style: 'align-items:center' }, h('b', { text: t.name }), (() => { const R = exerciseRank(t); return R ? h('span', { class: 'mini-rank' }, emblem(R.tierObj, 0, 20, { noDiv: true, label: R.tierObj.name }), R.tierObj.name) : h('span', { class: 'small muted', text: 'Unranked' }); })()),
+    h('div', { class: 'row', style: 'align-items:baseline;gap:10px' }, h('span', { class: 'big', text: fmtMetric(m, vals[vals.length - 1], t) }),
+      delta != null ? h('span', { class: 'small muted', text: `${delta >= 0 ? '+' : '−'}${m === 'reps' ? Math.abs(Math.round(delta)) : fmtNum(Math.abs(Math.round(delta)))} since ${fmtDate(t.pts[0].date)}` }) : null),
+    pts.length ? sparkline(pts) : null,
+    h('span', { class: 'small muted', text: `${METRICS[m].short}, ${t.pts.length} session${t.pts.length > 1 ? 's' : ''}. Last: ${setText(t, last)}, ${fmtDate(last.date)}` }));
+  return card;
+}
+function niceTicks(min, max, n = 4) {
+  if (min === max) { min -= 1; max += 1; }
+  const raw = (max - min) / n; const mag = Math.pow(10, Math.floor(Math.log10(raw)));
+  const step = [1, 2, 2.5, 5, 10].map(k => k * mag).find(k => raw <= k) || 10 * mag;
+  const lo = Math.floor(min / step) * step, hi = Math.ceil(max / step) * step; const out = [];
+  for (let v = lo; v <= hi + step / 2; v += step) out.push(+v.toFixed(6));
+  return out;
+}
+function viewTrendDetail(t) {
+  const root = h('div', { class: 'stack', style: 'gap:14px' });
+  const ms = metricsFor(t); const m = ms.includes(S.trendMetric) ? S.trendMetric : ms[0];
+  const range = S.trendRange || 'all';
+  const cut = range === '12w' ? addDays(todayStr(), -84) : null;
+  const tod = S.trendTod || 'any';
+  const pts = t.pts.filter(q => METRICS[m].get(q) != null && (!cut || q.date.slice(0, 10) >= cut) && (range !== 'app' || q.src === 'app') && (tod === 'any' || q.tod === tod));
+  root.append(h('div', { class: 'row' }, h('button', { class: 'link', type: 'button', text: 'All trends', onclick: () => { S.trendKey = null; renderMain(); } })));
+  const vals = pts.map(q => METRICS[m].get(q));
+  const best = vals.length ? Math.max(...vals) : null;
+  root.append(h('div', {}, h('h2', { text: t.name }),
+    h('p', { class: 'muted small', text: vals.length ? `${METRICS[m].label}: best ${fmtMetric(m, best, t)}, latest ${fmtMetric(m, vals[vals.length - 1], t)}${vals.length > 1 ? `, ${vals[vals.length - 1] - vals[0] >= 0 ? 'up' : 'down'} ${fmtMetric(m, Math.abs(vals[vals.length - 1] - vals[0]), t).replace('+', '')} over ${pts.length} sessions` : ''}.` : 'Nothing logged in this range.' })));
+  root.append(exRankCard(t));
+  // filters: one row above the chart
+  const chips = (opts, cur, set, label) => h('div', { class: 'chips', role: 'group', 'aria-label': label }, opts.map(([v, txt]) => h('button', { class: 'chip', type: 'button', 'aria-pressed': String(cur === v), text: txt, onclick: () => { set(v); renderMain(); } })));
+  const filters = h('div', { class: 'stack', style: 'gap:8px' }, chips([['all', 'All time'], ['12w', 'Last 12 weeks'], ['app', 'In this app']], range, v => { S.trendRange = v; }, 'Range'));
+  const tods = ['morning', 'afternoon', 'evening'].filter(k => t.pts.some(q => q.tod === k));
+  if (tods.length > 1) filters.append(chips([['any', 'Any time'], ...tods.map(k => [k, k === 'morning' ? 'Mornings' : k === 'afternoon' ? 'Afternoons' : 'Evenings'])], tod, v => { S.trendTod = v; }, 'Time of day'));
+  if (ms.length > 1) filters.append(chips(ms.map(k => [k, METRICS[k].short]), m, v => { S.trendMetric = v; }, 'Measure'));
+  root.append(filters);
+  const card = h('div', { class: 'card chart-card' });
+  if (pts.length) card.append(trendChart(t, pts, m)); else card.append(h('p', { class: 'muted', text: 'No sessions in this range.' }));
+  if (pts.some(q => q.src === 'strong') && pts.some(q => q.src === 'app')) card.append(h('div', { class: 'legend small muted' }, h('span', { class: 'lk app' }), 'Logged in this app', h('span', { class: 'lk strong' }), 'From Strong', h('span', { class: 'lk pr' }), 'PR'));
+  else if (pts.some(q => q.pr)) card.append(h('div', { class: 'legend small muted' }, h('span', { class: 'lk pr' }), 'PR'));
+  root.append(card);
+  // table view: every session, newest first
+  const tbl = h('div', { class: 'card' }, h('h3', { text: 'Sessions' }));
+  const rows = h('div', { class: 'tlist' });
+  for (const q of [...pts].reverse()) {
+    const extra = [q.pain != null ? `back ${q.pain}` : null, q.sh != null ? `shoulder ${q.sh}` : null, q.src === 'strong' ? 'from Strong' : null].filter(Boolean).join(', ');
+    rows.append(h('div', { class: 'trow' },
+      h('div', {}, h('b', { text: fmtDate(q.date) }), h('div', { class: 'small muted', text: `${q.time ? `${q.time} ${q.tod}. ` : ''}${q.sets} set${q.sets > 1 ? 's' : ''}, best ${setText(t, q)}${extra ? `, ${extra}` : ''}` }), q.note ? h('div', { class: 'small', text: `“${q.note}”` }) : null),
+      h('div', { class: 'tval' }, h('span', { text: fmtMetric(m, METRICS[m].get(q), t) }), q.pr && m === 'e1' ? h('span', { class: 'pr-flag', text: 'PR' }) : null)));
+  }
+  tbl.append(rows); root.append(tbl);
+  return root;
+}
+function trendChart(t, pts, m) {
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (n, a = {}) => { const x = document.createElementNS(NS, n); for (const [k, v] of Object.entries(a)) x.setAttribute(k, v); return x; };
+  const W = 340, H = 220, L = 42, R = 14, T = 14, B = 28;
+  const vals = pts.map(q => METRICS[m].get(q));
+  const ticks = niceTicks(Math.min(...vals), Math.max(...vals));
+  const y0 = ticks[0], y1 = ticks[ticks.length - 1];
+  // x by date so gaps in training show as gaps
+  const ts = pts.map(q => parseDay(q.date).getTime() + (Number(q.date.slice(11, 13)) || 0) * 3600e3);
+  const t0 = ts[0], t1 = ts[ts.length - 1];
+  const X = i => (pts.length === 1 ? L + (W - L - R) / 2 : L + (ts[i] - t0) / (t1 - t0 || 1) * (W - L - R));
+  const Y = v => T + (1 - (v - y0) / (y1 - y0 || 1)) * (H - T - B);
+  const wrap = h('div', { class: 'chart' });
+  const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': `${t.name}, ${METRICS[m].label}, ${pts.length} sessions`, tabindex: '0', class: 'tchart' });
+  for (const v of ticks) {
+    svg.append(el('line', { x1: L, x2: W - R, y1: Y(v), y2: Y(v), class: 'grid' }));
+    const tx = el('text', { x: L - 8, y: Y(v) + 4, class: 'tick', 'text-anchor': 'end' }); tx.textContent = m === 'vol' && v >= 1000 ? `${fmtNum(v / 1000)}k` : fmtNum(v); svg.append(tx);
+  }
+  const xl = [[0, 'start'], ...(pts.length > 2 ? [[Math.floor((pts.length - 1) / 2), 'middle']] : []), ...(pts.length > 1 ? [[pts.length - 1, 'end']] : [])];
+  for (const [i, anchor] of xl) { const tx = el('text', { x: X(i), y: H - 8, class: 'tick', 'text-anchor': anchor }); tx.textContent = parseDay(pts[i].date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }); svg.append(tx); }
+  if (pts.length > 1) {
+    const area = el('path', { d: `M${X(0)},${Y(y0)} ` + pts.map((q, i) => `L${X(i)},${Y(vals[i])}`).join(' ') + ` L${X(pts.length - 1)},${Y(y0)} Z`, class: 'area' });
+    svg.append(area);
+    svg.append(el('polyline', { points: pts.map((q, i) => `${X(i)},${Y(vals[i])}`).join(' '), class: 'line' }));
+  }
+  const cross = el('line', { y1: T, y2: H - B, class: 'cross' }); svg.append(cross);
+  const dots = pts.map((q, i) => { const c = el('circle', { cx: X(i), cy: Y(vals[i]), r: 4, class: 'dot' + (q.src === 'strong' ? ' strong' : '') + (q.pr && m === 'e1' ? ' pr' : '') }); svg.append(c); return c; });
+  const hit = el('rect', { x: 0, y: 0, width: W, height: H, fill: 'transparent' }); svg.append(hit);
+  const tip = h('div', { class: 'tip', 'aria-live': 'polite' });
+  wrap.append(tip, svg);
+  let sel = pts.length - 1;
+  const show = i => {
+    sel = Math.max(0, Math.min(pts.length - 1, i)); const q = pts[sel];
+    cross.setAttribute('x1', X(sel)); cross.setAttribute('x2', X(sel));
+    dots.forEach((d, k) => { d.classList.toggle('on', k === sel); d.setAttribute('r', k === sel ? 6 : 4); });
+    tip.replaceChildren(...[h('b', { text: fmtMetric(m, vals[sel], t) }), q.pr && m === 'e1' ? h('span', { class: 'pr-flag', text: 'PR' }) : null].filter(Boolean),
+      h('span', { class: 'small muted', text: `${fmtDate(q.date)}${q.time ? ` ${q.time}` : ''}, best ${setText(t, q)}${q.src === 'strong' ? ', from Strong' : ''}` }));
+  };
+  const nearest = ev => {
+    const r = svg.getBoundingClientRect(); const x = (ev.clientX - r.left) / r.width * W;
+    let bi = 0, bd = Infinity; pts.forEach((q, i) => { const d = Math.abs(X(i) - x); if (d < bd) { bd = d; bi = i; } }); return bi;
+  };
+  svg.addEventListener('pointerdown', ev => show(nearest(ev)));
+  svg.addEventListener('pointermove', ev => { if (ev.pointerType === 'mouse' || ev.buttons) show(nearest(ev)); });
+  svg.addEventListener('keydown', ev => { if (ev.key === 'ArrowLeft') { show(sel - 1); ev.preventDefault(); } if (ev.key === 'ArrowRight') { show(sel + 1); ev.preventDefault(); } });
+  show(sel);
+  return wrap;
+}
+
+/* ---------- exercise ranks ----------
+   Your rank on one exercise comes from progress you make in this app: sessions logged and how far your best
+   estimated 1-rep max (or best reps, for bodyweight moves) has risen since your first session here.
+   It never drops, so a pain-driven step back doesn't cost you a rank. Steps are sized for a lift trained
+   about once a week: Gold in about 2 months, Platinum by the end of the 12-week block, Titan in under a year. */
+const EX_TIERS = [{ sess: 1, imp: 0 }, { sess: 3, imp: 0 }, { sess: 5, imp: 0.025 }, { sess: 8, imp: 0.05 }, { sess: 12, imp: 0.10 }, { sess: 20, imp: 0.15 }, { sess: 32, imp: 0.22 }];
+function exerciseRank(t) {
+  const m = t.hasLoad ? 'e1' : 'reps'; const get = METRICS[m].get;
+  const app = t.pts.filter(q => q.src === 'app' && get(q) != null);
+  if (!app.length) return null;
+  const first = get(app[0]); const best = Math.max(...app.map(get));
+  const imp = first > 0 ? (best - first) / first : 0;
+  const n = app.length;
+  let tier = 0;
+  for (let i = 1; i < EX_TIERS.length; i++) { if (n >= EX_TIERS[i].sess && imp >= EX_TIERS[i].imp - 1e-9) tier = i; else break; }
+  const nx = EX_TIERS[tier + 1] || null;
+  let target = null;
+  if (nx) target = m === 'reps' ? Math.max(first + (nx.imp > 0 ? 1 : 0), Math.ceil(first * (1 + nx.imp))) : first * (1 + nx.imp);
+  return { m, tier, tierObj: TIERS[tier], n, first, best, imp, next: nx, nextObj: nx ? TIERS[tier + 1] : null, sessLeft: nx ? Math.max(0, nx.sess - n) : 0, target, valLeft: nx ? Math.max(0, target - best) : 0 };
+}
+function exampleSet(t, e1) {
+  const exId = [...t.exIds][0]; const ex = exId ? S.program.exercises[exId] : null; if (!ex) return null;
+  const reps = ex.hi || 8; let w = e1 / (1 + Math.min(reps, 15) / 30);
+  if (ex.unit === 'kg added') w -= (S.program.bodyweight || 0);
+  const inc = ex.inc || 2.5; w = Math.ceil(w / inc - 1e-9) * inc;
+  if (ex.unit === 'kg added' && w <= 0) return `bodyweight × ${reps}`;
+  return `${ex.unit === 'kg added' ? '+' : ''}${fmtNum(w)} kg${ex.unit === 'kg each' ? ' each' : ''} × ${reps}`;
+}
+function exRankCard(t) {
+  const R = exerciseRank(t);
+  const card = h('div', { class: 'card exrank', style: `--tier:${(R ? R.tierObj : TIERS[0]).c2}` });
+  if (!R) {
+    card.append(h('div', { class: 'exr-head' }, emblem(TIERS[0], 0, 56, { noDiv: true, label: 'Unranked' }),
+      h('div', {}, h('div', { class: 'small muted', text: 'Your rank on this exercise' }), h('div', { class: 'exr-name', text: 'Unranked' }))),
+      h('p', { class: 'small', text: 'Log it once in this app to get a rank. Ranks come from the progress you make here, measured from your first session.' }));
+    return card;
+  }
+  const what = R.m === 'reps' ? 'best reps' : 'best estimated 1-rep max';
+  card.append(h('div', { class: 'exr-head' }, emblem(R.tierObj, 0, 56, { noDiv: true, label: R.tierObj.name }),
+    h('div', {}, h('div', { class: 'small muted', text: 'Your rank on this exercise' }), h('div', { class: 'exr-name', text: R.tierObj.name }),
+      h('div', { class: 'small muted', text: R.n === 1 ? `1 session here. Your starting point: ${fmtMetric(R.m, R.first, t)} ${what}.` : `${R.n} sessions here, ${what} ${R.imp >= 0 ? 'up' : 'down'} ${Math.abs(Math.round(R.imp * 1000) / 10)}% since your first (${fmtMetric(R.m, R.first, t)} to ${fmtMetric(R.m, R.best, t)})` }))));
+  if (!R.next) { card.append(h('p', { class: 'small', text: 'Titan: the top rank on this exercise.' })); return card; }
+  const box = h('div', { class: 'stack', style: 'gap:8px' }, h('b', { text: `Next: ${R.nextObj.name}` }));
+  box.append(h('div', { class: 'req' }, h('span', { text: 'Sessions logged' }), h('span', { class: 'tnum', text: `${Math.min(R.n, R.next.sess)} of ${R.next.sess}` }), xpBar(Math.min(1, R.n / R.next.sess), 'thin blue')));
+  if (R.next.imp > 0) {
+    const fr = R.target > R.first ? (R.best - R.first) / (R.target - R.first) : 1;
+    box.append(h('div', { class: 'req' }, h('span', { text: R.m === 'reps' ? 'Best reps' : 'Best est. 1-rep max' }), h('span', { class: 'tnum', text: `${fmtMetric(R.m, R.best, t)} of ${fmtMetric(R.m, R.target, t)}` }), xpBar(Math.max(0, Math.min(1, fr)), 'thin')));
+  }
+  const todo = [];
+  if (R.sessLeft) todo.push(`log ${R.sessLeft} more session${R.sessLeft > 1 ? 's' : ''} of it`);
+  if (R.valLeft > 0.01) {
+    if (R.m === 'reps') todo.push(`get ${Math.ceil(R.target)} reps in a set`);
+    else { const ex = exampleSet(t, R.target); todo.push(`reach about ${fmtNum(Math.round(R.target * 2) / 2)} kg estimated 1-rep max${ex ? `, for example ${ex}` : ''}`); }
+  }
+  box.append(h('p', { class: 'small', text: todo.length ? `To get there: ${todo.join(' and ')}. The plan raises your weights as you hit the top of the rep range, so following it gets you there. There’s no need to test a max.` : 'You’ve met the requirements. It updates after your next session.' }));
+  card.append(box);
+  // strength tier against bodyweight, for the lifts that have one
+  const g = getGame(); const L = g && g.lifts.find(x => t.exIds.has(x.exId));
+  if (L) card.append(h('p', { class: 'small muted', text: `Strength tier against your bodyweight: ${L.tier.name}${L.nextAt ? `. ${L.nextTier.name} at about ${Math.round(L.nextAt)} kg estimated 1-rep max.` : '.'}` }));
+  return card;
+}
+
+function viewHistory() {
+  if (S.trendKey) { const t = allTrends().find(x => x.key === S.trendKey); if (t) return viewTrendDetail(t); S.trendKey = null; }
+  const p = S.program; const root = h('div', { class: 'stack' });
+  root.append(h('div', {}, h('h2', { text: 'Trends' }), h('p', { class: 'small muted', text: 'Every exercise you’ve logged. Tap one for the full chart, your rank on it and what the next rank takes.' })));
+  const trends = allTrends();
+  const q = h('input', { type: 'search', id: 'trend-search', placeholder: 'Search exercises', value: S.trendQuery || '', autocomplete: 'off', autocapitalize: 'off', spellcheck: 'false', 'aria-label': 'Search exercises' });
+  const grid = h('div', { class: 'trends' });
+  for (const t of trends) grid.append(trendCard(t));
+  const none = h('p', { class: 'muted small', text: 'No exercise matches that.', hidden: true });
+  const filter = () => {
+    const v = q.value.trim().toLowerCase(); S.trendQuery = q.value; let shown = 0;
+    for (const c of grid.children) { const ok = !v || c.dataset.name.includes(v); c.hidden = !ok; if (ok) shown++; }
+    none.hidden = shown > 0 || !trends.length;
+  };
+  q.addEventListener('input', filter);
+  if (!trends.length) root.append(h('p', { class: 'muted', text: 'Trends appear once a lift has been logged.' }));
+  else { root.append(q, grid, none); filter(); }
 
   root.append(h('div', { class: 'spread', style: 'align-items:center' }, h('h2', { text: 'Sessions' }), h('button', { class: 'btn', type: 'button', id: 'export-csv', text: 'Export sets (CSV)', onclick: exportCsv })));
   if (!S.sessions.length) root.append(h('p', { class: 'muted', text: 'No sessions yet.' }));
   for (const s of S.sessions.slice(0, 120)) {
     const light = s.source === 'strong' ? null : sessionHasBack(s) ? sessionLight(s) : null;
     const sets = (s.entries || []).reduce((n, e) => n + (e.skipped ? 0 : (e.sets || []).filter(x => x.done !== false).length), 0);
-    const sum = h('summary', {}, h('div', {}, h('b', { text: s.dayName || 'Session' }), h('div', { class: 'small muted', text: `${fmtDate(s.date)} · ${sets} sets` })),
+    const sum = h('summary', {}, h('div', {}, h('b', { text: s.dayName || 'Session' }), h('div', { class: 'small muted', text: `${fmtDate(s.date)}, ${whenText(s) || 'time not saved'}${s.durationMin ? `, ${s.durationMin} min` : ''}. ${sets} sets` })),
       h('div', { class: 'row' }, s.source === 'strong' ? h('span', { class: 'pill', text: 'From Strong' }) : null,
         light ? h('span', { class: 'pill ' + (light === 'red' ? 'stop' : light === 'amber' ? 'hold' : 'go'), text: `Back ${light}` }) : null));
     const body = h('div', { class: 'sess-body' });
@@ -1867,6 +2176,7 @@ Change types: "weight" (value = next working weight), "sets" (value), "reps" (lo
 function sessionLine(s) {
   const p = S.program;
   const bits = [`${s.date.slice(0, 10)} ${s.dayName || s.dayKey}${s.source === 'strong' ? ' (imported from Strong, before this plan; no pain data)' : ''}`];
+  if (fmtTime(s)) bits.push(`started ${(s.startedAt || s.date).slice(11, 16)} (${todOf(s)})${s.durationMin ? `, ${s.durationMin} min` : ''}`);
   if (s.readiness && Object.keys(s.readiness).length) bits.push(`readiness sleep ${s.readiness.sleep || '?'}, energy ${s.readiness.energy || '?'}, back before ${s.readiness.back || '?'}`);
   if (s.backPain != null) bits.push(`overall back pain ${s.backPain}/10`);
   if (s.morning) bits.push(`next morning ${s.morning}`);
