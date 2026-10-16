@@ -744,6 +744,39 @@ function migrateProgram(p) {
   p.version = 2;
   return true;
 }
+/* Version 4: his gym's dumbbells are in pounds. In the history imported from Strong every dumbbell weight is pounds
+   (everything else is kg), but it was read as kg. Dumbbell exercises now show and take pounds, the two program weights
+   that came straight from Strong are corrected, and the imported sessions are converted (see fixStrongDumbbells). */
+const DUMBBELL_IDS = ['a_bss', 'b_hinge_p2', 'b_lunge', 'b_calf', 'l_incurl', 'l_hammer', 'p_lowinc', 'p_lat', 'u_dbpress', 'u_incdb', 'w_carry'];
+function migrateProgramV4(p) {
+  if (!p || (p.version || 1) >= 4) return false;
+  for (const id of DUMBBELL_IDS) { const x = p.exercises[id]; if (!x) continue; x.lb = true; if (!x.maxW) x.maxW = 110 * KG_PER_LB; }
+  // Hammer curl 30 and lateral raise 20 were Strong's pound numbers taken as kg.
+  for (const id of ['l_hammer', 'p_lat']) { const x = p.exercises[id]; if (x && x.weight != null && !x.strongLb) { x.weight = x.weight * KG_PER_LB; x.strongLb = true; } }
+  // Weights set in kg on dumbbell lifts move to the nearest 5 lb dumbbell.
+  for (const id of ['b_hinge_p2', 'w_carry']) { const x = p.exercises[id]; if (x && x.weight > 0) x.weight = Math.round(x.weight / KG_PER_LB / 5) * 5 * KG_PER_LB; }
+  const lat = p.exercises.p_lat;
+  if (lat && /Weight logged the way you log it in Strong/.test(lat.note || '')) lat.note = 'About 20% lighter than before, no drop sets for now.';
+  p.version = 4;
+  return true;
+}
+/* Strong sessions: dumbbell entries (and farmer's carries, done with dumbbells) were logged in pounds. Converts them to kg
+   once, keeping what Strong showed in wStrong. */
+const STRONG_LB = /\(dumbbell\)|^farmers? carry/i;
+function fixStrongDumbbells() {
+  const out = [];
+  for (const s of Store.sessions()) {
+    if (s.source !== 'strong') continue;
+    let hit = false;
+    for (const e of s.entries || []) {
+      if (e.lbFixed || !STRONG_LB.test(e.name || '')) continue;
+      for (const st of e.sets || []) if (st.w != null) { st.wStrong = st.w; st.w = Math.round(st.w * KG_PER_LB * 100) / 100; }
+      e.lbFixed = true; hit = true;
+    }
+    if (hit) out.push(s);
+  }
+  return out;
+}
 /* Version 3: his heaviest dumbbell is 110 lb, so the goblet squat stops climbing there. */
 function migrateProgramV3(p) {
   if (!p || (p.version || 1) >= 3) return false;
@@ -1340,14 +1373,19 @@ function loadFromStore() {
   S.reminders = Store.get('app/reminders') || { standing: { on: true }, items: [] };
   if (!Array.isArray(S.reminders.items)) S.reminders.items = [];
   S.loaded.program = true;
-  const m2 = prog ? migrateProgram(prog) : false; const m3 = prog ? migrateProgramV3(prog) : false;
-  if (m2 || m3) queueMicrotask(async () => {
+  const m2 = prog ? migrateProgram(prog) : false; const m3 = prog ? migrateProgramV3(prog) : false; const m4 = prog ? migrateProgramV4(prog) : false;
+  if (m2 || m3 || m4) queueMicrotask(async () => {
     try {
       await saveProgram();
       if (m2) await addLog('auto', 'App update: a 6-minute back warm-up only on days that load your back, form cues on every exercise, hip thrust before leg extensions on Lower A.');
       if (m3) await addLog('you', 'Goblet box squat: your heaviest dumbbell is 110 lb, so the weight stops climbing there.');
+      if (m4) {
+        const fixed = fixStrongDumbbells();
+        for (const sx of fixed) await put('sessions/' + sx.id, sx);
+        await addLog('you', `Dumbbells are in pounds: dumbbell exercises now show lb, hammer curl is 30 lb and lateral raise 20 lb, and ${fixed.length} imported Strong sessions had their dumbbell weights converted from lb.`);
+      }
     } catch (e) {}
-    refresh();
+    S.sessions = Store.sessions(); refresh();
   });
 }
 function onRemoteChange() { loadFromStore(); refresh(); applyIncoming(); }
