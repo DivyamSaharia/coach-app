@@ -744,6 +744,17 @@ function migrateProgram(p) {
   p.version = 2;
   return true;
 }
+/* Version 3: his heaviest dumbbell is 110 lb, so the goblet squat stops climbing there. */
+function migrateProgramV3(p) {
+  if (!p || (p.version || 1) >= 3) return false;
+  const sq = p.exercises && p.exercises.a_squat_p1;
+  if (sq && !sq.maxW) {
+    sq.maxW = 110 * KG_PER_LB;
+    if (!sq.note || /^No heavier dumbbell\?|^Lower-back warm-up first/.test(sq.note)) sq.note = 'Your heaviest dumbbell is 110 lb (about 50 kg). The weight climbs in normal steps up to that; once you’re there, lower for 3 seconds and pause 1 second on the box instead of adding load.';
+  }
+  p.version = 3;
+  return true;
+}
 
 /* Double progression with the back rules on top. Mutates ex (and p.holds); returns what happened. */
 function progress(p, ex, entry, date) {
@@ -817,6 +828,11 @@ function progress(p, ex, entry, date) {
       msg = `Same weight. Aim for ${ex.aim} on every set.`;
       if (rir != null && rir < ex.rirLo - 1) msg += ' Stop a little further from failure.';
     }
+  }
+  // The heaviest weight he has for this exercise (a dumbbell rack that stops at 110 lb, say): never prescribe more.
+  if (ex.maxW > 0 && !bw && ex.weight > ex.maxW + 0.01) {
+    if (W >= ex.maxW - 0.01) { ex.weight = W; ex.aim = hi; verdict = 'hold'; msg = `That’s the heaviest you have (${fmtW(ex, ex.maxW)}). Make it harder instead: lower for 3 seconds and pause 1 second at the bottom.`; }
+    else { ex.weight = ex.maxW; msg = `Up to ${fmtW(ex, ex.maxW)} next time, the heaviest you have.`; }
   }
   return { W, verdict, msg };
 }
@@ -1324,8 +1340,13 @@ function loadFromStore() {
   S.reminders = Store.get('app/reminders') || { standing: { on: true }, items: [] };
   if (!Array.isArray(S.reminders.items)) S.reminders.items = [];
   S.loaded.program = true;
-  if (prog && migrateProgram(prog)) queueMicrotask(async () => {
-    try { await saveProgram(); await addLog('auto', 'App update: a 6-minute back warm-up only on days that load your back, form cues on every exercise, hip thrust before leg extensions on Lower A.'); } catch (e) {}
+  const m2 = prog ? migrateProgram(prog) : false; const m3 = prog ? migrateProgramV3(prog) : false;
+  if (m2 || m3) queueMicrotask(async () => {
+    try {
+      await saveProgram();
+      if (m2) await addLog('auto', 'App update: a 6-minute back warm-up only on days that load your back, form cues on every exercise, hip thrust before leg extensions on Lower A.');
+      if (m3) await addLog('you', 'Goblet box squat: your heaviest dumbbell is 110 lb, so the weight stops climbing there.');
+    } catch (e) {}
     refresh();
   });
 }
@@ -2278,8 +2299,11 @@ function startSession(dayKey) {
     entries,
   };
   // Cues he queued for this workout show at the top, and the evening notification won't send them again.
+  // Marks that he's trained today, so the 6 pm reminder stays quiet even before this session is finished and saved.
+  S.reminders.lastStartedAt = nowIso();
   const due = dueReminders();
-  if (due.length) { S.active.cuesToday = due.map(r => ({ id: r.id, text: r.text })); markReminders(due.map(r => r.id), 'shown'); }
+  if (due.length) S.active.cuesToday = due.map(r => ({ id: r.id, text: r.text }));
+  markReminders(due.map(r => r.id), 'shown');
   S.resumed = false; S.discardConfirm = false; S.pickKey = null; S.pickDay = false;
   saveDraftSoon(); requestWake(); renderTop(); renderMain(); window.scrollTo(0, 0);
 }
@@ -2713,6 +2737,7 @@ function exCard(e, idx) {
   if (ut) pres.append(ut);
   card.append(pres);
   if (pr.tag) card.append(h('div', {}, h('span', { class: 'tag', text: pr.tag })));
+  if (ex.maxW && pr.weight != null && pr.weight >= ex.maxW - 0.01) card.append(h('div', {}, h('span', { class: 'tag', text: 'The heaviest you have: slow the lowering instead of adding weight' })));
   if (ex.bar && pr.weight != null) {
     const lb = isLb(ex); const pl = platesFor(pr.weight, lb);
     if (pl) card.append(h('div', { class: 'plates' }, h('span', { text: lb ? '45 lb bar +' : '20 kg bar +' }), ...pl.map(x => h('span', { class: 'plate ' + plateClass(x, lb), text: fmtNum(x) })), h('span', { text: 'a side' })));
@@ -3369,7 +3394,7 @@ const FORMAT = `Reply with only one JSON object and no other text:
 {"reply": "2 to 5 short, plain sentences to him",
  "changes": [{"type": "weight", "exerciseId": "u_bench", "value": 80, "reason": "why, in one sentence"}],
  "questions": [{"id": "q1", "text": "the question", "options": ["short option", "short option"], "allowText": true}]}
-Change types: "weight" (value = next working weight, in that exercise's own unit: pounds where the program list says "in lb", otherwise kg), "sets" (value), "reps" (lo, hi), "rir" (lo, hi), "swap" (name = new exercise, weight = starting weight or null, cues = 2-4 short form cues for the new exercise), "note" (text = a coaching note shown on the exercise), "cues" (cues = 2-4 short form cues that replace the exercise's current form cues). Never rewrite "his own cues": those are his. Use only exerciseIds from the program list. At most 4 changes and 3 questions; use [] when none apply. Ask a question only when his answer would change what you recommend, with 2-4 short options; set allowText true when a free answer would help.`;
+Change types: "weight" (value = next working weight, in that exercise's own unit: pounds where the program list says "in lb", otherwise kg), "sets" (value), "reps" (lo, hi), "rir" (lo, hi), "swap" (name = new exercise, weight = starting weight or null, cues = 2-4 short form cues for the new exercise), "note" (text = a coaching note shown on the exercise), "cues" (cues = 2-4 short form cues that replace the exercise's current form cues), "max" (value = the heaviest weight he has for that exercise, like the top of the dumbbell rack; the app never prescribes more). Never rewrite "his own cues": those are his. Use only exerciseIds from the program list. At most 4 changes and 3 questions; use [] when none apply. Ask a question only when his answer would change what you recommend, with 2-4 short options; set allowText true when a free answer would help.`;
 
 function wTxt(ex, w) { return w == null ? 'BW' : `${ex && ex.unit === 'kg added' ? '+' : ''}${fmtD(ex, w)}${isLb(ex) ? 'lb' : ''}`; }
 function sessionLine(s) {
@@ -3397,7 +3422,7 @@ function sessionLine(s) {
 }
 function exContext(ex) {
   const cs = cuesOf(ex);
-  return [ex.back ? 'back-monitored' : null, ex.shoulder ? 'left-shoulder-monitored' : null, isLb(ex) ? 'in lb' : null,
+  return [ex.back ? 'back-monitored' : null, ex.shoulder ? 'left-shoulder-monitored' : null, isLb(ex) ? 'in lb' : null, ex.maxW ? `heaviest he has: ${fmtW(ex, ex.maxW)}` : null,
     cs.length ? `form cues: ${cs.join('; ')}` : null, ex.note ? `coach note: ${ex.note}` : null, ex.myCues ? `his own cues: ${ex.myCues.replace(/\s+/g, ' ')}` : null].filter(Boolean).join(' | ');
 }
 function buildContext() {
@@ -3469,6 +3494,7 @@ function validateChange(c, opts = {}) {
     case 'swap': { const name = String(c.name || '').trim().slice(0, 80); if (!name) return null; const w = c.weight == null ? null : num(c.weight); const cues = cleanCues(c.cues); return { ...base, name, weight: toKg(w), fromName: ex.name, ...(cues.length ? { cues } : {}) }; }
     case 'note': { const t = String(c.text || '').trim().slice(0, 300); return t ? { ...base, text: t } : null; }
     case 'cues': { const cues = cleanCues(c.cues); return cues.length ? { ...base, cues } : null; }
+    case 'max': { const v = num(c.value); return v == null || v <= 0 || v > 1000 ? null : { ...base, value: toKg(v) }; }
     default: return null;
   }
 }
@@ -3482,11 +3508,12 @@ function describeChange(c) {
     case 'swap': return `Swap ${c.fromName || n} for ${c.name}${c.weight != null ? ` at ${fmtW(ex, c.weight)}` : ''}`;
     case 'note': return `${n}: coach note “${c.text}”`;
     case 'cues': return `${n}: new form cues “${(c.cues || []).join('; ')}”`;
+    case 'max': return `${n}: the heaviest you have is ${fmtW(ex, c.value)}`;
     default: return n;
   }
 }
 const CHANGE_FIELDS = { weight: ['weight', 'aim', 'missStreak'], sets: ['sets'], reps: ['lo', 'hi', 'aim'], rir: ['rirLo', 'rirHi'],
-  swap: ['name', 'weight', 'aim', 'missStreak', 'prevName', 'video', 'cues'], note: ['note'], cues: ['cues'] };
+  swap: ['name', 'weight', 'aim', 'missStreak', 'prevName', 'video', 'cues'], note: ['note'], cues: ['cues'], max: ['maxW', 'weight'] };
 /* Form cues for a swapped-in exercise: the coach's, or the library's when the name matches a movement there. */
 function swapCues(c) {
   if (c.cues && c.cues.length) return c.cues;
@@ -3499,13 +3526,14 @@ function applyChangeTo(p, c) {
   const ex = p.exercises[c.exerciseId]; if (!ex || !CHANGE_FIELDS[c.type]) return null;
   const prev = {}; for (const f of CHANGE_FIELDS[c.type]) prev[f] = ex[f] ?? null;
   switch (c.type) {
-    case 'weight': ex.weight = c.value; ex.aim = ex.hi; ex.missStreak = 0; break;
+    case 'weight': ex.weight = ex.maxW > 0 ? Math.min(c.value, ex.maxW) : c.value; ex.aim = ex.hi; ex.missStreak = 0; break;
     case 'sets': ex.sets = c.value; break;
     case 'reps': ex.lo = c.lo; ex.hi = c.hi; ex.aim = Math.min(c.hi, Math.max(c.lo, ex.aim ?? c.hi)); break;
     case 'rir': ex.rirLo = c.lo; ex.rirHi = c.hi; break;
     case 'swap': ex.prevName = ex.prevName || ex.name; ex.name = c.name; ex.weight = c.weight; ex.aim = ex.hi; ex.missStreak = 0; ex.video = null; ex.cues = swapCues(c); break;
     case 'note': ex.note = c.text; break;
     case 'cues': ex.cues = [...c.cues]; break;
+    case 'max': ex.maxW = c.value; if (ex.weight > c.value) ex.weight = c.value; break;
   }
   return prev;
 }
