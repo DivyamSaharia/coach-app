@@ -407,6 +407,23 @@ details.remind summary::-webkit-details-marker{display:none}
 details.remind .prep-list{padding:0 14px 14px;display:flex;flex-direction:column;gap:8px}
 .rem-row{display:flex;flex-direction:column;gap:6px;padding:10px 0;border-top:1px solid var(--line)}
 .rem-row:first-of-type{border-top:0}
+/* Live tier-up */
+.tierup{position:fixed;inset:0;z-index:40;display:grid;place-items:center;padding:24px;background:radial-gradient(circle at 50% 38%,color-mix(in srgb,var(--tier) 70%,transparent),rgba(4,7,18,.92) 62%);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);transition:opacity .25s}
+.tierup.out{opacity:0}
+.tierup-box{position:relative;overflow:visible;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;color:#fff;max-width:420px;width:100%}
+.tierup-eyebrow{font:700 .9rem/1 var(--display);letter-spacing:.24em;text-transform:uppercase;color:var(--tier1)}
+.tierup-emblem{filter:drop-shadow(0 0 28px var(--tier1))}
+.tierup-name{font:700 3.4rem/1 var(--display);letter-spacing:-.02em;background:linear-gradient(180deg,#fff,var(--tier1));-webkit-background-clip:text;background-clip:text;color:transparent}
+.tierup-ex{font:600 1.35rem/1.2 var(--display)}
+.tierup-from{font:600 .95rem/1 var(--body);padding:7px 12px;border-radius:999px;background:rgba(255,255,255,.14)}
+.tierup-detail{font-size:.98rem;color:rgba(255,255,255,.86);max-width:32ch}
+.tierup .btn{margin-top:8px;min-width:200px}
+.tierup .burst i{top:30%}
+@media (prefers-reduced-motion: no-preference){
+  .tierup-box{animation:tierin .55s cubic-bezier(.2,1.4,.4,1)}
+  .tierup-name{animation:tierin .7s .15s cubic-bezier(.2,1.4,.4,1) both}
+}
+@keyframes tierin{0%{transform:scale(.6);opacity:0}100%{transform:none;opacity:1}}
 @media (prefers-reduced-motion: no-preference){
   .toast{transition:opacity .2s}
   .xpbar>i{transition:width .9s cubic-bezier(.2,.8,.2,1)}
@@ -2238,6 +2255,7 @@ function resultsBlock(sum) {
     box.append(pl);
   }
   if (G.badges.length) box.append(h('div', { class: 'row' }, ...G.badges.map(b => h('span', { class: 'pill xp', text: `Badge: ${b.name}` }))));
+  if ((sum.tierUps || []).length) box.append(h('div', { class: 'row' }, ...sum.tierUps.map(u => h('span', { class: 'pill xp', text: `${u.kind === 'lift' ? 'Strength tier' : 'Rank up'}: ${u.name}, ${u.tier}` }))));
   if (animate) {
     const t0 = performance.now(), dur = 900;
     const tick = t => { const k = Math.min(1, (t - t0) / dur); numEl.textContent = `+${fmtInt(G.gained * (1 - Math.pow(1 - k, 3)))}`; if (k < 1) requestAnimationFrame(tick); };
@@ -2622,6 +2640,63 @@ function notesBlock(e, idx) {
   return box;
 }
 
+/* ---------- live tier-ups ----------
+   The moment a ticked set lifts an exercise to a new rank, or to a new strength tier against bodyweight, it's celebrated. */
+function livePoint(p, ex, e) {
+  const done = e.sets.filter(x => x.done && Number(x.r) > 0);
+  if (!done.length) return null;
+  let best = null, maxR = 0;
+  for (const x of done) { const r = Number(x.r); maxR = Math.max(maxR, r); const v = setE1(p, ex, x.w, r); if (v != null && (!best || v > best.v)) best = { v, w: x.w, r }; }
+  return { sid: S.active.id, date: S.active.date, src: 'app', e1: best ? best.v : null, bw: best ? best.w : null, br: best ? best.r : null, maxR, sets: done.length };
+}
+function tierUpCheck(e) {
+  const p = S.program; const ex = p.exercises[e.exId]; if (!ex || !S.active) return;
+  const pt = livePoint(p, ex, e); if (!pt) return;
+  const name = trendName(e); const key = name.toLowerCase();
+  const base = allTrends().find(t => t.key === key) || { key, name, unit: ex.unit, lb: isLb(ex), exIds: new Set([ex.id]), pts: [] };
+  const pts = base.pts.filter(q => q.sid !== S.active.id);
+  const before = { ...base, pts, hasLoad: pts.some(q => q.e1 != null) };
+  const after = { ...base, pts: [...pts, pt], hasLoad: pts.some(q => q.e1 != null) || pt.e1 != null };
+  const R0 = pts.some(q => q.src === 'app') ? exerciseRank(before) : null;
+  const R1 = exerciseRank(after);
+  const ups = [];
+  const from = R0 ? R0.tier : 0;
+  if (R1 && R1.tier > Math.max(from, e.tierShown ?? -1)) { e.tierShown = R1.tier; ups.push({ kind: 'ex', tier: TIERS[R1.tier], from: TIERS[from], name, R: R1, t: after }); }
+  const L = LIFT_TIERS.find(x => x.exId === ex.id);
+  if (L && pt.e1 != null && p.bodyweight) {
+    const g = getGame(); const prev = g ? g.best[exKey(e)] : null;
+    const tierOf = v => { let t = 0; for (let i = 0; i < L.steps.length; i++) if (v / p.bodyweight >= L.steps[i]) t = i; return t; };
+    const t0 = prev == null ? 0 : tierOf(prev); const t1 = tierOf(Math.max(pt.e1, prev || 0));
+    if (t1 > Math.max(t0, e.liftTierShown ?? -1)) { e.liftTierShown = t1; ups.push({ kind: 'lift', tier: TIERS[t1], from: TIERS[t0], name: L.label, v: pt.e1, ex }); }
+  }
+  if (!ups.length) return;
+  e.tierUps = [...(e.tierUps || []).filter(x => !ups.some(u => u.kind === x.kind)), ...ups.map(u => ({ kind: u.kind, name: u.name, tier: u.tier.name }))];
+  saveDraftSoon(); showTierUp(ups);
+}
+function showTierUp(ups) {
+  const old = document.querySelector('.tierup'); if (old) old.remove();
+  const u = ups[0];
+  const detail = u.kind === 'lift'
+    ? `About ${Math.round(toD(u.ex, u.v))} ${wUnit(u.ex)} estimated 1-rep max, ${(u.v / S.program.bodyweight).toFixed(2)}× your bodyweight.`
+    : `${u.R.m === 'reps' ? `Best ${Math.round(u.R.best)} reps` : `Best estimated 1-rep max ${fmtMetric('e1', u.R.best, u.t)}`}${u.R.n > 1 ? `, ${u.R.imp >= 0 ? 'up' : 'down'} ${Math.abs(Math.round(u.R.imp * 1000) / 10)}% since your first session here` : ''}.`;
+  const ov = h('div', { class: 'tierup', role: 'dialog', 'aria-modal': 'true', 'aria-label': `${u.name}: ${u.tier.name}`, style: `--tier:${u.tier.c2};--tier1:${u.tier.c1}` });
+  const close = () => { ov.classList.add('out'); setTimeout(() => ov.remove(), 260); };
+  const box = h('div', { class: 'tierup-box' },
+    h('div', { class: 'tierup-eyebrow', text: u.kind === 'lift' ? 'Strength tier up' : 'Rank up' }),
+    h('div', { class: 'tierup-emblem' }, emblem(u.tier, 0, 140, { noDiv: true, spin: true, label: u.tier.name })),
+    h('div', { class: 'tierup-name', text: u.tier.name }),
+    h('div', { class: 'tierup-ex', text: u.name }),
+    u.from && u.from !== u.tier ? h('div', { class: 'tierup-from', text: `${u.from.name} → ${u.tier.name}` }) : null,
+    h('p', { class: 'tierup-detail', text: detail }),
+    ups.slice(1).map(x => h('p', { class: 'tierup-detail', text: `${x.kind === 'lift' ? 'Strength tier' : 'Rank'} on ${x.name} too: ${x.tier.name}.` })),
+    h('button', { class: 'btn primary big', type: 'button', text: 'Keep going', onclick: close }));
+  ov.append(box);
+  ov.addEventListener('click', ev => { if (ev.target === ov) close(); });
+  document.body.append(ov);
+  burst(box); setTimeout(() => burst(box), 380); setTimeout(() => burst(box), 900);
+  try { if (navigator.vibrate) navigator.vibrate([40, 60, 140]); } catch (er) {}
+}
+
 /* ---------- exercise card ---------- */
 function ratingsDone(e) {
   const ex = S.program.exercises[e.exId] || {};
@@ -2733,6 +2808,7 @@ function setGrid(e, idx, ex, list, kind) {
         const prog = document.querySelector(`#ex-${idx} .ex-prog`); const presN = e.presSets || (e.pres && e.pres.sets) || e.sets.length; const dn = e.sets.filter(x => x.done && Number(x.r) > 0).length;
         if (prog) prog.textContent = `${dn}/${presN}`;
         const card = document.getElementById('ex-' + idx); if (card) card.classList.toggle('is-done', dn >= presN);
+        if (s.done) { try { tierUpCheck(e); } catch (er) {} }
       }
       if (s.done) startRest(ex.id, warm ? { warm: true, last: list.slice(si + 1).every(x => x.done) } : null);
       saveDraftSoon(); updateFinishCount(); if (!warm) refold(idx);
@@ -2849,7 +2925,7 @@ async function finishSession() {
   const items = [];
   for (const e of sess.entries) {
     const ex = prog.exercises[e.exId];
-    delete e.open; delete e.notesOpen; delete e.sending;
+    delete e.open; delete e.notesOpen; delete e.sending; delete e.tierShown; delete e.liftTierShown;
     e.wu = (e.wu || []).filter(s => s.done).map(s => ({ w: num(s.w), r: num(s.r) ?? 0, done: true }));
     if (!e.wu.length) delete e.wu;
     if (Array.isArray(e.notes)) { e.notes = e.notes.filter(n => n.text).map(n => ({ text: n.text, state: n.state, batch: n.batch || null })); if (!e.notes.length) delete e.notes; }
@@ -2885,7 +2961,7 @@ async function finishSession() {
     game = { gained: after.xp - before.xp, before: { xp: before.xp, rank: before.rank }, after: { xp: after.xp, rank: after.rank, stats: after.stats },
       parts: mine.parts, prs: mine.prs, quests: qDone, badges: after.badges.filter(b => b.got && !before.badges.find(x => x.id === b.id).got) };
   } catch (e) { game = null; }
-  S.lastSummary = { id: sess.id, dayName: sess.dayName, items, game, reminder: sess.reminder || null };
+  S.lastSummary = { id: sess.id, dayName: sess.dayName, items, game, reminder: sess.reminder || null, tierUps: sess.entries.flatMap(e => e.tierUps || []) };
   if (sess.custom) {
     const ids = sess.entries.filter(e => !e.skipped).map(e => e.exId);
     const t = sess.custom.templateId ? customDays()[sess.custom.templateId] : null;
