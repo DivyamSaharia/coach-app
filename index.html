@@ -783,9 +783,35 @@ function migrateProgramV4(p) {
   p.version = 4;
   return true;
 }
-/* Strong sessions: dumbbell entries (and farmer's carries, done with dumbbells) were logged in pounds. Converts them to kg
-   once, keeping what Strong showed in wStrong. */
-const STRONG_LB = /\(dumbbell\)|^farmers? carry/i;
+/* Version 5: goblet squats are done with the same pound dumbbells. Strong's "Goblet Squat (Kettlebell)" was pounds too
+   (50 lb × 15 in August), so the 40 kg program weight was that history read as kg. The squat now shows pounds and
+   restarts at 45 lb. Friday 16 Oct was done with the 40 kg number by mistake: it stays in the history as logged,
+   but doesn't count as the starting point for the exercise rank or the lifter standing. */
+const UNIT_MIX = { 's-20261016193657': ['a_squat_p1'] };
+function migrateProgramV5(p) {
+  if (!p || (p.version || 1) >= 5) return false;
+  const sq = p.exercises && p.exercises.a_squat_p1;
+  if (sq) {
+    sq.lb = true; if (!sq.maxW) sq.maxW = 110 * KG_PER_LB;
+    sq.weight = 45 * KG_PER_LB; sq.aim = sq.hi || 10; sq.missStreak = 0;
+    if (!sq.note || /^Your heaviest dumbbell is 110 lb|^No heavier dumbbell\?|^Lower-back warm-up first/.test(sq.note)) sq.note = 'In pounds, like your other dumbbells. Your heaviest is 110 lb; once you’re there, lower for 3 seconds and pause 1 second on the box instead of adding load.';
+  }
+  p.version = 5;
+  return true;
+}
+function markUnitMix() {
+  const out = [];
+  for (const s of Store.sessions()) {
+    const ids = UNIT_MIX[s.id]; if (!ids) continue;
+    let hit = false;
+    for (const e of s.entries || []) if (ids.includes(e.exId) && !e.unitMix) { e.unitMix = 'Done with the kg number by mistake; not counted for rank or standing.'; hit = true; }
+    if (hit) out.push(s);
+  }
+  return out;
+}
+/* Strong sessions: dumbbell entries (and farmer's carries and goblet squats, done with dumbbells) were logged in pounds.
+   Converts them to kg once, keeping what Strong showed in wStrong. */
+const STRONG_LB = /\(dumbbell\)|^farmers? carry|^goblet squat/i;
 function fixStrongDumbbells() {
   const out = [];
   for (const s of Store.sessions()) {
@@ -1043,6 +1069,7 @@ function setE1(p, ex, w, r) {
   return e1rm(load, r);
 }
 function entryBest(p, e) {
+  if (e.unitMix) return null; // logged with the wrong unit's number: not a PR and not the bar for one
   const ex = p.exercises[e.exId];
   let best = null;
   for (const st of e.sets || []) {
@@ -1397,7 +1424,8 @@ function loadFromStore() {
   if (!Array.isArray(S.reminders.items)) S.reminders.items = [];
   S.loaded.program = true;
   const m2 = prog ? migrateProgram(prog) : false; const m3 = prog ? migrateProgramV3(prog) : false; const m4 = prog ? migrateProgramV4(prog) : false;
-  if (m2 || m3 || m4) queueMicrotask(async () => {
+  const m5 = prog ? migrateProgramV5(prog) : false;
+  if (m2 || m3 || m4 || m5) queueMicrotask(async () => {
     try {
       await saveProgram();
       if (m2) await addLog('auto', 'App update: a 6-minute back warm-up only on days that load your back, form cues on every exercise, hip thrust before leg extensions on Lower A.');
@@ -1406,6 +1434,12 @@ function loadFromStore() {
         const fixed = fixStrongDumbbells();
         for (const sx of fixed) await put('sessions/' + sx.id, sx);
         await addLog('you', `Dumbbells are in pounds: dumbbell exercises now show lb, hammer curl is 30 lb and lateral raise 20 lb, and ${fixed.length} imported Strong sessions had their dumbbell weights converted from lb.`);
+      }
+      if (m5) {
+        const fixed = m4 ? [] : fixStrongDumbbells();
+        const mixed = markUnitMix();
+        for (const sx of [...fixed, ...mixed.filter(x => !fixed.includes(x))]) await put('sessions/' + sx.id, sx);
+        await addLog('you', 'Goblet box squat is in pounds: restarts at 45 lb. Strong’s goblet squats were pounds (50 lb × 15 in August), and Friday’s 40 kg sets stay logged but don’t count for its rank or standing.');
       }
     } catch (e) {}
     S.sessions = Store.sessions(); refresh();
@@ -3273,13 +3307,13 @@ function allTrends() {
     const prev = t.pts.find(q => q.sid === s.id);
     if (prev) continue;
     t.pts.push({ sid: s.id, date: s.date, tod: todOf(s), time: fmtTime(s), src: s.source === 'strong' ? 'strong' : 'app', e1: best ? best.v : null, bw: best ? best.w : null, br: best ? best.r : null,
-      topW, vol, reps, maxR, sets: done.length, pain: e.pain, sh: e.shoulderPain, note: e.note || '' });
+      topW, vol, reps, maxR, sets: done.length, pain: e.pain, sh: e.shoulderPain, note: e.note || '', off: e.unitMix || '' });
   }
   const list = [...by.values()];
   for (const t of list) {
     t.hasLoad = t.pts.some(q => q.e1 != null);
     let run = null;
-    for (const q of t.pts) { q.pr = false; if (q.e1 != null) { if (run != null && q.e1 > run + 0.5) q.pr = true; run = run == null ? q.e1 : Math.max(run, q.e1); } }
+    for (const q of t.pts) { q.pr = false; if (q.e1 != null && !q.off) { if (run != null && q.e1 > run + 0.5) q.pr = true; run = run == null ? q.e1 : Math.max(run, q.e1); } }
     t.last = t.pts[t.pts.length - 1].date;
   }
   return list.sort((a, b) => (a.last < b.last ? 1 : -1));
@@ -3356,7 +3390,7 @@ function viewTrendDetail(t) {
   for (const q of [...pts].reverse()) {
     const extra = [q.pain != null ? `back ${q.pain}` : null, q.sh != null ? `shoulder ${q.sh}` : null, q.src === 'strong' ? 'from Strong' : null].filter(Boolean).join(', ');
     rows.append(h('div', { class: 'trow' },
-      h('div', {}, h('b', { text: fmtDate(q.date) }), h('div', { class: 'small muted', text: `${q.time ? `${q.time} ${q.tod}. ` : ''}${q.sets} set${q.sets > 1 ? 's' : ''}, best ${setText(t, q)}${extra ? `, ${extra}` : ''}` }), q.note ? h('div', { class: 'small', text: `“${q.note}”` }) : null),
+      h('div', {}, h('b', { text: fmtDate(q.date) }), h('div', { class: 'small muted', text: `${q.time ? `${q.time} ${q.tod}. ` : ''}${q.sets} set${q.sets > 1 ? 's' : ''}, best ${setText(t, q)}${extra ? `, ${extra}` : ''}` }), q.note ? h('div', { class: 'small', text: `“${q.note}”` }) : null, q.off ? h('div', { class: 'small muted', text: q.off }) : null),
       h('div', { class: 'tval' }, h('span', { text: fmtMetric(m, METRICS[m].get(q), t) }), q.pr && m === 'e1' ? h('span', { class: 'pr-flag', text: 'PR' }) : null)));
   }
   tbl.append(rows); root.append(tbl);
@@ -3483,7 +3517,7 @@ function lifterStanding(exIds, t, extraE1) {
   const id = [...exIds].find(x => LIFTER_MAP[x]); if (!id) return null;
   const key = LIFTER_MAP[id]; const ex = S.program.exercises[id];
   const cut = addDays(todayStr(), -84);
-  const pts = (t ? t.pts : []).filter(q => q.e1 != null);
+  const pts = (t ? t.pts : []).filter(q => q.e1 != null && !q.off);
   const recent = pts.filter(q => q.date.slice(0, 10) >= cut);
   let best = Math.max(-Infinity, ...(recent.length ? recent : pts).map(q => q.e1));
   if (extraE1 != null) best = Math.max(best, extraE1);
@@ -3511,11 +3545,13 @@ function trendsCached() { if (trendsCache.s !== S.sessions || trendsCache.p !== 
 const EX_TIERS = [{ sess: 1, imp: 0 }, { sess: 3, imp: 0 }, { sess: 5, imp: 0.025 }, { sess: 8, imp: 0.05 }, { sess: 12, imp: 0.10 }, { sess: 20, imp: 0.15 }, { sess: 32, imp: 0.22 }];
 function exerciseRank(t) {
   const m = t.hasLoad ? 'e1' : 'reps'; const get = METRICS[m].get;
-  const app = t.pts.filter(q => q.src === 'app' && get(q) != null);
-  if (!app.length) return null;
+  const all = t.pts.filter(q => q.src === 'app' && get(q) != null);
+  if (!all.length) return null;
+  // A session logged with the wrong unit still counts as a session, but not as the starting point or the best.
+  const app = all.some(q => !q.off) ? all.filter(q => !q.off) : all;
   const first = get(app[0]); const best = Math.max(...app.map(get));
   const imp = first > 0 ? (best - first) / first : 0;
-  const n = app.length;
+  const n = all.length;
   let tier = 0;
   for (let i = 1; i < EX_TIERS.length; i++) { if (n >= EX_TIERS[i].sess && imp >= EX_TIERS[i].imp - 1e-9) tier = i; else break; }
   const nx = EX_TIERS[tier + 1] || null;
@@ -3645,7 +3681,7 @@ function sessionLine(s) {
     const ex = p.exercises[e.exId];
     const sets = (e.sets || []).filter(x => x.done !== false).map(x => `${wTxt(ex, x.w)}x${x.r}`).join(', ');
     const wu = (e.wu || []).filter(x => x.done !== false).map(x => `${wTxt(ex, x.w)}x${x.r}`).join(', ');
-    const extra = [wu ? `warm-up ${wu}` : null, e.rir != null ? `last-set RIR ${rirText(e.rir)}` : null, e.pain != null ? `back pain ${e.pain}/10` : null, e.shoulderPain != null ? `left shoulder pain ${e.shoulderPain}/10` : null, e.verdict && e.verdict !== 'skipped' ? `app: ${e.msg}` : null, ...notes].filter(Boolean).join('; ');
+    const extra = [e.unitMix ? 'done with the program’s kg number by mistake (meant to be pounds); felt wrong, not a guide to his working weight' : null, wu ? `warm-up ${wu}` : null, e.rir != null ? `last-set RIR ${rirText(e.rir)}` : null, e.pain != null ? `back pain ${e.pain}/10` : null, e.shoulderPain != null ? `left shoulder pain ${e.shoulderPain}/10` : null, e.verdict && e.verdict !== 'skipped' ? `app: ${e.msg}` : null, ...notes].filter(Boolean).join('; ');
     lines.push(`  ${e.exId ? e.exId + ' ' : ''}${e.name}: ${sets}${extra ? ' | ' + extra : ''}`);
   }
   return lines.join('\n');
