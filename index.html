@@ -358,6 +358,55 @@ details.sess summary::-webkit-details-marker{display:none}
 .rest-box button{appearance:none;border:0;background:transparent;color:inherit;font:600 .85rem var(--body);padding:6px 10px;border-radius:999px;cursor:pointer}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(118px + env(safe-area-inset-bottom,0px));z-index:13;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:var(--r-sm);font-size:.95rem;max-width:min(92vw,520px)}
 .toast.pr{background:var(--pr);color:#fff;font-weight:600}
+/* Cues, warm-up sets, notes and folding */
+.sticky{background:var(--xp-soft);border:1px solid color-mix(in srgb,var(--xp) 45%,var(--line));border-radius:var(--r-sm);padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+.sticky-head{font:600 .82rem/1.2 var(--body);color:var(--xp-ink);letter-spacing:.02em;text-transform:uppercase}
+.my-text{white-space:pre-wrap;font-size:.95rem}
+.sticky .link{align-self:flex-start;padding:2px 0}
+.add-my{font-size:.9rem;align-self:flex-start;padding:2px 0}
+.cue-list{margin:0;padding-left:1.15rem;display:flex;flex-direction:column;gap:3px;font-size:.93rem}
+details.cues summary{cursor:pointer;font:600 .9rem/1.3 var(--body);color:var(--muted);list-style:none;display:inline-flex;gap:6px;align-items:center}
+details.cues summary::-webkit-details-marker{display:none}
+details.cues summary::after{content:"▾";font-size:.75rem}
+details.cues[open] summary::after{content:"▴"}
+details.cues[open] summary{margin-bottom:6px}
+.coach-note{color:var(--ink)}
+.coach-note b{color:var(--muted);font-weight:600}
+.my-line{margin-top:4px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;flex:none;margin-left:auto;align-self:center}
+.seg-b{appearance:none;border:0;background:transparent;color:var(--muted);font:600 .82rem/1 var(--body);padding:7px 11px;min-height:32px;cursor:pointer}
+.seg-b[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
+.wu-box{display:flex;flex-direction:column;gap:8px;padding:10px 12px;border:1px dashed var(--line);border-radius:var(--r-sm)}
+.sets.wu .num-in{height:42px;font-size:1.05rem!important;background:var(--raised)}
+.sets.wu .done-btn{height:42px}
+.sets.wu .set-idx{font-size:.9rem}
+.notes{display:flex;flex-direction:column;gap:8px}
+.note-row{display:flex;flex-direction:column;gap:2px}
+.note-bubble{background:var(--accent-soft);border-radius:var(--r-sm);padding:8px 12px;white-space:pre-wrap;font-size:.95rem}
+.note-bubble.sent{background:var(--sunk)}
+.note-acts{gap:16px}
+.note-acts .link{font-size:.85rem;padding:2px 0}
+.note-row.editing{gap:6px}
+.fold-row,.ex-fold,.coach-fold{appearance:none;width:100%;border:1px solid var(--line);background:var(--raised);color:var(--ink);font:inherit;text-align:left;cursor:pointer;border-radius:var(--r-sm);padding:10px 12px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.batch{display:flex;flex-direction:column;gap:8px}
+.ex.folded{padding:0;box-shadow:none;background:transparent;border:0}
+.ex-fold{background:var(--surface);border-radius:var(--r);padding:12px 14px;box-shadow:var(--shadow)}
+.ex.is-done .ex-fold{border-color:color-mix(in srgb,var(--go) 60%,var(--line))}
+.fold-check{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;flex:none;background:var(--go-soft);color:var(--go);font-weight:700}
+.ex.is-skipped .fold-check{background:var(--sunk);color:var(--muted)}
+.fold-check svg{width:16px;height:16px}
+.fold-main{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+.fold-main b{font-family:var(--display);font-weight:600}
+.fold-open{color:var(--accent);font-weight:600;flex:none}
+.coach-fold{background:var(--surface);box-shadow:var(--shadow)}
+.clamp{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.msg-acts{gap:18px}
+details.remind{border:1px solid var(--line);border-radius:var(--r-sm)}
+details.remind summary{cursor:pointer;padding:12px 14px;font:600 1rem var(--display);list-style:none;display:flex;justify-content:space-between;align-items:center;gap:10px}
+details.remind summary::-webkit-details-marker{display:none}
+details.remind .prep-list{padding:0 14px 14px;display:flex;flex-direction:column;gap:8px}
+.rem-row{display:flex;flex-direction:column;gap:6px;padding:10px 0;border-top:1px solid var(--line)}
+.rem-row:first-of-type{border-top:0}
 @media (prefers-reduced-motion: no-preference){
   .toast{transition:opacity .2s}
   .xpbar>i{transition:width .9s cubic-bezier(.2,.8,.2,1)}
@@ -431,14 +480,27 @@ const num = v => { if (v === '' || v == null) return null; const n = parseFloat(
 const fmtNum = n => (n == null ? '' : Number.isInteger(n) ? String(n) : String(+Number(n).toFixed(2)));
 const rirText = v => (v >= 4 ? '4+' : String(v));
 function rirLabel(lo, hi) { return lo === hi ? `RIR ${rirText(lo)}` : `RIR ${rirText(lo)}–${rirText(hi)}`; }
+/* Weights are always stored in kg. An exercise with ex.lb shows and takes pounds instead. */
+const KG_PER_LB = 0.45359237;
+const isLb = ex => !!(ex && ex.lb);
+const wUnit = ex => (isLb(ex) ? 'lb' : 'kg');
+const toD = (ex, kg) => (kg == null ? null : isLb(ex) ? Math.round((kg / KG_PER_LB) * 10) / 10 : kg);
+const fromD = (ex, v) => (v == null ? null : isLb(ex) ? v * KG_PER_LB : v);
+const fmtD = (ex, kg) => fmtNum(toD(ex, kg));
+/* The next weight after a change, rounded the way the plates go: 0.5 kg, or 0.5 lb on a pounds exercise. */
+function roundW(ex, kg) { return isLb(ex) ? Math.round((kg / KG_PER_LB) * 2) / 2 * KG_PER_LB : r05(kg); }
+/* One progression step in kg: the exercise's kg step, or its pound step (5 lb unless set) on a pounds exercise. */
+function stepKg(ex) { return isLb(ex) ? (ex.incLb || 5) * KG_PER_LB : (ex.inc || 2.5); }
+function stepText(ex, kg) { return `${fmtD(ex, kg)} ${wUnit(ex)}`; }
 function fmtW(ex, w) {
   if (!ex) return w == null ? '' : `${fmtNum(w)} kg`;
   if (ex.unit === 'bw') return 'Bodyweight';
   if (w == null) return 'Pick a weight';
-  if (ex.unit === 'kg added') return `+${fmtNum(w)} kg`;
-  if (ex.unit === 'kg each') return `${fmtNum(w)} kg each`;
-  if (ex.unit === 'kg plate') return w > 0 ? `${fmtNum(w)} kg plate` : 'Bodyweight';
-  return `${fmtNum(w)} kg`;
+  const v = fmtD(ex, w), u = wUnit(ex);
+  if (ex.unit === 'kg added') return `+${v} ${u}`;
+  if (ex.unit === 'kg each') return `${v} ${u} each`;
+  if (ex.unit === 'kg plate') return w > 0 ? `${v} ${u} plate` : 'Bodyweight';
+  return `${v} ${u}`;
 }
 function repsLabel(ex) {
   const range = ex.lo === ex.hi ? `${ex.lo}` : `${ex.lo}–${ex.hi}`;
@@ -446,13 +508,16 @@ function repsLabel(ex) {
   const side = ex.perSide ? (ex.lower && ex.repUnit !== 'm' ? ' per leg' : ' per side') : '';
   return range + unit + side;
 }
-function platesFor(w) {
-  if (!(w > 20)) return null;
-  let side = (w - 20) / 2; const out = [];
-  for (const p of [25, 20, 15, 10, 5, 2.5, 1.25]) while (side >= p - 1e-9) { out.push(p); side -= p; }
+function platesFor(w, lb) {
+  const bar = lb ? 45 : 20; const sizes = lb ? [45, 35, 25, 10, 5, 2.5] : [25, 20, 15, 10, 5, 2.5, 1.25];
+  if (lb) w = Math.round((w / KG_PER_LB) * 2) / 2;
+  if (!(w > bar)) return null;
+  let side = (w - bar) / 2; const out = [];
+  for (const p of sizes) while (side >= p - 1e-9) { out.push(p); side -= p; }
   return side > 0.01 ? null : out;
 }
-const plateClass = p => (p >= 25 ? 'p25' : p >= 20 ? 'p20' : p >= 15 ? 'p15' : p >= 10 ? 'p10' : p >= 5 ? 'p5' : 'p2');
+const plateClass = (p, lb) => (lb ? (p >= 45 ? 'p20' : p >= 35 ? 'p15' : p >= 25 ? 'p10' : p >= 10 ? 'p5' : 'p2')
+  : (p >= 25 ? 'p25' : p >= 20 ? 'p20' : p >= 15 ? 'p15' : p >= 10 ? 'p10' : p >= 5 ? 'p5' : 'p2'));
 const painClass = v => 'n ' + (v >= 5 ? 'v-stop' : v >= 3 ? 'v-hold' : 'v-go');
 function classifyPain(p) { if (p == null) return 'green'; if (p >= 5) return 'red'; if (p >= 3) return 'amber'; return 'green'; }
 const CHECK_SVG = () => { const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); s.setAttribute('viewBox', '0 0 24 24'); s.setAttribute('aria-hidden', 'true'); const p = document.createElementNS('http://www.w3.org/2000/svg', 'path'); p.setAttribute('d', 'M5 12.5l4.5 4.5L19 7.5'); p.setAttribute('fill', 'none'); p.setAttribute('stroke', 'currentColor'); p.setAttribute('stroke-width', '2.6'); p.setAttribute('stroke-linecap', 'round'); p.setAttribute('stroke-linejoin', 'round'); s.append(p); return s; };
@@ -508,17 +573,69 @@ function prescription(p, ex, date = todayStr()) {
   if (ex.setAdj && ex.setAdj.until >= date && wk !== 12) { sets = Math.max(1, sets + ex.setAdj.delta); tag = ex.setAdj.why; }
   return { sets, rirLo, rirHi, aim, tag };
 }
-/* Warm-up sets before the first heavy lift; not logged. */
-function rampSets(ex, w) {
-  if (!ex.ramp || w == null || !(w > 0) || ex.unit === 'bw') return null;
-  if (ex.unit === 'kg added') return ['Bodyweight × 5', `+${fmtNum(r05(w / 2))} kg × 3`];
-  const inc = ex.inc || 2.5; const rd = x => Math.round(x / inc) * inc;
-  const steps = ex.unit === 'kg each' ? [[0.5, 8], [0.75, 4]] : [[0.5, 8], [0.7, 4], [0.85, 2]];
-  const out = []; let last = 0;
-  if (ex.bar && w >= 40) { out.push('Bar × 10'); last = 20; }
-  for (const [f, r] of steps) { const v = rd(w * f); if (v > last && v < w) { out.push(`${fmtNum(v)} × ${r}`); last = v; } }
-  return out.length ? out : null;
+/* What kind of exercise this is, for warm-up sets: muscle groups (main one first), compound or not, a shoulder press or not. */
+function libOf(ex) { return ex && ex.lib ? LIB.find(m => m.id === ex.lib) || null : null; }
+function exGroups(ex) { if (!ex) return []; if (Array.isArray(ex.groups) && ex.groups.length) return ex.groups; if (ex.group) return [ex.group]; const m = libOf(ex); return m ? [m.group] : []; }
+function exCompound(ex) { if (!ex) return false; if (ex.compound != null) return !!ex.compound; const m = libOf(ex); return !!(m && m.compound); }
+function exPress(ex) { if (!ex) return false; if (ex.press != null) return !!ex.press; const m = libOf(ex); return !!(m && libPress(m)); }
+function cuesOf(ex) { if (!ex) return []; if (Array.isArray(ex.cues) && ex.cues.length) return ex.cues; const m = libOf(ex); return m ? m.cues : []; }
+/* Warm-up sets, worked out from each exercise's working weight for the day:
+   - the first heavy compound for a muscle group: 2–3 ramp sets, about 50% × 8, 70% × 4, 85% × 2 (dumbbells 50% × 8, 75% × 4)
+   - a later compound for muscles already worked: one feeler set, about 65% × 5
+   - isolation and machine work: none, or one light set when there's no weight yet (a new machine) to dial in the setup
+   - anything that loads the lower back or presses with the shoulder: always at least one feeler set, which doubles as a pain check.
+   They're logged like working sets but never count toward progression, XP or PRs. */
+function warmRound(ex, kg) {
+  if (isLb(ex)) { const inc = ex.incLb || 5; return Math.round((kg / KG_PER_LB) / inc) * inc * KG_PER_LB; }
+  const inc = ex.inc > 0 ? ex.inc : 2.5; return Math.round(kg / inc) * inc;
 }
+function feelerSet(ex, W) {
+  const lo = ex.lo || 8;
+  if (ex.unit === 'bw' || (ex.unit === 'kg plate' && !(W > 0))) return [{ w: null, r: Math.max(3, Math.round(lo / 2)), why: 'easy, bodyweight' }];
+  if (ex.unit === 'kg added') return [{ w: 0, r: 5, why: 'bodyweight only' }];
+  if (!(W > 0)) return [{ w: null, r: 5, why: 'light: about two-thirds of your working weight' }];
+  const r = ex.repUnit === 'm' || ex.repUnit === 's' ? Math.max(5, Math.round(lo / 2)) : 5;
+  let v = warmRound(ex, W * 0.65); if (!(v > 0) || v >= W) v = null;
+  return [{ w: v, r, why: v == null ? 'light' : 'about 65%' }];
+}
+function rampPlan(ex, W) {
+  if (ex.unit === 'bw' || (ex.unit === 'kg plate' && !(W > 0))) return feelerSet(ex, W);
+  if (ex.unit === 'kg added') return W > 0 ? [{ w: 0, r: 5, why: 'bodyweight only' }, { w: warmRound(ex, W / 2) || null, r: 3, why: 'about half the added weight' }] : [{ w: 0, r: 5, why: 'bodyweight only' }];
+  const each = ex.unit === 'kg each';
+  if (!(W > 0)) return [{ w: null, r: 8, why: 'about half your working weight' }, { w: null, r: 4, why: each ? 'about three-quarters' : 'about 70%' }];
+  const steps = each ? [[0.5, 8], [0.75, 4]] : [[0.5, 8], [0.7, 4], [0.85, 2]];
+  const out = []; let last = 0;
+  const barKg = isLb(ex) ? 45 * KG_PER_LB : 20;
+  if (ex.bar && W >= 2 * barKg) { out.push({ w: barKg, r: 10, why: 'empty bar' }); last = barKg; }
+  for (const [f, r] of steps) { const v = warmRound(ex, W * f); if (v > last + 1e-6 && v < W - 1e-6) { out.push({ w: v, r, why: `about ${Math.round(f * 100)}%` }); last = v; } }
+  return out.length ? out : feelerSet(ex, W);
+}
+function warmPlan(p, entries, opts = {}) {
+  const seen = new Set(opts.seen || []);
+  return entries.map(e => {
+    const ex = p.exercises[e.exId];
+    if (!ex || ex.cond) return [];
+    const W = e.pres && e.pres.weight != null ? e.pres.weight : ex.weight;
+    const gs = exGroups(ex); const comp = exCompound(ex);
+    let plan = [];
+    if (comp && !(gs[0] && seen.has(gs[0]))) plan = rampPlan(ex, W);
+    else if (comp) plan = feelerSet(ex, W);
+    else if (W == null && ex.unit !== 'bw' && ex.unit !== 'kg plate') plan = [{ w: null, r: Math.max(8, ex.lo || 10), why: 'light, to dial in the setup' }];
+    if (!plan.length && (ex.back || exPress(ex))) plan = feelerSet(ex, W);
+    if (comp) for (const g of gs) seen.add(g);
+    return plan.map(x => ({ w: x.w, r: x.r, done: false, why: x.why || '' }));
+  });
+}
+/* Gives entries that don't have warm-up sets yet (new, added, swapped, or from an older draft) their plan, in session order. */
+function fillWarm(p, entries) {
+  const seen = new Set();
+  entries.forEach((e, i) => {
+    if (!Array.isArray(e.wu)) e.wu = warmPlan(p, [e], { seen })[0];
+    const ex = p.exercises[e.exId];
+    if (ex && exCompound(ex)) for (const g of exGroups(ex)) seen.add(g);
+  });
+}
+function backWarmNeeded(p, entries) { return (entries || []).some(e => { const ex = p.exercises[e.exId]; return ex && ex.back && !e.skipped; }); }
 function shoulderLight(s) {
   let w = 'green';
   for (const e of s.entries || []) { if (e.skipped) continue; const c = classifyPain(e.shoulderPain); if (c === 'red') return 'red'; if (c === 'amber') w = 'amber'; }
@@ -538,6 +655,95 @@ function sessionLight(s) {
   return worst;
 }
 function ownSessions() { return S.sessions.filter(s => s.source !== 'strong'); }
+
+/* ---------- program version 2: short back warm-up, form cues, warm-up sets ----------
+   Muscle groups (first one is the main one), compound lifts, shoulder presses and form cues for every program exercise. */
+const PROG_META = {
+  a_squat_p1: ['Quads,Glutes', 'c', ['Hold the dumbbell upright against your chest, elbows tucked under it', 'Keep your upper back tight; if it gives out before your legs, end the set', 'Box at the depth where your pelvis stays neutral', '3 seconds down, touch the box, stand up without rocking']],
+  a_squat_p2: ['Quads,Glutes', 'c', ['Feet high and shoulder-width, whole foot pressing', 'Lower until just before your tailbone lifts off the pad', 'Back flat against the pad, hands on the handles', 'Don’t lock your knees hard at the top']],
+  a_squat_p3: ['Quads,Glutes', 'c', ['Same depth rule: stop before your pelvis tucks', '2 seconds down, under control', 'Knees track over the toes, drive through the whole foot', 'Back stays flat against the pad the whole set']],
+  a_bss: ['Quads,Glutes', 'c', ['Front foot far enough forward that the heel stays down', 'Slight forward lean, drop the back knee straight down', 'Push through the front heel and midfoot', 'Right leg first, then match the reps on the left']],
+  a_curl_p1: ['Hamstrings', '', ['Kneel with your hips square and pressed into the pad', 'Ribs down and glutes lightly tight so your lower back doesn’t arch', 'Curl smoothly, no swinging; 2 seconds back down', 'Right leg first, then the left']],
+  a_curl_p2: ['Hamstrings', '', ['Recline the back pad and keep your hips pressed into it', 'Thigh pad snug just above the knees', 'Curl fully, pause, 2 seconds back up', 'Don’t lift your hips to finish a rep']],
+  a_curl_p3: ['Hamstrings', '', ['Hips stay pinned to the pad', 'Toes pulled up toward the shins', 'Full curl, then a controlled 2-second lowering', 'Stop the set if your lower back starts to arch']],
+  a_legext: ['Quads', '', ['Knee lined up with the machine’s pivot', 'Sit back, hold the handles, toes up', '1-second squeeze at the top', 'Lower under control; don’t let the stack crash']],
+  a_thrust: ['Glutes,Hamstrings', 'c', ['Chin tucked, ribs down', 'Feet where your shins are vertical at the top', 'Drive through the heels; finish with a glute squeeze, not a lower-back arch', 'Pause 1 second at the top']],
+  a_calf: ['Calves', '', ['Pad snug on the lower thighs, balls of the feet on the edge', '2-second pause in the bottom stretch', 'Rise all the way onto the big toe', 'No bouncing out of the bottom']],
+  a_abd: ['Glutes', '', ['Sit tall, back against the pad', 'Push out with the knees, hold 1 second at the widest point', 'Control the way back in; don’t let the plates touch']],
+  b_hinge_p1: ['Hamstrings,Glutes', 'c', ['Pad just below your hip crease so the hips can fold', 'Hips do the moving; spine stays neutral from head to tailbone', 'Squeeze your glutes to come up', 'Stop when your body is in a straight line, no leaning back']],
+  b_hinge_p2: ['Hamstrings,Glutes', 'c', ['Soft knees, push the hips straight back', 'Dumbbells slide down the front of your thighs', 'Stop where your back position would change, usually mid-shin', 'Stand up by squeezing the glutes; never rush the lowering']],
+  b_hinge_p3: ['Hamstrings,Glutes', 'c', ['Bar stays against your legs the whole way', 'Hips back, soft knees, lats tight', 'Lower only as far as your back stays flat', 'Never closer than RIR 2']],
+  b_pullthrough: ['Glutes,Hamstrings', 'c', ['Face away from the stack, rope between your legs', 'Hips back as if closing a car door with your backside', 'Arms just hold the rope; the hips do the work', 'Finish tall with a glute squeeze, no leaning back']],
+  b_slider: ['Hamstrings', '', ['Hold a glute bridge the whole set', 'Curl the heels in without letting the hips drop', 'Slow on the way out', 'Ribs down, no arching']],
+  b_lunge: ['Quads,Glutes', 'c', ['Step back far enough that the front shin stays fairly upright', 'Torso upright, back knee drops straight down', 'Push through the front heel to come back', 'Right leg first']],
+  b_legext: ['Quads', '', ['Knee lined up with the machine’s pivot', 'Keep tension: no resting at the bottom', '1-second squeeze at the top']],
+  b_calf: ['Calves', '', ['Dumbbell on the working side, other hand on a support', 'Full stretch at the bottom, 1-second pause', 'Rise as high as you can on the big toe', 'Right leg first']],
+  b_pallof: ['Core', '', ['Stand side-on to the cable, feet hip-width', 'Press the handle straight out and hold 2 seconds', 'Don’t let the cable turn your torso', 'Ribs down, glutes lightly tight']],
+  l_pulldown: ['Back,Biceps', 'c', ['Thighs locked under the pad', 'Drive the elbows down to your sides', 'Only a slight lean back', 'Full stretch at the top, shoulders down away from the ears']],
+  l_highrow: ['Back', 'c', ['Chest on the pad', 'Pull the elbows down and back', 'Full stretch at the top without shrugging']],
+  l_row: ['Back', 'c', ['Chest stays on the pad, no rocking', 'Pull the elbows back past your torso', 'Squeeze the shoulder blades, then let them spread at the front']],
+  l_straight: ['Back', '', ['Slight hip hinge, arms almost straight', 'Sweep the bar down to your thighs with the lats', 'Stop where the left shoulder stays pain-free']],
+  l_revfly: ['Shoulders', '', ['Chest on the pad, handles at shoulder height', 'Lead with the elbows, arms slightly bent', 'No shrugging; squeeze the rear delts']],
+  w_er: ['Shoulders', '', ['Rolled towel between elbow and ribs', 'Elbow stays at your side, forearm level', 'Rotate out slowly, 2 seconds back', 'Left arm first; keep pain at 2/10 or less']],
+  l_incurl: ['Biceps', '', ['Bench at 45–60 degrees, arms hang straight down', 'Keep the elbows back; don’t swing them forward', 'Full stretch at the bottom, squeeze at the top']],
+  l_hammer: ['Biceps', '', ['Palms face each other the whole rep', 'Elbows pinned at your sides', 'No swinging the torso']],
+  p_lowinc: ['Chest,Shoulders,Triceps', 'cp', ['Bench at 15–30 degrees, palms facing each other', 'Elbows about 45 degrees from your sides', 'Shoulder blades back and down on the bench', 'Lower only as far as the shoulder stays pain-free']],
+  p_machpress: ['Chest,Shoulders,Triceps', 'cp', ['Seat so the handles line up with mid-chest', 'Shoulder blades back against the pad', 'Lower to a good stretch, no bounce']],
+  p_fly: ['Chest', '', ['Pulleys low, slight bend in the elbows', 'Sweep up to about chin height', 'Stretch at the bottom only as far as the left shoulder allows']],
+  p_lat: ['Shoulders', '', ['Arms about 30 degrees forward of your sides', 'Lead with the elbows, stop at shoulder height', 'No swinging or shrugging']],
+  p_ohext: ['Triceps', '', ['Face away from the stack, elbows pointing forward', 'Let the hands go deep behind your head, as far as the shoulder allows', 'Only the forearms move']],
+  p_pushdown: ['Triceps', '', ['Elbows pinned to your sides', 'Lock out fully and squeeze', 'Don’t lean over the stack']],
+  p_incline: ['Chest,Shoulders,Triceps', 'cp', ['Bench at 30 degrees, shoulder blades pinned', 'Bar touches the upper chest', 'Elbows about 45–60 degrees from your sides']],
+  u_bench: ['Chest,Shoulders,Triceps', 'cp', ['Feet planted, shoulder blades pinned back and down', 'Bar touches just below the nipples', 'Elbows about 45–60 degrees from your sides', 'Press back up and slightly toward your face']],
+  u_pullup: ['Back,Biceps', 'c', ['Start from a dead hang', 'Pull your chest toward the bar, elbows down to your sides', 'No kipping; control the way down']],
+  u_landmine: ['Shoulders,Triceps', 'cp', ['Kneel on the same side as the pressing arm, glute squeezed', 'Press up and slightly forward', 'Ribs down; don’t lean back', 'Stop short of any pinch in the shoulder']],
+  u_csrow: ['Back', 'c', ['Chest stays on the pad', 'Pull the elbows toward your hips', 'Pause with the shoulder blades squeezed']],
+  u_incmach: ['Chest,Shoulders,Triceps', 'cp', ['Seat so the handles start at upper-chest height', 'Shoulder blades back against the pad', 'Lower only as far as the shoulder stays pain-free']],
+  u_cablelat: ['Shoulders', '', ['Arm about 30 degrees forward of your side, thumb slightly up', 'Raise to shoulder height, no higher', 'Slow on the way down']],
+  u_dbpress: ['Shoulders,Triceps', 'cp', ['Bench at 75–80 degrees, back stays on the pad', 'Elbows slightly in front of your body', 'Press to just short of lockout']],
+  u_incdb: ['Chest,Shoulders,Triceps', 'cp', ['Bench at 30 degrees, shoulder blades pinned', 'Lower the dumbbells to the sides of your upper chest', 'Press up and slightly in']],
+  w_facepull: ['Shoulders', '', ['Rope at face height', 'Pull to your forehead, elbows high', 'Rotate the hands back at the end']],
+  w_preacher: ['Biceps', '', ['Armpits snug against the top of the pad', 'Full stretch at the bottom without locking hard', 'Squeeze at the top, 2 seconds down']],
+  w_skull: ['Triceps', '', ['Lower the bar to just above your forehead', 'Upper arms stay still, slightly angled back', 'Elbows in, no flaring']],
+  w_carry: ['Core', '', ['One heavy dumbbell, stand tall', 'Don’t lean toward or away from the weight', 'Short, steady steps; breathe behind a brace']],
+  w_deadbug: ['Core', '', ['Lower back stays flat on the floor', 'Reach the opposite arm and leg slowly', 'Exhale as you reach']],
+  w_machlat: ['Shoulders', '', ['Pads just above the elbows', 'Raise to shoulder height', 'Slow on the way down']],
+};
+/* Old coach notes that only repeated what the form cues now say: original text → what stays. */
+const NOTE_TRIM = {"a_bss": ["Right leg first, then match the reps on the left. Slight forward lean, front heel stays down.", ""], "a_squat_p2": ["Feet high on the platform. Stop each rep before your tailbone lifts off the pad.", ""], "a_squat_p3": ["Same depth rule: stop before your pelvis tucks.", ""], "b_calf": ["Dumbbell in one hand, full stretch at the bottom. Right leg first.", ""], "b_lunge": ["Right leg first, torso upright.", ""], "b_slider": ["Hold a bridge and curl your heels in. Go single-leg once 3 x 12 is easy.", "Go single-leg once 3 × 12 is easy."], "l_highrow": ["Full stretch at the top.", ""], "l_incurl": ["Long-head stretch.", ""], "l_pulldown": ["Drive the elbows down to your sides with only a slight lean.", ""], "l_row": ["Chest on the pad, no rocking.", ""], "p_fly": ["Finish with your hands around chin height to bias the upper chest.", ""], "p_ohext": ["Long-head stretch.", ""], "p_lowinc": ["Upper chest first while you're fresh. Palms facing each other, elbows about 45 degrees from your sides; stop the descent where the shoulder stays pain-free.", "Upper chest first while you’re fresh."], "u_bench": ["Rest 3 min. Feet planted, shoulder blades pinned, elbows about 45-60 degrees from your sides.", "Rest 3 min."], "u_cablelat": ["Arm about 30 degrees forward of your side, thumb slightly up, stop at shoulder height. If it hurts above 2/10, stop at the height where it doesn't.", "If it hurts above 2/10, stop at the height where it doesn’t."], "u_csrow": ["Chest stays on the pad. You did 60 x 11 on 31 Aug.", "You did 60 × 11 on 31 Aug."], "u_incmach": ["Lower only as far as the shoulder stays pain-free. You did 70 x 13 on 2 Oct.", "You did 70 × 13 on 2 Oct."], "u_pullup": ["Dead hang, no kipping. Rest 3 min.", "Rest 3 min."], "w_carry": ["One heavy dumbbell, stand tall without leaning. Reps are metres per side.", "Reps are metres per side."], "w_deadbug": ["Lower back stays flat on the floor.", ""], "w_er": ["Rolled towel between elbow and ribs, left arm first. Slow both ways; keep shoulder pain at 2/10 or less.", ""], "w_facepull": ["Pull to your forehead and rotate the hands back.", ""]};
+/* The back warm-up: about 6 minutes, before any session with a lift that loads the lower back. */
+const BACK_WARM = ['Easy bike or incline walk, 3 minutes', 'Cat-camel: 6 slow cycles, no pushing into the ends', 'McGill curl-up: 3 holds of 10 seconds, switch the bent knee halfway', 'Side plank from the knees: 2 holds of 10 seconds per side', 'Bird dog: 3 holds of 10 seconds per side', 'Glute bridge: 1 × 10 with a 2-second squeeze, ribs down'];
+const BACK_WARM_VIDEOS = [null, 'https://www.youtube.com/watch?v=XCIu2A_vwOs', 'https://www.youtube.com/watch?v=FmZwkgg7pqU', 'https://www.youtube.com/watch?v=FmZwkgg7pqU', 'https://www.youtube.com/watch?v=FmZwkgg7pqU', 'https://www.youtube.com/watch?v=KI6fjDqGZh4'];
+function migrateProgram(p) {
+  if (!p || (p.version || 1) >= 2) return false;
+  p.prep = [...BACK_WARM]; p.prepVideos = [...BACK_WARM_VIDEOS];
+  for (const [k, d] of Object.entries(p.days || {})) d.prep = ['lowerA', 'lowerB', 'weak'].includes(k) ? BACK_WARM.length : 0;
+  if (p.warmups) {
+    p.warmups.lower = [{ text: 'Bodyweight box squat × 10, to the same box as your goblet squat', video: 'https://www.youtube.com/watch?v=yroxsbvFZ00' },
+      { text: 'Lateral band walk: 1 × 10 steps each way', video: 'https://www.youtube.com/watch?v=BmmeAkAedbE' },
+      { text: 'Leg swings: 10 front-to-back and 10 side-to-side per leg', video: 'https://www.youtube.com/watch?v=difYoBtZi2s' }];
+    p.warmups.upper = (p.warmups.upper || []).filter(s => !/^Ramp-up sets/.test(s.text));
+  }
+  // His first session: hip thrust cramped right after leg extensions, so it moves in front of them.
+  const la = p.days && p.days.lowerA;
+  if (la && la.items.includes('a_thrust') && la.items.includes('a_legext') && la.items.indexOf('a_thrust') > la.items.indexOf('a_legext')) {
+    la.items = la.items.filter(x => x !== 'a_thrust'); la.items.splice(la.items.indexOf('a_legext'), 0, 'a_thrust');
+  }
+  for (const [id, [groups, flags, cues]] of Object.entries(PROG_META)) {
+    const ex = p.exercises[id]; if (!ex) continue;
+    ex.groups = groups.split(','); ex.compound = flags.includes('c') || undefined; ex.press = flags.includes('p') || undefined;
+    if (!ex.cues) ex.cues = cues;
+  }
+  for (const [id, [was, now]] of Object.entries(NOTE_TRIM)) { const x = p.exercises[id]; if (x && x.note === was) x.note = now; }
+  // The back warm-up now has its own card, so coach notes that only repeated it go back to plain guidance.
+  const ex = p.exercises;
+  if (ex.a_squat_p1 && /^Lower-back warm-up first/.test(ex.a_squat_p1.note || '')) ex.a_squat_p1.note = 'No heavier dumbbell? Don’t chase the number: use the heaviest you have, and when 10 reps get easy, lower for 3 seconds and pause 1 second on the box instead of adding load.';
+  if (ex.b_hinge_p1 && /^Lower-back warm-up first/.test(ex.b_hinge_p1.note || '')) ex.b_hinge_p1.note = 'Bodyweight for the first 2 weeks, then hug a 5–10 kg plate. Stop at RIR 3.';
+  if (ex.a_curl_p1 && /Kneeling/i.test(ex.a_curl_p1.name) && /^Replaces seated and lying curls/.test(ex.a_curl_p1.note || '')) ex.a_curl_p1.note = 'New machine: start light. If your back twinges only on the left leg, shorten the range on that side and note it.';
+  if (ex.a_thrust && /^Do this before leg extensions/.test(ex.a_thrust.note || '')) ex.a_thrust.note = 'Now before leg extensions so your quads are fresh. The glute drive machine is fine: its load won’t match the barbell number, so pick one that leaves 2 reps in reserve.';
+  p.version = 2;
+  return true;
+}
 
 /* Double progression with the back rules on top. Mutates ex (and p.holds); returns what happened. */
 function progress(p, ex, entry, date) {
@@ -565,7 +771,7 @@ function progress(p, ex, entry, date) {
   const minReps = Math.min(...reps);
 
   if (pain === 'red') {
-    if (!bw) ex.weight = r05(W * 0.8);
+    if (!bw) ex.weight = roundW(ex, W * 0.8);
     ex.aim = lo; verdict = 'down';
     msg = `${painLabel}: load down 20% and one set fewer for a week.`;
     ex.setAdj = { delta: -1, until: addDays(date, 7), why: shWorse ? 'Shoulder flare: one set fewer this week' : 'Back flare: one set fewer this week' };
@@ -584,16 +790,16 @@ function progress(p, ex, entry, date) {
     if (bw) { verdict = 'up'; ex.aim = hi; msg = 'Top of the range on every set: make it harder (single-leg, slower, or add load).'; }
     else if (ex.lockUntilWeek && wk < ex.lockUntilWeek) { ex.weight = W; ex.aim = hi; verdict = 'hold'; msg = `Stay at this load until week ${ex.lockUntilWeek}.`; }
     else {
-      let step = inc;
-      if (rir != null && rir >= ex.rirHi + 2) step = inc * 2;
+      let step = stepKg(ex);
+      if (rir != null && rir >= ex.rirHi + 2) step = step * 2;
       if (ex.cap) step = Math.min(step, ex.cap);
-      ex.weight = r05(W + step); ex.aim = lo; verdict = 'up';
-      msg = `Hit ${hi} on every set: +${fmtNum(step)} kg next time.`;
+      ex.weight = roundW(ex, W + step); ex.aim = lo; verdict = 'up';
+      msg = `Hit ${hi} on every set: +${stepText(ex, step)} next time.`;
     }
   } else if (below) {
     ex.missStreak = (ex.missStreak || 0) + 1;
     if (ex.missStreak >= 2 && W > 0 && !bw) {
-      ex.weight = r05(W * 0.93); ex.aim = hi; ex.missStreak = 0; verdict = 'down';
+      ex.weight = roundW(ex, W * 0.93); ex.aim = hi; ex.missStreak = 0; verdict = 'down';
       msg = 'Below the rep range two sessions running: weight down about 7%.';
     } else {
       if (!bw) ex.weight = W; ex.aim = lo; verdict = 'hold';
@@ -602,9 +808,9 @@ function progress(p, ex, entry, date) {
   } else {
     ex.missStreak = 0;
     if (!bw && rir != null && rir > ex.rirHi + 1 && !(ex.lockUntilWeek && wk < ex.lockUntilWeek)) {
-      const step = ex.cap ? Math.min(inc, ex.cap) : inc;
-      ex.weight = r05(W + step); ex.aim = lo; verdict = 'up';
-      msg = `Felt easy (RIR ${rirText(rir)}): +${fmtNum(step)} kg next time.`;
+      const step = ex.cap ? Math.min(stepKg(ex), ex.cap) : stepKg(ex);
+      ex.weight = roundW(ex, W + step); ex.aim = lo; verdict = 'up';
+      msg = `Felt easy (RIR ${rirText(rir)}): +${stepText(ex, step)} next time.`;
     } else {
       if (!bw) ex.weight = W;
       ex.aim = Math.min(hi, minReps + 1); verdict = 'hold';
@@ -627,7 +833,7 @@ function applyMorning(p, s, val) {
     if (val === 'stiff') {
       if (ex.unit !== 'bw' && W != null && ex.weight > W) { ex.weight = W; ex.aim = e.before?.aim ?? ex.aim; notes.push(`${ex.name} held at ${fmtW(ex, W)}`); }
     } else if (val === 'worse') {
-      if (ex.unit !== 'bw' && W != null) ex.weight = r05(W * 0.9);
+      if (ex.unit !== 'bw' && W != null) ex.weight = roundW(ex, W * 0.9);
       ex.setAdj = { delta: -1, until: addDays(today, 7), why: 'Worse next morning: one set fewer this week' };
       if (ex.slot && p.phase > 1) {
         p.holds = (p.holds || []).filter(x => x.slot !== ex.slot);
@@ -774,12 +980,14 @@ function entryBest(p, e) {
   }
   return best;
 }
+/* Sessions since the app update carry prepSteps: how many back warm-up steps that session needed (0 = none). */
 function prepInfo(p, s) {
-  const day = p.days[s.dayKey] || (s.custom ? { prep: s.custom.prep ?? 6, warm: s.custom.warm } : null); const steps = day ? (day.prep ?? 6) : 0;
+  const day = p.days[s.dayKey] || (s.custom ? { prep: s.custom.prep ?? 6, warm: s.custom.warm } : null);
+  const steps = s.prepSteps != null ? s.prepSteps : day ? (day.prep ?? 6) : 0;
   const done = (s.prep || []).filter(i => i < steps).length;
   const wsteps = day && day.warm && p.warmups ? (p.warmups[day.warm] || []).length : 0;
   const wdone = (s.warm || []).filter(i => i < wsteps).length;
-  return { steps, done, full: steps > 0 && done >= steps, wsteps, wdone, wfull: wsteps > 0 && wdone >= wsteps };
+  return { steps, done, needed: steps > 0, full: steps > 0 && done >= steps, wsteps, wdone, wfull: wsteps > 0 && wdone >= wsteps };
 }
 function honestLog(p, s) {
   let tracked = 0, rated = 0;
@@ -805,7 +1013,8 @@ function sessionXP(p, s, best, opts = {}) {
   if (!opts.live) add('Session finished', XP.finish);
   add(`${sets} working set${sets === 1 ? '' : 's'}`, sets * XP.set);
   const pi = prepInfo(p, s);
-  if (pi.full) add('Full back prep', XP.prepFull); else add(`Back prep, ${pi.done} step${pi.done === 1 ? '' : 's'}`, pi.done * XP.prepStep);
+  if (!pi.needed) add('Back warm-up not needed today', XP.prepFull);
+  else if (pi.full) add('Full back warm-up', XP.prepFull); else add(`Back warm-up, ${pi.done} step${pi.done === 1 ? '' : 's'}`, pi.done * XP.prepStep);
   if (pi.wfull) add('Full warm-up', XP.warmFull); else add(`Warm-up, ${pi.wdone} step${pi.wdone === 1 ? '' : 's'}`, pi.wdone * XP.warmStep);
   if (s.readiness && Object.values(s.readiness).some(v => v != null)) add('Readiness check', XP.readiness);
   if (honestLog(p, s)) add('Every pain rating logged', XP.honest);
@@ -814,17 +1023,18 @@ function sessionXP(p, s, best, opts = {}) {
   const prn = Math.min(prs.length, XP.prMax);
   add(`${prs.length} PR${prs.length === 1 ? '' : 's'}${prs.length > XP.prMax ? ` (${XP.prMax} count)` : ''}`, prn * XP.pr);
   if (s.morning) add('Next-morning check', XP.morning);
-  return { xp: parts.reduce((n, x) => n + x.xp, 0), parts, prs, sets, prepFull: pi.full, honest: honestLog(p, s) };
+  return { xp: parts.reduce((n, x) => n + x.xp, 0), parts, prs, sets, prepFull: pi.full, prepNeeded: pi.needed, honest: honestLog(p, s) };
 }
 const QUESTS = [
   { id: 'train4', name: 'Train 4 times', xp: 150, goal: 4 },
   { id: 'legs', name: 'Do both leg days', xp: 150, goal: 2 },
-  { id: 'prep', name: 'Full back prep in every session, 3 or more sessions', xp: 100, goal: 3 },
+  { id: 'prep', name: 'Back warm-up every time a session needs it, 2 or more sessions', xp: 100, goal: 2 },
 ];
 function questState(p, own) {
   const legs = (own.some(s => s.dayKey === 'lowerA') ? 1 : 0) + (own.some(s => s.dayKey === 'lowerB') ? 1 : 0);
-  const prepFull = own.filter(s => prepInfo(p, s).full).length;
-  const prepMissed = own.length - prepFull > 0;
+  const pis = own.map(s => prepInfo(p, s));
+  const prepFull = pis.filter(x => x.full).length;
+  const prepMissed = pis.some(x => x.needed && !x.full);
   return QUESTS.map(q => {
     const have = q.id === 'train4' ? own.length : q.id === 'legs' ? legs : prepFull;
     const missed = q.id === 'prep' && prepMissed;
@@ -833,7 +1043,7 @@ function questState(p, own) {
 }
 const BADGES = [
   { id: 'first', name: 'Day one', desc: 'Finish your first session in the app', goal: 1, stat: 'own' },
-  { id: 'prep10', name: 'Prep work', desc: 'Full back prep in 10 sessions', goal: 10, stat: 'prepFull' },
+  { id: 'prep10', name: 'Prep work', desc: 'Full back warm-up in 10 sessions', goal: 10, stat: 'prepFull' },
   { id: 'honest10', name: 'Honest log', desc: 'Rate every tracked pain in 10 sessions', goal: 10, stat: 'honest' },
   { id: 'legs', name: 'Leg week', desc: 'Both leg days in one week', goal: 1, stat: 'legWeeks' },
   { id: 'full', name: 'Full week', desc: '5 sessions in one week', goal: 5, stat: 'maxWeek' },
@@ -844,7 +1054,7 @@ const BADGES = [
   { id: 'phase3', name: 'Phase 3', desc: 'Pass the gate to Phase 3', goal: 3, stat: 'phase' },
   { id: 'deload', name: 'Took the deload', desc: 'Log a session in week 12', goal: 1, stat: 'deload' },
   { id: 'tonnes', name: '100 tonnes', desc: 'Lift 100,000 kg in app sessions', goal: 100000, stat: 'tonnage' },
-  { id: 'prep50', name: 'Rehab regular', desc: 'Full back prep in 50 sessions', goal: 50, stat: 'prepFull' },
+  { id: 'prep50', name: 'Rehab regular', desc: 'Full back warm-up in 50 sessions', goal: 50, stat: 'prepFull' },
   { id: 'streak12', name: 'Iron habit', desc: '12-week streak', goal: 12, stat: 'bestStreak' },
   { id: 'block', name: 'Block complete', desc: 'Finish the 12 weeks with 40+ sessions', goal: 1, stat: 'block' },
 ];
@@ -960,7 +1170,7 @@ function questCard(g) {
     box.append(h('div', { class: 'quest' + (q.done ? ' done' : q.missed ? ' missed' : '') },
       h('span', { class: 'qname', text: q.name }), h('span', { class: 'qxp', text: q.done ? `+${q.xp} XP earned` : `+${q.xp} XP` }),
       xpBar(q.have / q.goal, 'thin ' + (q.done ? 'go' : 'blue')),
-      q.missed ? h('span', { class: 'qstate', text: 'Missed this week: a session went without the full back prep.' }) : !q.done ? h('span', { class: 'qstate', text: `${q.have} of ${q.goal}` }) : null));
+      q.missed ? h('span', { class: 'qstate', text: 'Missed this week: a session that loads your back went without the full back warm-up.' }) : !q.done ? h('span', { class: 'qstate', text: `${q.have} of ${q.goal}` }) : null));
   }
   card.append(box);
   return card;
@@ -1004,7 +1214,7 @@ const Store = {
     if (path === 'app/draft') return clone(this.data.draft);
     if (col === 'app') return clone(this.data.docs[id === 'program' ? 'program' : id] || null);
     if (col === 'sessions') return clone(this.data.sessions[id] || null);
-    if (path === 'coach/thread') return { items: Object.values(this.data.coach).sort((a, b) => (a.ts < b.ts ? -1 : 1)).slice(-25).map(clone) };
+    if (path === 'coach/thread') return { items: Object.values(this.data.coach).filter(it => it && !it.deleted).sort((a, b) => (a.ts < b.ts ? -1 : 1)).slice(-25).map(clone) };
     return null;
   },
   set(path, val) {
@@ -1111,7 +1321,13 @@ function loadFromStore() {
   if (!S.coachBusy) S.thread = Store.get('coach/thread');
   S.log = Store.get('app/log') || { items: [] };
   if (!Array.isArray(S.log.items)) S.log.items = [];
+  S.reminders = Store.get('app/reminders') || { standing: { on: true }, items: [] };
+  if (!Array.isArray(S.reminders.items)) S.reminders.items = [];
   S.loaded.program = true;
+  if (prog && migrateProgram(prog)) queueMicrotask(async () => {
+    try { await saveProgram(); await addLog('auto', 'App update: a 6-minute back warm-up only on days that load your back, form cues on every exercise, hip thrust before leg extensions on Lower A.'); } catch (e) {}
+    refresh();
+  });
 }
 function onRemoteChange() { loadFromStore(); refresh(); applyIncoming(); }
 // The Sunday check-in can't edit the program itself: it leaves its changes in the coach tab with
@@ -1125,7 +1341,7 @@ async function applyIncoming() {
   try {
     for (const it of items) {
       it.applyOnSync = false;
-      it.changes = (Array.isArray(it.changes) ? it.changes : []).slice(0, 6).map(validateChange).filter(Boolean);
+      it.changes = (Array.isArray(it.changes) ? it.changes : []).slice(0, 6).map(c => validateChange(c, { kg: true })).filter(Boolean);
       const now = it.changes.filter(c => !needsTap(c));
       await applyChanges(it, now, { auto: true, quiet: true });
     }
@@ -1377,12 +1593,176 @@ Jump rope|Conditioning|W|tn
 Burpee|Conditioning|W|n
 Incline treadmill walk|Conditioning|M|tn
 `;
+/* Form cues for every library movement: name | cue; cue; cue */
+const LIB_CUES_SRC = `
+Bench press|Feet planted, shoulder blades pinned back and down; Bar to the lower chest, elbows 45-60 degrees from your sides; Press back up and slightly toward your face
+Incline bench press|Bench at about 30 degrees, shoulder blades pinned; Lower to the upper chest, elbows 45-60 degrees out; Press up over the shoulders without flaring
+Decline bench press|Hook your feet so you don't slide; Lower to the lower chest under control; Keep the shoulder blades pinned the whole set
+Low-incline neutral-grip press|Bench at 15-30 degrees, palms facing each other; Elbows about 45 degrees from your sides; Lower only as far as the shoulder stays pain-free
+Floor press|Upper arms touch the floor softly, no bounce; Elbows about 45 degrees out; Press straight up over the chest
+Chest press|Seat so the handles line up with mid-chest; Shoulder blades back against the pad; Lower to a good stretch, no bounce
+Incline chest press|Handles start at upper-chest height; Shoulder blades back against the pad; Lower only as far as the shoulders stay comfortable
+Chest fly|Slight bend in the elbows, fixed the whole rep; Open until you feel a stretch, not a strain; Squeeze the arms together over the chest
+Incline fly|Bench at about 30 degrees; Elbows slightly bent, wide arc; Stop the stretch before the shoulder complains
+Cable crossover|Step forward, slight forward lean; Sweep the hands together in a wide arc; Squeeze for a second where the hands meet
+Low-to-high cable fly|Pulleys low, slight bend in the elbows; Sweep up to about chin height; Squeeze the upper chest at the top
+Push-up|Body in one straight line, glutes tight; Hands under the shoulders, elbows 45 degrees out; Chest to a fist's height from the floor
+Deficit push-up|Hands on plates or handles for extra depth; Body stays in one straight line; Go as deep as the shoulders allow without pain
+Chest dip|Lean the torso forward slightly; Lower until the upper arms are about parallel; Stop short of any pinch at the front of the shoulder
+Pullover|Hips low, arms slightly bent; Lower behind your head only as far as is comfortable; Pull back over the chest with the lats and chest
+Svend press|Squeeze the plates together hard; Press straight out from the chest; Keep squeezing on the way back in
+Pull-up|Start from a dead hang; Pull your chest toward the bar, elbows down to your sides; Control the way down, no kipping
+Chin-up|Palms facing you, shoulder-width grip; Lead with the chest, elbows to your sides; Full hang at the bottom
+Neutral-grip pull-up|Palms facing each other; Drive the elbows down and back; Lower all the way under control
+Lat pulldown|Thighs locked under the pad; Drive the elbows down to your sides with only a slight lean; Shoulders stay down, away from the ears
+Close-grip lat pulldown|Slight lean back, chest up; Pull the handle to the upper chest; Full stretch at the top
+Single-arm lat pulldown|Pull the elbow down toward your hip; Let the shoulder blade rise at the top for the stretch; Keep the torso still
+Straight-arm pulldown|Slight hip hinge, arms almost straight; Sweep the bar down to the thighs with the lats; No elbow bending to cheat it
+Seated cable row|Sit tall, slight knee bend; Pull the handle to the lower ribs; Let the shoulder blades spread at the front, no rocking
+Chest-supported row|Chest stays on the pad; Pull the elbows toward your hips; Pause with the shoulder blades squeezed
+T-bar row|Chest on the pad if there is one; Pull to the lower chest; Lower under control without losing your back position
+Bent-over row|Hinge to about 45 degrees with a flat back; Pull the bar to the lower ribs; Keep the torso still, no heaving
+Pendlay row|Torso near parallel, back flat; Pull explosively from the floor to the lower chest; Reset the bar on the floor each rep
+One-arm row|Hand and knee on the bench, back flat; Pull the dumbbell toward your hip; Don't twist the torso open
+Seal row|Lie flat on a high bench; Pull to the bench with the elbows back; Full stretch at the bottom
+Meadows row|Stand side-on to the landmine, hinge with a flat back; Pull the elbow high and back; Control the stretch at the bottom
+Inverted row|Body in one straight line, heels down; Pull your chest to the bar; Squeeze the shoulder blades at the top
+High row|Chest on the pad; Pull the elbows down and back; Full stretch at the top without shrugging
+Shrug|Stand tall, arms straight; Lift the shoulders straight up toward the ears; Hold 1 second at the top, no rolling
+Rack pull|Bar starts at or just below the knees; Flat back, lats tight; Stand up by driving the hips forward
+Back extension|Pad just below the hip crease; Spine stays neutral as the hips fold; Squeeze the glutes to rise, no leaning back
+Superman|Lift arms and legs a few centimetres only; Squeeze the glutes; Hold briefly, no straining the neck
+Deadlift|Bar over midfoot, shins close; Flat back, lats tight before you pull; Push the floor away and stand tall without leaning back
+Sumo deadlift|Wide stance, toes out, grip inside the knees; Knees track over the toes; Chest up, push the floor apart as you stand
+Trap bar deadlift|Stand in the middle of the bar; Flat back, hips lower than a deadlift; Drive through the whole foot to stand
+Good morning|Bar on the upper back, soft knees; Push the hips back with a flat back; Stop where the back position would change
+Overhead press|Squeeze the glutes, ribs down; Press straight up, head through at the top; Don't lean back to finish
+Seated shoulder press|Bench at 75-80 degrees, back on the pad; Elbows slightly in front of your body; Press to just short of lockout
+Arnold press|Start palms facing you; Rotate the palms out as you press; Control the way down
+Half-kneeling landmine press|Kneel on the same side as the pressing arm, glute squeezed; Press up and slightly forward; Ribs down, stop short of any pinch
+Landmine press|Stand staggered, ribs down; Press up and slightly forward; Don't lean back to finish the rep
+Lateral raise|Lead with the elbows, slight bend; Raise to shoulder height; No swinging or shrugging
+Lateral raise, scapular plane|Arms about 30 degrees forward of your sides; Raise to shoulder height, no higher; Slow on the way down
+Lean-away lateral raise|Hold the post and lean away; Raise to shoulder height; Keep tension at the bottom
+Front raise|Arms almost straight; Raise to shoulder height; No swinging the torso
+Rear delt fly|Hinge forward or lie on an incline bench; Lead with the elbows, arms slightly bent; Squeeze the rear delts, no shrugging
+Face pull|Rope at face height; Pull to your forehead with the elbows high; Rotate the hands back at the end
+Upright row|Wide grip; Pull only to lower-chest height; Stop if the shoulder pinches
+Y-raise|Thumbs up, arms in a Y; Raise only as high as is pain-free; Light weight, slow reps
+External rotation, elbow at side|Rolled towel between elbow and ribs; Elbow stays at your side, forearm level; Rotate out slowly, 2 seconds back
+Side-lying external rotation|Lie on your side, towel under the top elbow; Rotate the forearm up slowly; Keep the elbow pinned to your side
+Internal rotation|Elbow at your side, towel under it; Rotate the forearm in toward your belly; Slow and controlled both ways
+Band pull-apart|Arms straight at shoulder height; Pull the band apart by squeezing the shoulder blades; Ribs down, no shrugging
+Cuban press|Upright row to elbow height first; Rotate the forearms up; Press only if it's pain-free
+Biceps curl|Elbows pinned at your sides; Curl without swinging the torso; Lower for 2 seconds
+Hammer curl|Palms face each other the whole rep; Elbows pinned at your sides; No swinging
+Incline curl|Bench at 45-60 degrees, arms hang straight down; Keep the elbows back; Full stretch at the bottom
+Preacher curl|Armpits snug against the top of the pad; Full stretch at the bottom without locking hard; Squeeze at the top, 2 seconds down
+Concentration curl|Elbow braced on the inner thigh; Curl toward the shoulder; Slow lowering
+Spider curl|Chest on an incline bench, arms hang down; Curl without moving the upper arms; Squeeze hard at the top
+Bayesian cable curl|Face away from the cable, arm behind you; Curl forward without moving the elbow; Feel the stretch at the start
+Drag curl|Drag the bar up along your torso; Elbows travel back; No swinging
+Cross-body hammer curl|Curl the dumbbell toward the opposite shoulder; Elbow stays at your side; Control the way down
+Close-grip bench press|Hands about shoulder-width; Elbows tucked close to the body; Bar to the lower chest
+Triceps pushdown|Elbows pinned to your sides; Lock out fully and squeeze; Don't lean over the stack
+Overhead triceps extension|Elbows pointing forward, close together; Let the hands go deep behind your head; Only the forearms move
+Skull crusher|Lower the bar to just above your forehead; Upper arms stay still, slightly angled back; Elbows in, no flaring
+JM press|Bar lowers toward the upper chest and chin; Elbows forward and tucked; Press back with the triceps
+Triceps dip|Torso upright; Lower until the elbows reach about 90 degrees; Stop short of any shoulder pinch
+Bench dip|Hands on the bench behind you, hips close to it; Lower until elbows are near 90 degrees; Stop if the front of the shoulder hurts
+Triceps kickback|Hinge with the upper arm parallel to the floor; Extend the elbow fully; Upper arm stays still
+Diamond push-up|Hands close under the chest; Elbows tucked close to the body; Body stays in one straight line
+Single-arm pushdown|Elbow pinned to your side; Extend fully and squeeze; Slow on the way up
+Wrist curl|Forearms on your thighs, palms up; Curl only at the wrist; Full range, slow
+Reverse wrist curl|Forearms on your thighs, palms down; Lift the back of the hand; Light weight, slow
+Reverse curl|Overhand grip; Elbows pinned at your sides; Slow lowering
+Dead hang|Hang with straight arms; Shoulders gently engaged, not slumped; Breathe and hold
+Plate pinch|Pinch the plates smooth sides out; Stand tall; Hold for time
+Wrist roller|Arms straight out in front; Roll the weight up with the wrists; Lower it under control
+Back squat|Bar on the upper back, brace before each rep; Knees track over the toes; Stand up with the chest and hips rising together
+Front squat|Elbows high, bar on the front of the shoulders; Torso upright; Sit down between the heels
+Goblet squat|Hold the weight upright against your chest, elbows under it; Sit down between the heels, chest up; Drive through the whole foot
+Box squat|Sit back to the box with control; Touch the box without relaxing; Stand up through the whole foot
+Goblet box squat|Hold the dumbbell upright against your chest, elbows tucked; Box at the depth where your pelvis stays neutral; 3 seconds down, touch the box, stand without rocking
+Hack squat|Back flat against the pad; Lower under control to a comfortable depth; Drive through the whole foot
+Leg press|Feet shoulder-width on the platform; Lower until just before your tailbone lifts off the pad; Don't lock the knees hard
+Single-leg leg press|One foot centred on the platform; Lower under control; Keep the hips square on the seat
+Pendulum squat|Back against the pad, feet forward; Deep, controlled lowering; Drive through the whole foot
+Belt squat|Belt around the hips, torso upright; Sit straight down; Drive through the whole foot
+Smith squat|Feet slightly forward of the bar; Brace before each rep; Lower to a depth where the back stays neutral
+Bulgarian split squat|Front foot far enough forward that the heel stays down; Slight forward lean, drop the back knee straight down; Push through the front heel and midfoot
+Split squat|Long stance, torso upright; Drop the back knee straight down; Push through the front foot
+Walking lunge|Long steps, torso upright; Back knee drops toward the floor; Push off the front foot into the next step
+Reverse lunge|Step back far enough that the front shin stays fairly upright; Torso upright, back knee drops straight down; Push through the front heel to come back
+Step-up|Whole foot on the box; Drive up through the top leg, not by pushing off the bottom foot; Lower under control
+Leg extension|Knee lined up with the machine's pivot; 1-second squeeze at the top; Lower under control, don't let the stack crash
+Single-leg extension|Knee lined up with the pivot; Squeeze at the top; Match the reps on both legs
+Sissy squat|Hold a support, knees forward; Lean back as the knees bend; Only as deep as the knees allow
+Spanish squat|Band behind the knees, lean back into it; Sit down with shins vertical; Push through the heels
+Wall sit|Back flat on the wall; Thighs about parallel; Breathe and hold
+Romanian deadlift|Soft knees, push the hips straight back; Weight slides down the front of the thighs; Stop where the back position would change
+Single-leg Romanian deadlift|Hinge on one leg, the back leg rises in line; Keep the hips square to the floor; Hold a support if balance limits you
+Stiff-leg deadlift|Knees almost straight; Hinge with a flat back; Only as low as the hamstrings allow
+Lying leg curl|Hips pinned to the pad; Curl fully, then 2 seconds down; Don't lift your hips to finish a rep
+Seated leg curl|Recline the back pad and press your hips into it; Thigh pad snug just above the knees; Curl fully, pause, 2 seconds back up
+Standing single-leg curl|Hips square, chest up; Curl the heel toward the glute; Slow on the way down
+Nordic curl|Anchor the heels, body straight from knees to head; Lower as slowly as you can; Push up with the hands at the bottom
+Glute-ham raise|Knees just behind the pad; Body straight as you lower; Curl yourself up with the hamstrings
+Swiss ball leg curl|Hold a glute bridge the whole set; Curl the heels in without letting the hips drop; Slow on the way out
+Cable pull-through|Face away from the stack, rope between your legs; Hips back, arms just hold the rope; Finish tall with a glute squeeze, no leaning back
+Hip thrust|Chin tucked, ribs down; Shins vertical at the top; Finish with a glute squeeze, not a lower-back arch
+Single-leg hip thrust|Upper back on the bench, one foot planted; Keep the hips level; Squeeze the glute at the top
+Glute bridge|Feet close to the hips; Ribs down, drive through the heels; 2-second squeeze at the top
+Cable kickback|Slight forward lean, hips square; Kick back and slightly out; No lower-back arching
+Glute kickback|Hips square on the machine; Push back through the heel; Squeeze at the top, no arching
+Hip abduction|Sit tall, back against the pad; Push out with the knees, hold 1 second; Control the way back in
+Hip adduction|Sit tall, back against the pad; Squeeze the legs together; Control the way back out
+Frog pump|Soles of the feet together, knees out; Drive the hips up; Squeeze hard at the top
+Reverse hyper|Hips on the edge of the pad; Lift the legs with the glutes; Keep the movement small and controlled
+Standing calf raise|Balls of the feet on the edge; Full stretch at the bottom, 1-second pause; Rise high onto the big toe
+Seated calf raise|Pad snug on the lower thighs; 2-second pause in the bottom stretch; Rise all the way onto the big toe
+Single-leg calf raise|Hold a support with one hand; Full stretch at the bottom; Rise as high as you can
+Leg press calf raise|Balls of the feet on the bottom edge of the platform; Knees soft, not locked; Full stretch and full rise
+Tibialis raise|Back against a wall, heels forward; Lift the toes as high as you can; Lower slowly
+Plank|Elbows under the shoulders; Body in one straight line, glutes tight; Breathe, don't hold your breath
+Side plank|Elbow under the shoulder; Hips up in line with the body; Brace and breathe
+Copenhagen plank|Top leg on the bench, inner thigh supported; Lift the hips in line; Start from the knee if needed
+Dead bug|Lower back stays flat on the floor; Reach the opposite arm and leg slowly; Exhale as you reach
+Bird dog|Reach the opposite arm and leg long; Keep the back flat, no twisting; Hold 10 seconds each rep
+Pallof press|Stand side-on to the cable; Press straight out and hold 2 seconds; Don't let the cable turn your torso
+Hollow hold|Lower back pressed into the floor; Arms and legs long; Shorten the levers if your back lifts
+McGill curl-up|One knee bent, hands under the lower back; Lift the head and shoulders a little as one unit; Hold 10 seconds, breathe
+Hanging knee raise|Hang still, no swinging; Curl the knees up toward the chest; Lower slowly
+Hanging leg raise|Legs straight, hang still; Raise with control; Lower without swinging
+Ab wheel rollout|Ribs down, glutes tight; Roll out only as far as the back stays flat; Pull back with the abs
+Crunch|Lift the shoulder blades only; Exhale at the top; Don't pull on your neck
+Cable crunch|Kneel, rope by your head; Curl the ribs toward the hips; Hips stay still
+Decline sit-up|Feet hooked; Curl up rather than yanking; Lower slowly
+Russian twist|Sit tall; Rotate from the ribs; Slow and controlled
+Cable woodchop|Pivot the back foot; Rotate through the hips and torso together; Control the return
+Suitcase carry|One heavy dumbbell, stand tall; Don't lean toward or away from the weight; Short, steady steps
+Farmer's carry|Heavy weight in each hand, stand tall; Shoulders down and back; Short, steady steps
+Overhead carry|Weight locked out overhead; Ribs down, glutes tight; Walk slowly
+Kettlebell swing|Hinge, don't squat; Snap the hips forward to float the bell; Arms just guide it
+Power clean|Bar close to the body; Explode with the hips, then catch high on the shoulders; Reset each rep
+Thruster|Front squat into a press in one motion; Drive with the legs; Ribs down at the top
+Sled push|Arms locked, body leaning in; Short, powerful steps; Push through the balls of the feet
+Sled pull|Lean back, arms straight; Walk backward with short steps; Keep tension on the strap
+Rowing machine|Legs, then body, then arms; Reverse on the way back; Steady breathing
+Exercise bike|Seat at hip height; Steady, easy pace for warm-ups; Sit tall
+Ski erg|Hinge with the pull; Arms and hips together; Smooth rhythm
+Battle ropes|Athletic stance, soft knees; Fast waves from the shoulders; Breathe
+Jump rope|Small jumps on the balls of the feet; Turn the rope with the wrists; Relax the shoulders
+Burpee|Hands down, jump the feet back; Chest to the floor, then up; Land soft
+Incline treadmill walk|Don't hold the rails; Upright posture; Steady pace you can talk at
+`;
+const LIB_CUES = Object.fromEntries(LIB_CUES_SRC.trim().split('\n').map(l => { const [n, c] = l.split('|'); return [n, c.split(';').map(x => x.trim()).filter(Boolean)]; }));
 const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
 const LIB = LIB_SRC.trim().split('\n').map(line => {
   const [name, group, eq, flags = ''] = line.split('|');
   const f = new Set(flags.split(''));
   return { id: slug(name), name, group, equip: eq.split(''), compound: f.has('c'), lower: f.has('l'), perSide: f.has('u'), single: f.has('1'),
-    time: f.has('t'), metres: f.has('m'), cond: f.has('n'), back: f.has('b'), shoulder: f.has('s'), avoidBack: f.has('X'), avoidShoulder: f.has('Y') };
+    time: f.has('t'), metres: f.has('m'), cond: f.has('n'), back: f.has('b'), shoulder: f.has('s'), avoidBack: f.has('X'), avoidShoulder: f.has('Y'), cues: LIB_CUES[name] || [] };
 });
 function libVariantName(m, code) {
   if (m.equip.length === 1 && (code === 'W' || m.cond)) return m.name;
@@ -1399,8 +1779,10 @@ function libExercise(m, code) {
     repUnit: metres ? 'm' : time ? 's' : undefined, perSide: m.perSide || undefined, lower: m.lower || undefined,
     back: m.back || m.avoidBack || undefined, shoulder: m.shoulder || m.avoidShoulder || undefined,
     bar: code === 'B' ? true : undefined, ramp: m.compound && 'BSTD'.includes(code) ? true : undefined, cond: m.cond || undefined,
+    compound: m.compound || undefined, press: libPress(m) || undefined, cues: m.cues && m.cues.length ? [...m.cues] : undefined,
   };
 }
+function libPress(m) { return m.compound && (m.group === 'Chest' || m.group === 'Shoulders') && /press|push-up|dip|thruster/i.test(m.name); }
 
 /* ---------- custom workouts ---------- */
 function customDays() { return (S.program && S.program.customDays) || {}; }
@@ -1409,10 +1791,11 @@ function dayInfo(key) {
   if (key.startsWith('custom:')) {
     const t = customDays()[key.slice(7)]; if (!t) return null;
     const items = (t.items || []).filter(id => p.exercises[id]).map(id => ({ id }));
-    return { key, name: t.name, focus: `Your custom workout, ${items.length} exercise${items.length === 1 ? '' : 's'}`, prep: t.prep ?? 6, items, custom: true, template: t };
+    return { key, name: t.name, focus: `Your custom workout, ${items.length} exercise${items.length === 1 ? '' : 's'}`, prep: backWarmNeeded(p, items.map(it => ({ exId: it.id }))) ? (p.prep || []).length : 0, items, custom: true, template: t };
   }
   const d = p.days[key]; if (!d) return null;
-  return { key, name: d.name, focus: d.focus, prep: d.prep, optional: d.optional, items: dayItems(p, key) };
+  const items = dayItems(p, key);
+  return { key, name: d.name, focus: d.focus, prep: backWarmNeeded(p, items.map(it => ({ exId: it.id }))) ? (p.prep || []).length : 0, optional: d.optional, items };
 }
 function addLibExercise(m, code) {
   const ex = clone(libExercise(m, code));
@@ -1439,6 +1822,8 @@ function makeEntry(ex, date) {
 function addToSession(id) {
   const a = S.active; const ex = S.program.exercises[id]; if (!a || !ex) return;
   a.entries.push(makeEntry(ex, todayStr()));
+  fillWarm(S.program, a.entries);
+  if (ex.back && !a.prepSteps && !(a.prep || []).length) a.prepSteps = (S.program.prep || []).length;
   if (a.custom && ex.lower) a.custom.warm = 'lower';
   saveDraftSoon(); renderMain();
   const el = document.getElementById('ex-' + (a.entries.length - 1)); if (el) el.scrollIntoView({ block: 'start' });
@@ -1565,10 +1950,9 @@ function viewBuilder() {
   });
   card.append(list, h('button', { class: 'btn block', type: 'button', id: 'b-add', text: '+ Add exercises', onclick: () => openPicker(id => { if (!b.items.includes(id)) b.items.push(id); }, { multi: true, title: 'Add exercises', onClose: renderMain }) }));
   root.append(card);
-  const prepCard = h('div', { class: 'card' }, h('h3', { text: 'Back prep before it' }));
-  prepCard.append(chipGroup('Steps from your back prep', [[0, 'None'], [6, 'Steps 1–6'], [8, 'All 8']], b.prep, v => { b.prep = v == null ? 6 : v; }));
-  prepCard.append(h('p', { class: 'small muted', text: 'Your plan does steps 1–6 before every session and all 8 before leg days. Full back prep earns XP like any other session.' }));
-  root.append(prepCard);
+  const needs = b.items.map(id => p.exercises[id]).filter(ex => ex && ex.back);
+  root.append(h('div', { class: 'card' }, h('h3', { text: 'Back warm-up' }),
+    h('p', { class: 'small muted', text: needs.length ? `This workout gets the 6-minute back warm-up first, because ${needs.map(x => x.name).slice(0, 3).join(', ')}${needs.length > 3 ? ' and others' : ''} load${needs.length === 1 ? 's' : ''} your lower back.` : 'No back warm-up: nothing in this workout loads your lower back. The app adds it on its own when an exercise does.' })));
   root.append(h('div', { class: 'row' },
     h('button', { class: 'btn primary', type: 'button', id: 'b-save-start', text: 'Save and start', onclick: () => saveBuilder(true) }),
     h('button', { class: 'btn', type: 'button', id: 'b-save', text: 'Save', onclick: () => saveBuilder(false) })));
@@ -1701,7 +2085,7 @@ function viewToday() {
   const next = h('div', { class: 'card' },
     h('div', { class: 'eyebrow', text: S.pickKey ? 'Your pick' : 'Next in the rotation' }),
     h('div', { class: 'next-day', text: day.name }),
-    h('p', { class: 'muted', text: day.custom ? `${day.focus}. ${day.prep ? `Back prep steps 1–${day.prep}.` : 'No back prep.'}` : `${day.focus} · ${items.length} exercises · back prep steps 1–${day.prep}` }));
+    h('p', { class: 'muted', text: `${day.focus}${day.custom ? '' : ` · ${items.length} exercises`} · ${day.prep ? 'back warm-up first, about 6 min' : 'no back warm-up needed'}` }));
   const ll = lastLowerDate();
   if (isLowerDay(key) && ll && daysBetween(ll, today) < 2) next.append(h('div', { class: 'warn', text: `Your last leg session was ${daysBetween(ll, today) === 0 ? 'today' : 'yesterday'}. Keep a day between leg sessions: pick an upper day or rest.` }));
   if (day.optional) next.append(h('p', { class: 'small', text: 'Optional. Only do it if your last two sessions went to plan and your back is green; otherwise rest.' }));
@@ -1721,6 +2105,8 @@ function viewToday() {
     next.append(grid);
   }
   root.append(next);
+  const ups = upcomingReminders();
+  if (ups.length) root.append(remindersCard(ups));
   root.append(questCard(g));
 
   const gs = gateStatus(p);
@@ -1741,6 +2127,24 @@ function viewToday() {
   return root;
 }
 
+function remindersCard(ups) {
+  const card = h('div', { class: 'card', id: 'reminders-card' }, h('div', { class: 'spread', style: 'align-items:center' }, h('h3', { text: 'Pre-workout cues' }), h('span', { class: 'small muted', text: 'about 6 pm' })));
+  for (const r of ups) {
+    const editing = S.remEdit === r.id;
+    const row = h('div', { class: 'rem-row' }, h('div', { class: 'small muted', text: `${fmtDate(r.date)}${r.date < todayStr() ? ' (waiting for your next evening without a workout)' : ''}` }));
+    if (editing) {
+      const ta = h('textarea', { id: 'rem-' + r.id, value: r.text, 'aria-label': 'Reminder text' });
+      const dt = h('input', { type: 'date', value: r.date, min: todayStr(), 'aria-label': 'Send on' });
+      row.append(ta, dt, h('div', { class: 'row' }, h('button', { class: 'btn', type: 'button', text: 'Save', onclick: () => { const t = ta.value.trim(); S.remEdit = null; if (t) { r.text = t.slice(0, 600); if (dt.value) r.date = dt.value; } else r.status = 'cancelled'; saveReminders(); renderMain(); } }),
+        h('button', { class: 'link', type: 'button', text: 'Cancel', onclick: () => { S.remEdit = null; renderMain(); } })));
+    } else row.append(h('p', { class: 'reply', text: r.text }), h('div', { class: 'row', style: 'gap:16px' },
+      h('button', { class: 'link', type: 'button', text: 'Edit', onclick: () => { S.remEdit = r.id; renderMain(); } }),
+      h('button', { class: 'link danger-link', type: 'button', text: 'Delete', onclick: () => { r.status = 'cancelled'; saveReminders(); toast('Reminder deleted.'); renderMain(); } })));
+    card.append(row);
+  }
+  card.append(h('p', { class: 'small muted', text: 'Sent as a Claude notification at about 6 pm on that day if you haven’t trained yet. Start a workout first and they show at the top of it instead.' }));
+  return card;
+}
 function verdictList(items) {
   const box = h('div', { class: 'verdicts' });
   if (!items.length) { box.append(h('p', { class: 'muted small', text: 'Nothing logged.' })); return box; }
@@ -1771,7 +2175,7 @@ function resultsBlock(sum) {
   box.append(dl);
   if (G.prs.length) {
     const pl = h('div', { class: 'prlist' });
-    for (const x of G.prs) pl.append(h('div', { class: 'pritem' }, h('span', { class: 'pr-flag', text: 'PR' }), h('div', {}, h('b', { text: x.name }), h('div', { class: 'small', text: `${(S.program.exercises[x.exId] || {}).unit === 'kg added' ? '+' : ''}${fmtNum(x.w)} kg × ${x.r}: about ${Math.round(x.v)} kg estimated 1-rep max, up from ${Math.round(x.prior)} kg` }))));
+    for (const x of G.prs) pl.append(h('div', { class: 'pritem' }, h('span', { class: 'pr-flag', text: 'PR' }), h('div', {}, h('b', { text: x.name }), h('div', { class: 'small', text: (() => { const pe = S.program.exercises[x.exId] || {}; const u = wUnit(pe); return `${pe.unit === 'kg added' ? '+' : ''}${fmtD(pe, x.w)} ${u} × ${x.r}: about ${Math.round(toD(pe, x.v))} ${u} estimated 1-rep max, up from ${Math.round(toD(pe, x.prior))} ${u}`; })() }))));
     box.append(pl);
   }
   if (G.badges.length) box.append(h('div', { class: 'row' }, ...G.badges.map(b => h('span', { class: 'pill xp', text: `Badge: ${b.name}` }))));
@@ -1801,6 +2205,7 @@ function summaryCard(sum) {
   const card = h('div', { class: 'card flag-blue' },
     h('h3', { text: 'Next time' }),
     verdictList(sum.items));
+  if (sum.reminder) card.append(h('p', { class: 'small', text: `Your cues are queued for ${fmtDate(sum.reminder.date)}: a Claude notification at about 6 pm if you haven’t trained by then.` }));
   wrap.append(card);
   const rev = sum.reviewId ? (S.thread.items || []).find(x => x.id === sum.reviewId) : null;
   if (rev) card.append(h('div', { class: 'stack', style: 'border-top:1px solid var(--line);padding-top:12px' },
@@ -1865,13 +2270,51 @@ function startSession(dayKey) {
     dayName = d ? d.name : 'Custom workout';
     custom = { templateId: d ? d.template.id : null, prep: d ? d.prep : 6, warm: items.some(it => p.exercises[it.id].lower) ? 'lower' : 'upper' };
   } else { items = dayItems(p, dayKey, date); dayName = p.days[dayKey].name; }
+  const entries = items.map(it => makeEntry(p.exercises[it.id], date));
+  fillWarm(p, entries);
   S.active = {
     id: 's-' + nowIso().replace(/[-:T]/g, '').slice(0, 14), date: nowIso(), startedAt: nowIso(), timeOfDay: todOf(nowIso()), dayKey, dayName, custom,
-    phase: p.phase, week: weekNo(p, date), readiness: {}, prep: [], backPain: null, note: '',
-    entries: items.map(it => makeEntry(p.exercises[it.id], date)),
+    phase: p.phase, week: weekNo(p, date), readiness: {}, prep: [], prepSteps: backWarmNeeded(p, entries) ? (p.prep || []).length : 0, backPain: null, note: '',
+    entries,
   };
+  // Cues he queued for this workout show at the top, and the evening notification won't send them again.
+  const due = dueReminders();
+  if (due.length) { S.active.cuesToday = due.map(r => ({ id: r.id, text: r.text })); markReminders(due.map(r => r.id), 'shown'); }
   S.resumed = false; S.discardConfirm = false; S.pickKey = null; S.pickDay = false;
   saveDraftSoon(); requestWake(); renderTop(); renderMain(); window.scrollTo(0, 0);
+}
+/* ---------- pre-workout reminders ----------
+   The "reminders" row of the sheet: { standing: { on }, items: [{ id, date, text, created, fromSession, status: queued|shown|cancelled, shownAt }] }.
+   A scheduled task reads it every evening at about 6 pm and sends the queued cues (and, if standing is on, a snack reminder)
+   as a Claude notification on days with no session logged yet. It records what it sent as a coach note of kind "reminder". */
+function sentReminderIds() {
+  const ids = new Set();
+  for (const it of Object.values(Store.data.coach || {})) if (it && it.kind === 'reminder') for (const id of it.reminderIds || []) ids.add(id);
+  return ids;
+}
+function dueReminders(date = todayStr()) {
+  const sent = sentReminderIds();
+  return (S.reminders.items || []).filter(r => r.status === 'queued' && r.date <= date && !sent.has(r.id));
+}
+function upcomingReminders() {
+  const sent = sentReminderIds();
+  return (S.reminders.items || []).filter(r => r.status === 'queued' && !sent.has(r.id)).sort((a, b) => (a.date < b.date ? -1 : 1));
+}
+function saveReminders() {
+  S.reminders.items = (S.reminders.items || []).filter(r => r.status === 'queued' || (r.created || '') >= addDays(todayStr(), -60)).slice(-60);
+  S.reminders.updatedAt = nowIso();
+  return put('app/reminders', clone(S.reminders)).catch(() => toast('Couldn’t save the reminder. Check your connection.'));
+}
+function markReminders(ids, status) {
+  for (const r of S.reminders.items || []) if (ids.includes(r.id)) { r.status = status; if (status === 'shown') r.shownAt = nowIso(); }
+  return saveReminders();
+}
+function addReminder(date, text, fromSession) {
+  const t = String(text || '').trim().slice(0, 600); if (!t) return null;
+  const r = { id: 'r' + Date.now().toString(36), date, text: t, created: nowIso(), fromSession: fromSession || null, status: 'queued' };
+  S.reminders.items = [...(S.reminders.items || []), r];
+  saveReminders();
+  return r;
 }
 let wakeLock = null;
 async function requestWake() { try { if (navigator.wakeLock && !wakeLock) { wakeLock = await navigator.wakeLock.request('screen'); wakeLock.addEventListener('release', () => { wakeLock = null; }); } } catch (e) { wakeLock = null; } }
@@ -1892,6 +2335,8 @@ const RIR_OPTS = [[0, '0 · failure'], [1, '1'], [2, '2'], [3, '3'], [4, '4+']];
 function viewLogger() {
   const a = S.active, p = S.program;
   const day = p.days[a.dayKey] || { prep: a.custom ? (a.custom.prep ?? 6) : 6, name: a.dayName, warm: a.custom ? a.custom.warm : null };
+  if (a.prepSteps == null) a.prepSteps = backWarmNeeded(p, a.entries) ? (p.prep || []).length : 0;
+  if (a.entries.some(e => !Array.isArray(e.wu))) fillWarm(p, a.entries);
   const root = h('div', { class: 'stack' });
   root.append(h('div', {},
     h('div', { class: 'eyebrow', text: `${fmtDate(a.date)}, ${todOf(a) || ''} session started ${fmtTime(a)}. Phase ${a.phase}, week ${a.week}` }),
@@ -1900,23 +2345,30 @@ function viewLogger() {
     h('div', { class: 'live-top' }, h('span', { class: 'small muted', id: 'live-sets' }), h('span', { class: 'live-xp', id: 'live-xp' })),
     xpBar(0, 'blue')));
   if (S.resumed) root.append(h('div', { class: 'warn', text: 'Picked up your unfinished session.' }));
+  if ((a.cuesToday || []).length) root.append(h('div', { class: 'sticky', id: 'cues-today' }, h('div', { class: 'sticky-head', text: 'Your cues for today' }),
+    h('ul', { class: 'cue-list' }, a.cuesToday.map(c => h('li', { text: c.text })))));
 
-  // back prep
-  const steps = (p.prep || []).slice(0, day.prep ?? 6);
-  const prepDone = () => steps.filter((_, i) => a.prep.includes(i)).length;
-  const sumText = h('span', { class: 'small muted', text: `${prepDone()}/${steps.length} done` });
-  const det = h('details', { class: 'prep' + (prepDone() >= steps.length ? ' full' : '') }, h('summary', {}, h('span', { text: 'Back prep' }), sumText));
-  const pl = h('div', { class: 'prep-list' });
-  steps.forEach((s, i) => {
-    const id = `prep-${i}`;
-    const vid = (p.prepVideos || [])[i];
-    pl.append(h('div', { class: 'prep-row' },
-      h('label', { class: 'check', for: id }, h('input', { type: 'checkbox', id, checked: a.prep.includes(i), onchange: ev => {
-        a.prep = ev.target.checked ? [...new Set([...a.prep, i])] : a.prep.filter(x => x !== i);
-        sumText.textContent = `${prepDone()}/${steps.length} done`; det.classList.toggle('full', prepDone() >= steps.length); saveDraftSoon(); } }), h('span', { text: `${i + 1}. ${s}` })),
-      vid ? h('a', { class: 'vid', href: vid, target: '_blank', rel: 'noopener noreferrer', 'aria-label': `Video for step ${i + 1}` }, PLAY_SVG(), 'Video') : null));
-  });
-  det.append(pl); if (steps.length) root.append(det);
+  // back warm-up: only on sessions with a lift that loads the lower back
+  const steps = (p.prep || []).slice(0, a.prepSteps);
+  if (steps.length) {
+    const prepDone = () => steps.filter((_, i) => a.prep.includes(i)).length;
+    const sumText = h('span', { class: 'small muted', text: `${prepDone()}/${steps.length} done` });
+    const det = h('details', { class: 'prep' + (prepDone() >= steps.length ? ' full' : ''), id: 'back-warm' }, h('summary', {}, h('span', { text: 'Back warm-up · about 6 min' }), sumText));
+    const why = a.entries.map(e => p.exercises[e.exId]).filter(ex => ex && ex.back).map(ex => ex.name);
+    const pl = h('div', { class: 'prep-list' }, h('p', { class: 'small muted', text: `Do it today because ${why.slice(0, 3).join(', ')}${why.length > 3 ? ` and ${why.length - 3} more` : ''} load${why.length === 1 ? 's' : ''} your lower back. Been sitting for hours, like after the factory? Walk 5 minutes first.` }));
+    steps.forEach((s, i) => {
+      const id = `prep-${i}`;
+      const vid = (p.prepVideos || [])[i];
+      pl.append(h('div', { class: 'prep-row' },
+        h('label', { class: 'check', for: id }, h('input', { type: 'checkbox', id, checked: a.prep.includes(i), onchange: ev => {
+          a.prep = ev.target.checked ? [...new Set([...a.prep, i])] : a.prep.filter(x => x !== i);
+          sumText.textContent = `${prepDone()}/${steps.length} done`; det.classList.toggle('full', prepDone() >= steps.length); saveDraftSoon(); } }), h('span', { text: `${i + 1}. ${s}` })),
+        vid ? h('a', { class: 'vid', href: vid, target: '_blank', rel: 'noopener noreferrer', 'aria-label': `Video for step ${i + 1}` }, PLAY_SVG(), 'Video') : null));
+    });
+    det.append(pl); root.append(det);
+  } else {
+    root.append(h('p', { class: 'small muted', id: 'no-back-warm', text: 'No back warm-up today: nothing in this session loads your lower back.' }));
+  }
 
   // warm-up for the day type
   const wkey = day.warm; const wsteps = (p.warmups && wkey && p.warmups[wkey]) || [];
@@ -1934,17 +2386,22 @@ function viewLogger() {
           wSum.textContent = `${wDone()}/${wsteps.length} done`; wd.classList.toggle('full', wDone() >= wsteps.length); saveDraftSoon(); } }), h('span', { text: s.text })),
         s.video ? h('a', { class: 'vid', href: s.video, target: '_blank', rel: 'noopener noreferrer', 'aria-label': `Video: ${s.text}` }, PLAY_SVG(), 'Video') : null));
     });
+    wl.append(h('p', { class: 'small muted', text: 'Then the warm-up sets on each exercise card.' }));
     wd.append(wl); root.append(wd);
   }
 
-  // readiness
-  const rd = h('div', { class: 'card' }, h('div', { class: 'eyebrow', text: 'Before you start (optional)' }));
+  // readiness, folded away like the warm-ups
+  const rAnswered = () => ['sleep', 'energy', 'back'].filter(k => a.readiness[k] != null).length;
+  const rSum = h('span', { class: 'small muted', text: `${rAnswered()}/3 answered` });
+  const rd = h('details', { class: 'prep' + (rAnswered() >= 3 ? ' full' : ''), id: 'readiness' }, h('summary', {}, h('span', { text: 'Before you start (optional)' }), rSum));
+  const rl = h('div', { class: 'prep-list' });
   const warnBox = h('div');
-  const updWarn = () => { warnBox.replaceChildren(); if (a.readiness.back === '4+' && isLowerDay(a.dayKey)) warnBox.append(h('div', { class: 'warn stop', text: 'Back is at 4 or more before you start. Do the back prep and a walk, or switch to an upper session today.' })); };
-  rd.append(chipGroup('Sleep last night', [['<6', 'Under 6 h'], ['6-7', '6–7 h'], ['7-8', '7–8 h'], ['8+', '8 h+']], a.readiness.sleep ?? null, v => { a.readiness.sleep = v; saveDraftSoon(); }));
-  rd.append(chipGroup('Energy', [['low', 'Low'], ['ok', 'OK'], ['high', 'High']], a.readiness.energy ?? null, v => { a.readiness.energy = v; saveDraftSoon(); }));
-  rd.append(chipGroup('Back right now (0–10)', [['0-1', '0–1'], ['2-3', '2–3'], ['4+', '4 or more']], a.readiness.back ?? null, v => { a.readiness.back = v; saveDraftSoon(); updWarn(); }));
-  updWarn(); rd.append(warnBox); root.append(rd);
+  const updR = () => { rSum.textContent = `${rAnswered()}/3 answered`; rd.classList.toggle('full', rAnswered() >= 3); saveDraftSoon(); };
+  const updWarn = () => { warnBox.replaceChildren(); if (a.readiness.back === '4+' && isLowerDay(a.dayKey)) warnBox.append(h('div', { class: 'warn stop', text: 'Back is at 4 or more before you start. Do the back warm-up and a walk, or switch to an upper session today.' })); };
+  rl.append(chipGroup('Sleep last night', [['<6', 'Under 6 h'], ['6-7', '6–7 h'], ['7-8', '7–8 h'], ['8+', '8 h+']], a.readiness.sleep ?? null, v => { a.readiness.sleep = v; updR(); }));
+  rl.append(chipGroup('Energy', [['low', 'Low'], ['ok', 'OK'], ['high', 'High']], a.readiness.energy ?? null, v => { a.readiness.energy = v; updR(); }));
+  rl.append(chipGroup('Back right now (0–10)', [['0-1', '0–1'], ['2-3', '2–3'], ['4+', '4 or more']], a.readiness.back ?? null, v => { a.readiness.back = v; updR(); updWarn(); }));
+  updWarn(); rl.append(warnBox); rd.append(rl); root.append(rd);
 
   if (!a.entries.length) root.append(h('div', { class: 'card' }, h('h3', { text: 'Add your first exercise' }), h('p', { class: 'small muted', text: `Pick from ${LIB.length} exercises with any equipment, or from your program. Add more as you go.` })));
   a.entries.forEach((e, idx) => root.append(exCard(e, idx)));
@@ -1956,6 +2413,7 @@ function viewLogger() {
   const ta = h('textarea', { id: 'sess-note', placeholder: 'Anything the coach should know: sleep, stress, a joint that felt off, equipment you couldn’t get…', value: a.note || '' });
   ta.addEventListener('input', () => { a.note = ta.value; saveDraftSoon(); });
   fin.append(h('label', { class: 'q', for: 'sess-note' }, h('span', { class: 'q-label', text: 'Session note' }), ta));
+  fin.append(reminderComposer(a));
   const doneCount = a.entries.reduce((n, e) => n + (e.skipped ? 0 : e.sets.filter(s => s.done).length), 0);
   fin.append(h('button', { class: 'btn primary block', type: 'button', text: `Finish session (${doneCount} sets ticked)`, id: 'finish-btn', onclick: finishSession }));
   if (!S.discardConfirm) fin.append(h('button', { class: 'link', type: 'button', text: 'Discard this session', onclick: () => { S.discardConfirm = true; renderMain(); } }));
@@ -1965,6 +2423,23 @@ function viewLogger() {
   root.append(fin);
   queueMicrotask(updateLive);
   return root;
+}
+/* Finish card: cues to send himself before the next workout, as a Claude notification at about 6 pm that day. */
+function reminderComposer(a) {
+  a.remind = a.remind || { text: '', date: addDays(todayStr(), 1) };
+  const r = a.remind;
+  const det = h('details', { class: 'remind', id: 'remind', open: r.text ? true : null }, h('summary', {}, h('span', { text: 'Remind me before my next workout' }), h('span', { class: 'small muted', text: r.text ? 'On' : 'Optional' })));
+  const ta = h('textarea', { id: 'remind-text', placeholder: 'Cues for next time, e.g. “Eat by 6. Ribs down on the curls. Hip thrust before leg extensions.”', value: r.text || '' });
+  ta.addEventListener('input', () => { r.text = ta.value; saveDraftSoon(); });
+  const dt = h('input', { type: 'date', id: 'remind-date', value: r.date, min: todayStr() });
+  dt.addEventListener('change', () => { if (dt.value) { r.date = dt.value; saveDraftSoon(); } });
+  const notes = a.entries.flatMap(e => entryNotes(e).map(n => ({ e, n }))).filter(x => x.n.text);
+  det.append(h('div', { class: 'prep-list' }, ta,
+    notes.length ? h('button', { class: 'link', type: 'button', text: 'Add my exercise notes from today', onclick: () => {
+      const add = notes.map(x => `${x.e.name}: ${x.n.text}`).join('\n'); r.text = (r.text ? r.text.trim() + '\n' : '') + add; ta.value = r.text; saveDraftSoon(); } }) : null,
+    h('label', { class: 'q', for: 'remind-date' }, h('span', { class: 'q-label', text: 'Send on' }), dt),
+    h('p', { class: 'small muted', text: 'Arrives as a Claude notification at about 6 pm that day if you haven’t trained yet. If you start a workout earlier, the app shows these cues at the top instead.' })));
+  return det;
 }
 function updateLive() {
   if (!S.active || S.tab !== 'today') return;
@@ -1978,79 +2453,303 @@ function updateLive() {
   el.querySelector('.xpbar > i').style.width = `${tot ? (done / tot) * 100 : 0}%`;
 }
 
+/* ---------- exercise notes for the coach ----------
+   Each exercise keeps a list of notes. Return adds one as a draft; Apply sends the drafts to the coach, whose changes are for
+   future sessions (with Undo). Exercise swaps for today happen only through the Coach tab. */
+function entryNotes(e) {
+  if (!Array.isArray(e.notes)) e.notes = e.note ? [{ id: 'n' + Date.now().toString(36), text: e.note, ts: nowIso(), state: 'draft' }] : [];
+  return e.notes;
+}
+/* A note typed but not yet sent with Return still counts when he taps Apply or finishes the session. */
+function takeTypedNote(e) {
+  const idx = entryIdx(e); const d = S.noteDraft;
+  if (!d || d.idx !== idx || !String(d.text || '').trim()) return;
+  entryNotes(e).push({ id: 'n' + Date.now().toString(36), text: d.text.trim().slice(0, 400), ts: nowIso(), state: 'draft' });
+  S.noteDraft = null; syncNoteText(e);
+}
+function syncNoteText(e) { e.note = entryNotes(e).map(n => n.text).filter(Boolean).join(' / ').slice(0, 600); }
+function threadItem(id) { return (S.thread.items || []).find(x => x.id === id) || null; }
+function entryIdx(e) { return S.active ? S.active.entries.indexOf(e) : -1; }
+async function applyNotes(e) {
+  takeTypedNote(e);
+  const drafts = entryNotes(e).filter(n => n.state === 'draft' && n.text);
+  if (!drafts.length) return;
+  if (!coachReady()) { toast('Add your Claude API key in Settings to send notes to the coach. They stay here and go with the session review.'); return; }
+  if (!navigator.onLine) { toast('No signal. Your notes stay as drafts and go to the coach with the session review.'); return; }
+  if (S.coachBusy) { toast('The coach is busy with another message. Try again in a moment.'); return; }
+  const idx = entryIdx(e);
+  e.sending = true; rerenderCard(idx);
+  const text = drafts.map(n => n.text).join('\n');
+  const item = await askCoach('exnote', text, null, { stay: true, exId: e.exId, entryName: e.name, sessionId: S.active && S.active.id, noteIds: drafts.map(n => n.id), onUpdate: () => rerenderCard(entryIdx(e)) });
+  e.sending = false;
+  if (item && item.status === 'done') { for (const n of drafts) { n.state = 'sent'; n.batch = item.id; } e.notesOpen = item.id; }
+  else if (item && item.status === 'error') toast(item.reply);
+  syncNoteText(e); saveDraftSoon(); rerenderCard(entryIdx(e));
+}
+/* Editing or deleting a note that was already sent undoes what the coach changed from that batch; the batch's other notes go back to drafts. */
+async function reopenBatch(e, batchId) {
+  const it = threadItem(batchId);
+  if (it) await deleteItem(it, { quiet: true, keepNotes: true });
+  for (const n of entryNotes(e)) if (n.batch === batchId) { n.state = 'draft'; n.batch = null; }
+}
+async function editNote(e, n, text) {
+  text = String(text || '').trim();
+  if (n.state === 'sent' && n.batch) { await reopenBatch(e, n.batch); toast('Changes from those notes are undone. Tap Apply to send them again.'); }
+  if (!text) e.notes = entryNotes(e).filter(x => x !== n); else n.text = text.slice(0, 400);
+  syncNoteText(e); saveDraftSoon(); rerenderCard(entryIdx(e));
+}
+async function deleteNote(e, n) {
+  if (n.state === 'sent' && n.batch) { await reopenBatch(e, n.batch); toast('Note deleted and its changes undone.'); }
+  e.notes = entryNotes(e).filter(x => x !== n);
+  syncNoteText(e); saveDraftSoon(); rerenderCard(entryIdx(e));
+}
+function noteBubble(e, n) {
+  const key = `${entryIdx(e)}:${n.id}`;
+  if (S.noteEdit === key) {
+    const inp = h('input', { type: 'text', class: 'note-edit', value: n.text, 'aria-label': 'Edit note', enterkeyhint: 'done' });
+    const save = () => { S.noteEdit = null; editNote(e, n, inp.value); };
+    inp.addEventListener('keydown', ev => { if (ev.key === 'Enter') { ev.preventDefault(); save(); } if (ev.key === 'Escape') { S.noteEdit = null; rerenderCard(entryIdx(e)); } });
+    setTimeout(() => inp.focus(), 30);
+    return h('div', { class: 'note-row editing' }, inp, h('div', { class: 'row' }, h('button', { class: 'btn', type: 'button', text: 'Save', onclick: save }),
+      h('button', { class: 'link', type: 'button', text: 'Cancel', onclick: () => { S.noteEdit = null; rerenderCard(entryIdx(e)); } })),
+      n.state === 'sent' ? h('p', { class: 'small muted', text: 'Saving undoes what the coach changed from this note.' }) : null);
+  }
+  return h('div', { class: 'note-row' }, h('div', { class: 'note-bubble' + (n.state === 'sent' ? ' sent' : ''), text: n.text }),
+    h('div', { class: 'row note-acts' }, h('button', { class: 'link', type: 'button', text: 'Edit', onclick: () => { S.noteEdit = key; rerenderCard(entryIdx(e)); } }),
+      h('button', { class: 'link danger-link', type: 'button', text: 'Delete', onclick: () => deleteNote(e, n) })));
+}
+function notesBlock(e, idx) {
+  const notes = entryNotes(e);
+  const box = h('div', { class: 'notes', id: `notes-${idx}` }, h('div', { class: 'q-label', text: 'Notes for the coach' }));
+  // sent batches fold into one line each
+  const batches = [...new Set(notes.filter(n => n.state === 'sent' && n.batch).map(n => n.batch))];
+  for (const b of batches) {
+    const it = threadItem(b); const ns = notes.filter(n => n.batch === b);
+    const fam = it ? [it, ...followUps(it)] : [];
+    const applied = fam.reduce((k, x) => k + (x.changes || []).filter(c => c.state === 'applied').length, 0);
+    const open = e.notesOpen === b;
+    const head = h('button', { class: 'fold-row', type: 'button', 'aria-expanded': String(open), onclick: () => { e.notesOpen = open ? null : b; rerenderCard(idx); } },
+      h('span', { text: `Sent ${ns.length} note${ns.length === 1 ? '' : 's'}` }), h('span', { class: 'small muted', text: `${applied ? `${applied} change${applied === 1 ? '' : 's'} for next time` : 'no changes'} ${open ? '▴' : '▾'}` }));
+    const wrap = h('div', { class: 'batch' }, head);
+    if (open) {
+      for (const n of ns) wrap.append(noteBubble(e, n));
+      for (const x of fam) wrap.append(coachItem(x, { bare: true, noActions: true }));
+    }
+    box.append(wrap);
+  }
+  for (const n of notes.filter(n => n.state !== 'sent' || !n.batch)) box.append(noteBubble(e, n));
+  if (e.sending) box.append(h('p', { class: 'small muted', text: 'Sending to the coach…' }));
+  const inp = h('input', { type: 'text', id: `note-${idx}`, placeholder: notes.length ? 'Add another note, then Return' : 'Note for the coach (optional), then Return', enterkeyhint: 'send', autocomplete: 'off' });
+  if (S.noteDraft && S.noteDraft.idx === idx) inp.value = S.noteDraft.text;
+  inp.addEventListener('input', () => { S.noteDraft = { idx, text: inp.value }; });
+  const add = () => {
+    const t = inp.value.trim(); if (!t) return;
+    notes.push({ id: 'n' + Date.now().toString(36), text: t.slice(0, 400), ts: nowIso(), state: 'draft' });
+    S.noteDraft = null; S.noteFocus = idx; syncNoteText(e); saveDraftSoon(); rerenderCard(idx);
+  };
+  inp.addEventListener('keydown', ev => { if (ev.key === 'Enter') { ev.preventDefault(); add(); } });
+  box.append(inp);
+  const drafts = notes.filter(n => n.state === 'draft');
+  if (drafts.length && !e.sending) {
+    box.append(h('div', { class: 'row' },
+      h('button', { class: 'btn primary', type: 'button', id: `apply-notes-${idx}`, text: drafts.length === 1 ? 'Apply' : `Apply ${drafts.length} notes`, onclick: () => applyNotes(e) }),
+      h('button', { class: 'btn', type: 'button', text: 'Keep drafting', onclick: () => { const el = document.getElementById(`note-${idx}`); if (el) el.focus(); } })),
+      h('p', { class: 'small muted', text: 'Apply sends these to the coach now. What it changes is for your next sessions, with an Undo. Not applied by the end? They go with the session review.' }));
+  }
+  if (S.noteFocus === idx) { S.noteFocus = null; setTimeout(() => { const el = document.getElementById(`note-${idx}`); if (el) el.focus(); }, 30); }
+  return box;
+}
+
+/* ---------- exercise card ---------- */
+function ratingsDone(e) {
+  const ex = S.program.exercises[e.exId] || {};
+  return e.rir != null && (!ex.back || e.pain != null) && (!ex.shoulder || e.shoulderPain != null);
+}
+function entryDone(e) { const presN = e.presSets || (e.pres && e.pres.sets) || e.sets.length; return e.sets.filter(x => x.done && Number(x.r) > 0).length >= presN; }
+/* A finished exercise folds away once its ratings are in, or once a later exercise has a ticked set. Tapping it opens it again. */
+function isFolded(e, idx) {
+  if (e.open === true) return false;
+  if (e.open === false) return true;
+  if (e.skipped) return true;
+  if (!entryDone(e)) return false;
+  if (ratingsDone(e)) return true;
+  return S.active.entries.slice(idx + 1).some(x => !x.skipped && x.sets.some(st => st.done));
+}
+function refold(changedIdx) {
+  const a = S.active; if (!a) return;
+  a.entries.forEach((e, i) => {
+    const el = document.getElementById('ex-' + i); if (!el) return;
+    const was = el.classList.contains('folded'); const now = isFolded(e, i);
+    if (was !== now) {
+      if (now && i === changedIdx) {
+        setTimeout(() => {
+          if (!S.active || S.active.entries[i] !== e || !isFolded(e, i)) return;
+          rerenderCard(i);
+          const nx = document.getElementById('ex-' + (i + 1));
+          if (nx) { const top = nx.getBoundingClientRect().top; if (top > window.innerHeight * 0.6 || top < 0) nx.scrollIntoView({ block: 'start', behavior: 'smooth' }); }
+        }, 650);
+      } else rerenderCard(i);
+    }
+  });
+}
+function setSummary(ex, e) {
+  const sets = e.sets.filter(x => x.done && Number(x.r) > 0);
+  if (!sets.length) return 'No sets ticked';
+  const ws = [...new Set(sets.map(x => fmtD(ex, x.w)))];
+  const reps = sets.map(x => x.r).join(', ');
+  const w = ex.unit === 'bw' || sets.every(x => x.w == null) ? 'BW' : ws.length === 1 ? `${ex.unit === 'kg added' ? '+' : ''}${ws[0]} ${wUnit(ex)}` : `${ws.join('/')} ${wUnit(ex)}`;
+  return `${w} × ${reps}${e.rir != null ? ` · RIR ${rirText(e.rir)}` : ''}${e.pain != null ? ` · back ${e.pain}` : ''}${e.shoulderPain != null ? ` · shoulder ${e.shoulderPain}` : ''}`;
+}
+function unitToggle(ex, idx) {
+  if (!ex || ex.unit === 'bw' || ex.cond || !S.program.exercises[ex.id]) return null;
+  const pick = async u => {
+    if (wUnit(ex) === u) return;
+    if (u === 'lb') ex.lb = true; else delete ex.lb;
+    // untouched warm-up sets are worked out again so they land on round numbers in the new unit
+    const e = S.active && S.active.entries[idx];
+    if (e && Array.isArray(e.wu) && !e.wu.some(x => x.done)) { e.wu = undefined; fillWarm(S.program, S.active.entries); saveDraftSoon(); }
+    rerenderCard(idx);
+    try { await saveProgram(); addLog('you', `${ex.name}: weights shown in ${u === 'lb' ? 'pounds' : 'kilograms'}.`); } catch (er) { toast('Couldn’t save that. Try again.'); }
+  };
+  return h('div', { class: 'seg', role: 'group', 'aria-label': 'Weight unit' },
+    ['kg', 'lb'].map(u => h('button', { type: 'button', class: 'seg-b', 'aria-pressed': String(wUnit(ex) === u), text: u, onclick: () => pick(u) })));
+}
+function myCuesBox(ex, idx) {
+  if (!ex || !S.program.exercises[ex.id]) return null;
+  const key = 'my:' + ex.id + ':' + idx;
+  const box = h('div', { class: 'sticky my-cues' }, h('div', { class: 'sticky-head', text: 'My cues' }));
+  if (S.myEdit === key) {
+    const ta = h('textarea', { id: `my-${idx}`, 'aria-label': 'My cues', placeholder: 'Your own reminders for this exercise. They show every session.', value: ex.myCues || '' });
+    setTimeout(() => ta.focus(), 30);
+    box.append(ta, h('div', { class: 'row' }, h('button', { class: 'btn', type: 'button', text: 'Save', onclick: async () => {
+      const v = ta.value.trim().slice(0, 600); S.myEdit = null;
+      if (v) ex.myCues = v; else delete ex.myCues;
+      rerenderCard(idx);
+      try { await saveProgram(); addLog('you', `${ex.name}: ${v ? 'my cues updated' : 'my cues cleared'}.`); } catch (er) { toast('Couldn’t save your cues. Try again.'); }
+    } }), h('button', { class: 'link', type: 'button', text: 'Cancel', onclick: () => { S.myEdit = null; rerenderCard(idx); } })));
+    return box;
+  }
+  if (ex.myCues) box.append(h('p', { class: 'my-text', text: ex.myCues }), h('button', { class: 'link', type: 'button', text: 'Edit', onclick: () => { S.myEdit = key; rerenderCard(idx); } }));
+  else return h('button', { class: 'link add-my', type: 'button', text: '+ Add your own cue (shows every session)', onclick: () => { S.myEdit = key; rerenderCard(idx); } });
+  return box;
+}
+/* Form cues stay folded until he opens them; the app remembers which ones he keeps open. */
+function cuesBox(ex) {
+  const cs = cuesOf(ex); if (!cs.length) return null;
+  const open = !!(Settings.cuesOpen && Settings.cuesOpen[ex.id]);
+  const d = h('details', { class: 'cues', open: open || null }, h('summary', { text: `Form cues (${cs.length})` }), h('ul', { class: 'cue-list' }, cs.map(c => h('li', { text: c }))));
+  d.addEventListener('toggle', () => { Settings.cuesOpen = { ...(Settings.cuesOpen || {}) }; if (d.open) Settings.cuesOpen[ex.id] = true; else delete Settings.cuesOpen[ex.id]; saveSettings(); });
+  return d;
+}
+function setGrid(e, idx, ex, list, kind) {
+  const bw = ex.unit === 'bw';
+  const warm = kind === 'warm';
+  const g = getGame(); const prior = g ? g.best[exKey(e)] : null;
+  const isPR = st => !warm && st.done && prior != null && (setE1(S.program, ex, st.w, Number(st.r)) || 0) > prior + 0.5;
+  const grid = h('div', { class: 'sets' + (warm ? ' wu' : '') },
+    h('span', { class: 'hd', text: warm ? 'Warm' : 'Set' }), h('span', { class: 'hd', text: ex.unit === 'kg added' ? `+${wUnit(ex)}` : bw ? 'Load' : wUnit(ex) }),
+    h('span', { class: 'hd', text: ex.repUnit === 'm' ? 'Metres' : ex.repUnit === 's' ? 'Seconds' : 'Reps' }), h('span', { class: 'hd', text: 'Done' }));
+  list.forEach((s, si) => {
+    const pre = warm ? 'ww' : 'w', rpre = warm ? 'wr' : 'r';
+    const rowEl = h('div', { class: 'setrow' + (s.done ? ' done' : '') + (isPR(s) ? ' pr' : '') });
+    const wIn = bw ? h('span', { class: 'bw-cell', text: ex.cond ? '–' : 'BW' }) : h('input', { class: 'num-in', type: 'number', inputmode: 'decimal', step: '0.5', min: '0', id: `${pre}-${idx}-${si}`, 'aria-label': `${warm ? 'Warm-up set' : 'Set'} ${si + 1} weight`, value: s.w == null ? '' : fmtD(ex, s.w), placeholder: warm && s.w == null ? (s.why && /bodyweight/.test(s.why) ? 'BW' : 'light') : '–' });
+    const rIn = h('input', { class: 'num-in', type: 'number', inputmode: 'numeric', step: '1', min: '0', id: `${rpre}-${idx}-${si}`, 'aria-label': `${warm ? 'Warm-up set' : 'Set'} ${si + 1} ${ex.repUnit === 'm' ? 'metres' : ex.repUnit === 's' ? 'seconds' : 'reps'}`, value: s.r == null ? '' : String(s.r), placeholder: '–' });
+    const readW = () => { if (!bw && wIn.value !== (s.w == null ? '' : fmtD(ex, s.w))) s.w = fromD(ex, num(wIn.value)); };
+    if (!bw) wIn.addEventListener('input', () => {
+      readW();
+      if (!warm) for (let j = si + 1; j < list.length; j++) { if (!list[j].done) { list[j].w = s.w; const o = document.getElementById(`${pre}-${idx}-${j}`); if (o) o.value = s.w == null ? '' : fmtD(ex, s.w); } }
+      saveDraftSoon();
+    });
+    rIn.addEventListener('input', () => { s.r = num(rIn.value); saveDraftSoon(); });
+    const doneBtn = h('button', { class: 'done-btn', type: 'button', 'aria-pressed': String(!!s.done), 'aria-label': `Mark ${warm ? 'warm-up set' : 'set'} ${si + 1} done` }, CHECK_SVG());
+    doneBtn.addEventListener('click', () => {
+      s.done = !s.done; readW(); s.r = num(rIn.value);
+      doneBtn.setAttribute('aria-pressed', String(s.done)); rowEl.classList.toggle('done', s.done);
+      if (!warm) {
+        const pr = isPR(s); rowEl.classList.toggle('pr', pr);
+        if (pr) { const v = setE1(S.program, ex, s.w, Number(s.r)); if (v > (e.prShown || 0)) { e.prShown = v; toast(`New PR on ${e.name}: about ${fmtD(ex, v)} ${wUnit(ex)} estimated 1-rep max`, 'pr'); const pf = document.querySelector(`#ex-${idx} .pr-flag`); if (pf) { pf.hidden = false; pf.classList.remove('fresh'); void pf.offsetWidth; pf.classList.add('fresh'); } } }
+        const prog = document.querySelector(`#ex-${idx} .ex-prog`); const presN = e.presSets || (e.pres && e.pres.sets) || e.sets.length; const dn = e.sets.filter(x => x.done && Number(x.r) > 0).length;
+        if (prog) prog.textContent = `${dn}/${presN}`;
+        const card = document.getElementById('ex-' + idx); if (card) card.classList.toggle('is-done', dn >= presN);
+      }
+      if (s.done) startRest(ex.id, warm ? { warm: true, last: list.slice(si + 1).every(x => x.done) } : null);
+      saveDraftSoon(); updateFinishCount(); if (!warm) refold(idx);
+    });
+    rowEl.append(h('span', { class: 'set-idx', text: warm ? `W${si + 1}` : String(si + 1) }), wIn, rIn, doneBtn);
+    grid.append(rowEl);
+  });
+  return grid;
+}
 function exCard(e, idx) {
   const p = S.program; const ex = p.exercises[e.exId] || { name: e.name, unit: 'kg', lo: 1, hi: 1 };
   const pr = e.pres || {};
   const presN = e.presSets || pr.sets || e.sets.length;
   const doneN = () => e.sets.filter(x => x.done && Number(x.r) > 0).length;
   const g = getGame(); const prior = g ? g.best[exKey(e)] : null;
-  const isPR = st => st.done && prior != null && (setE1(p, ex, st.w, Number(st.r)) || 0) > prior + 0.5;
-  const card = h('section', { class: 'ex' + (e.skipped ? ' is-skipped' : '') + (!e.skipped && doneN() >= presN ? ' is-done' : ''), id: 'ex-' + idx });
+  const anyPR = e.sets.some(st => st.done && prior != null && (setE1(p, ex, st.w, Number(st.r)) || 0) > prior + 0.5);
+  const folded = isFolded(e, idx);
+  const card = h('section', { class: 'ex' + (e.skipped ? ' is-skipped' : '') + (!e.skipped && doneN() >= presN ? ' is-done' : '') + (folded ? ' folded' : ''), id: 'ex-' + idx });
+  if (folded) {
+    card.append(h('button', { class: 'ex-fold', type: 'button', 'aria-expanded': 'false', onclick: () => { e.open = true; saveDraftSoon(); rerenderCard(idx); } },
+      h('span', { class: 'fold-check', 'aria-hidden': 'true' }, e.skipped ? '–' : CHECK_SVG()),
+      h('span', { class: 'fold-main' }, h('b', { text: e.name }), h('span', { class: 'small muted', text: e.skipped ? 'Skipped' : setSummary(ex, e) })),
+      h('span', { class: 'small fold-open', text: 'Show' })));
+    return card;
+  }
   const progEl = h('span', { class: 'ex-prog', text: `${doneN()}/${presN}` });
-  const prFlag = h('span', { class: 'pr-flag', text: 'PR', hidden: !e.sets.some(isPR) });
-  const updProg = () => { progEl.textContent = `${doneN()}/${presN}`; card.classList.toggle('is-done', doneN() >= presN); prFlag.hidden = !e.sets.some(isPR); };
+  const prFlag = h('span', { class: 'pr-flag', text: 'PR', hidden: !anyPR });
+  const headBtns = h('div', { class: 'row', style: 'gap:14px;justify-content:flex-end' });
+  if (entryDone(e) || e.skipped || e.open === true) headBtns.append(h('button', { class: 'link', type: 'button', text: 'Fold', onclick: () => { e.open = false; saveDraftSoon(); rerenderCard(idx); } }));
+  headBtns.append(h('button', { class: 'link', type: 'button', text: e.skipped ? 'Undo skip' : 'Skip', onclick: () => { e.skipped = !e.skipped; if (!e.skipped) e.open = true; else delete e.open; saveDraftSoon(); rerenderCard(idx); } }));
   card.append(h('div', { class: 'ex-head' },
-    h('div', { class: 'stack', style: 'gap:6px' }, h('span', { class: 'ex-num' }, `${idx + 1} of ${S.active.entries.length}`, e.skipped ? null : progEl, prFlag), h('h3', { text: ex.name })),
-    h('button', { class: 'link', type: 'button', text: e.skipped ? 'Undo skip' : 'Skip', onclick: () => { e.skipped = !e.skipped; saveDraftSoon(); rerenderCard(idx); } })));
+    h('div', { class: 'stack', style: 'gap:6px' }, h('span', { class: 'ex-num' }, `${idx + 1} of ${S.active.entries.length}`, e.skipped ? null : progEl, prFlag), h('h3', { text: e.name })),
+    headBtns));
+  if (e.swappedFrom) card.append(h('p', { class: 'small muted', text: `Swapped in today for ${e.swappedFrom}.` }));
   const pres = h('div', { class: 'pres' },
     h('span', { class: 'w', text: fmtW(ex, pr.weight) }),
     h('span', { class: 'sr', text: `${pr.sets} × ${repsLabel({ ...ex, lo: pr.lo, hi: pr.hi })}` }),
     h('span', { class: 'sr muted', text: rirLabel(pr.rirLo, pr.rirHi) }));
+  const ut = unitToggle(ex, idx);
+  if (ut) pres.append(ut);
   card.append(pres);
   if (pr.tag) card.append(h('div', {}, h('span', { class: 'tag', text: pr.tag })));
-  if (ex.bar && pr.weight > 20) {
-    const pl = platesFor(pr.weight);
-    if (pl) card.append(h('div', { class: 'plates' }, h('span', { text: '20 kg bar +' }), ...pl.map(x => h('span', { class: 'plate ' + plateClass(x), text: fmtNum(x) })), h('span', { text: 'a side' })));
+  if (ex.bar && pr.weight != null) {
+    const lb = isLb(ex); const pl = platesFor(pr.weight, lb);
+    if (pl) card.append(h('div', { class: 'plates' }, h('span', { text: lb ? '45 lb bar +' : '20 kg bar +' }), ...pl.map(x => h('span', { class: 'plate ' + plateClass(x, lb), text: fmtNum(x) })), h('span', { text: 'a side' })));
   }
-  const ramp = rampSets(ex, pr.weight);
-  if (ramp && !e.skipped) card.append(h('p', { class: 'small' }, h('b', { text: 'Ramp-up first (not logged): ' }), ramp.join(' · ')));
-  if (ex.note) card.append(h('p', { class: 'small muted', text: ex.note }));
+  if (ex.note) card.append(h('p', { class: 'small coach-note' }, h('b', { text: 'Coach: ' }), ex.note));
+  const cb = cuesBox(ex); if (cb) card.append(cb);
+  const mc = myCuesBox(ex, idx); if (mc) card.append(mc);
   card.append(h('div', {}, videoLink(ex)));
   if (e.skipped) return card;
 
-  const bw = ex.unit === 'bw';
-  const grid = h('div', { class: 'sets' },
-    h('span', { class: 'hd', text: 'Set' }), h('span', { class: 'hd', text: ex.unit === 'kg added' ? '+kg' : bw ? 'Load' : 'kg' }),
-    h('span', { class: 'hd', text: ex.repUnit === 'm' ? 'Metres' : ex.repUnit === 's' ? 'Seconds' : 'Reps' }), h('span', { class: 'hd', text: 'Done' }));
-  e.sets.forEach((s, si) => {
-    const rowEl = h('div', { class: 'setrow' + (s.done ? ' done' : '') + (isPR(s) ? ' pr' : '') });
-    const wIn = bw ? h('span', { class: 'bw-cell', text: ex.cond ? '–' : 'BW' }) : h('input', { class: 'num-in', type: 'number', inputmode: 'decimal', step: '0.5', min: '0', id: `w-${idx}-${si}`, 'aria-label': `Set ${si + 1} weight`, value: s.w == null ? '' : fmtNum(s.w), placeholder: '–' });
-    const rIn = h('input', { class: 'num-in', type: 'number', inputmode: 'numeric', step: '1', min: '0', id: `r-${idx}-${si}`, 'aria-label': `Set ${si + 1} ${ex.repUnit === 'm' ? 'metres' : ex.repUnit === 's' ? 'seconds' : 'reps'}`, value: s.r == null ? '' : String(s.r), placeholder: '–' });
-    if (!bw) wIn.addEventListener('input', () => {
-      s.w = num(wIn.value);
-      for (let j = si + 1; j < e.sets.length; j++) { if (!e.sets[j].done) { e.sets[j].w = s.w; const o = document.getElementById(`w-${idx}-${j}`); if (o) o.value = s.w == null ? '' : fmtNum(s.w); } }
-      saveDraftSoon();
-    });
-    rIn.addEventListener('input', () => { s.r = num(rIn.value); saveDraftSoon(); });
-    const doneBtn = h('button', { class: 'done-btn', type: 'button', 'aria-pressed': String(!!s.done), 'aria-label': `Mark set ${si + 1} done` }, CHECK_SVG());
-    doneBtn.addEventListener('click', () => {
-      s.done = !s.done;
-      if (!bw) s.w = num(wIn.value); s.r = num(rIn.value);
-      doneBtn.setAttribute('aria-pressed', String(s.done)); rowEl.classList.toggle('done', s.done);
-      const pr = isPR(s); rowEl.classList.toggle('pr', pr);
-      if (pr) { const v = setE1(p, ex, s.w, Number(s.r)); if (v > (e.prShown || 0)) { e.prShown = v; toast(`New PR on ${ex.name}: about ${Math.round(v)} kg estimated 1-rep max`, 'pr'); prFlag.classList.remove('fresh'); void prFlag.offsetWidth; prFlag.classList.add('fresh'); } }
-      updProg();
-      if (s.done) startRest(ex.id); saveDraftSoon(); updateFinishCount();
-    });
-    rowEl.append(h('span', { class: 'set-idx', text: String(si + 1) }), wIn, rIn, doneBtn);
-    grid.append(rowEl);
-  });
-  card.append(grid);
+  // warm-up sets: logged so the rest timer runs from the last one, never counted for progress or XP
+  const wu = Array.isArray(e.wu) ? e.wu : (e.wu = []);
+  const wbox = h('div', { class: 'wu-box' });
+  if (wu.length) {
+    wbox.append(h('div', { class: 'spread', style: 'align-items:baseline' }, h('span', { class: 'q-label', text: 'Warm-up sets' }), h('span', { class: 'small muted', text: wu.map(x => x.why).filter(Boolean)[0] ? wu.map((x, i) => `W${i + 1} ${x.why}`).join(' · ') : '' })));
+    wbox.append(setGrid(e, idx, ex, wu, 'warm'));
+  }
+  wbox.append(h('div', { class: 'row', style: 'gap:4px 18px' },
+    h('button', { class: 'link', type: 'button', text: '+ Add warm-up set', onclick: () => { const last = wu[wu.length - 1]; wu.push({ w: last ? last.w : null, r: last ? last.r : 5, done: false, why: '' }); saveDraftSoon(); rerenderCard(idx); } }),
+    wu.length && !wu[wu.length - 1].done ? h('button', { class: 'link', type: 'button', text: 'Remove warm-up set', onclick: () => { wu.pop(); saveDraftSoon(); rerenderCard(idx); } }) : null));
+  card.append(wbox);
+
+  card.append(setGrid(e, idx, ex, e.sets, 'work'));
   card.append(h('div', { class: 'row' },
     h('button', { class: 'link', type: 'button', text: '+ Add set', onclick: () => { const last = e.sets[e.sets.length - 1] || {}; e.sets.push({ w: last.w ?? null, r: last.r ?? null, done: false }); saveDraftSoon(); rerenderCard(idx); } }),
     e.sets.length > 1 ? h('button', { class: 'link', type: 'button', text: 'Remove last set', style: 'margin-left:16px', onclick: () => { e.sets.pop(); saveDraftSoon(); rerenderCard(idx); } }) : null));
-  card.append(chipGroup('Last set: reps left in the tank', RIR_OPTS, e.rir, v => { e.rir = v; saveDraftSoon(); }));
-  if (ex.back) card.append(chipGroup('Back pain during this exercise (0–10)', PAIN_OPTS, e.pain, v => { e.pain = v; saveDraftSoon(); }, painClass));
-  if (ex.shoulder) card.append(chipGroup('Left shoulder pain during this exercise (0–10)', PAIN_OPTS, e.shoulderPain ?? null, v => { e.shoulderPain = v; saveDraftSoon(); }, painClass));
-  const note = h('input', { type: 'text', id: `note-${idx}`, placeholder: 'Note for the coach (optional)', value: e.note || '' });
-  note.addEventListener('input', () => { e.note = note.value; saveDraftSoon(); });
-  card.append(note);
+  card.append(chipGroup('Last set: reps left in the tank', RIR_OPTS, e.rir, v => { e.rir = v; saveDraftSoon(); refold(idx); }));
+  if (ex.back) card.append(chipGroup('Back pain during this exercise (0–10)', PAIN_OPTS, e.pain, v => { e.pain = v; saveDraftSoon(); refold(idx); }, painClass));
+  if (ex.shoulder) card.append(chipGroup('Left shoulder pain during this exercise (0–10)', PAIN_OPTS, e.shoulderPain ?? null, v => { e.shoulderPain = v; saveDraftSoon(); refold(idx); }, painClass));
+  card.append(notesBlock(e, idx));
   return card;
 }
 function rerenderCard(idx) {
+  if (!S.active || idx < 0 || S.tab !== 'today') return;
   const old = document.getElementById('ex-' + idx);
   if (old) old.replaceWith(exCard(S.active.entries[idx], idx));
-  updateFinishCount();
+  updateFinishCount(); updateLive();
 }
 function updateFinishCount() {
   const b = document.getElementById('finish-btn'); if (!b || !S.active) return;
@@ -2060,14 +2759,14 @@ function updateFinishCount() {
 
 /* rest timer */
 let restTick = null;
-function startRest(exId) { S.restStart = Date.now(); S.restTarget = (exId === 'u_bench' || exId === 'u_pullup' || exId === 'b_hinge_p3') ? 180 : 120; updateRest(); }
+function startRest(exId, warm) { S.restStart = Date.now(); S.restTarget = warm ? (warm.last ? 90 : 60) : (exId === 'u_bench' || exId === 'u_pullup' || exId === 'b_hinge_p3') ? 180 : 120; updateRest(); }
 function updateRest() {
   const box = $('#rest');
   if (!S.active || !S.restStart || S.tab !== 'today') { box.hidden = true; clearInterval(restTick); restTick = null; return; }
   box.hidden = false;
   const draw = () => {
     const s = Math.floor((Date.now() - S.restStart) / 1000); const over = s >= S.restTarget;
-    $('#rest-text').textContent = over ? `Rested ${Math.floor(s / 60)}:${pad(s % 60)}, go` : `Rest ${Math.floor(s / 60)}:${pad(s % 60)} / ${S.restTarget / 60}:00`;
+    $('#rest-text').textContent = over ? `Rested ${Math.floor(s / 60)}:${pad(s % 60)}, go` : `Rest ${Math.floor(s / 60)}:${pad(s % 60)} / ${Math.floor(S.restTarget / 60)}:${pad(S.restTarget % 60)}`;
     $('#rest-box').classList.toggle('over', over);
     $('#rest-fill').style.transform = `scaleX(${Math.min(1, s / S.restTarget)})`;
   };
@@ -2078,13 +2777,19 @@ $('#rest-close').addEventListener('click', () => { S.restStart = null; updateRes
 async function finishSession() {
   const a = S.active, p = S.program; if (!a) return;
   const btn = document.getElementById('finish-btn'); if (btn) btn.disabled = true;
+  for (const e of a.entries) { takeTypedNote(e); syncNoteText(e); }
   const prog = clone(p);
   const date = a.date.slice(0, 10);
   const sess = clone(a);
+  const remind = sess.remind; delete sess.remind;
   if (!prog.startDate) { prog.startDate = date; prog.phaseSince = prog.phaseSince || date; }
   const items = [];
   for (const e of sess.entries) {
     const ex = prog.exercises[e.exId];
+    delete e.open; delete e.notesOpen; delete e.sending;
+    e.wu = (e.wu || []).filter(s => s.done).map(s => ({ w: num(s.w), r: num(s.r) ?? 0, done: true }));
+    if (!e.wu.length) delete e.wu;
+    if (Array.isArray(e.notes)) { e.notes = e.notes.filter(n => n.text).map(n => ({ text: n.text, state: n.state, batch: n.batch || null })); if (!e.notes.length) delete e.notes; }
     e.sets = e.sets.map(s => ({ w: num(s.w), r: num(s.r) ?? 0, done: !!s.done }));
     if (!ex) continue;
     if (e.skipped || !e.sets.some(s => s.done && s.r > 0)) { e.skipped = true; e.verdict = 'skipped'; continue; }
@@ -2096,6 +2801,7 @@ async function finishSession() {
   sess.finishedAt = nowIso(); sess.source = 'app';
   sess.startedAt = sess.startedAt || sess.date; sess.timeOfDay = todOf(sess.startedAt);
   sess.durationMin = Math.max(0, Math.round((new Date(sess.finishedAt) - new Date(sess.startedAt)) / 60000));
+  if (remind && String(remind.text || '').trim()) { const r = addReminder(remind.date || addDays(todayStr(), 1), remind.text, sess.id); if (r) sess.reminder = { id: r.id, date: r.date }; }
   try {
     await put('sessions/' + sess.id, sess);
     S.program = prog; await saveProgram();
@@ -2116,7 +2822,7 @@ async function finishSession() {
     game = { gained: after.xp - before.xp, before: { xp: before.xp, rank: before.rank }, after: { xp: after.xp, rank: after.rank, stats: after.stats },
       parts: mine.parts, prs: mine.prs, quests: qDone, badges: after.badges.filter(b => b.got && !before.badges.find(x => x.id === b.id).got) };
   } catch (e) { game = null; }
-  S.lastSummary = { id: sess.id, dayName: sess.dayName, items, game };
+  S.lastSummary = { id: sess.id, dayName: sess.dayName, items, game, reminder: sess.reminder || null };
   if (sess.custom) {
     const ids = sess.entries.filter(e => !e.skipped).map(e => e.exId);
     const t = sess.custom.templateId ? customDays()[sess.custom.templateId] : null;
@@ -2172,18 +2878,24 @@ function viewProgram() {
 
   for (const k of p.rotation) {
     const d = p.days[k];
-    const card = h('div', { class: 'card' }, h('div', { class: 'spread' }, h('h3', { text: d.name }), h('span', { class: 'small muted', text: d.optional ? 'Optional' : `Prep 1–${d.prep}` })), h('p', { class: 'small muted', text: d.focus }));
+    const needs = backWarmNeeded(p, dayItems(p, k).map(it => ({ exId: it.id })));
+    const card = h('div', { class: 'card' }, h('div', { class: 'spread' }, h('h3', { text: d.name }), h('span', { class: 'small muted', text: `${d.optional ? 'Optional · ' : ''}${needs ? 'Back warm-up first' : 'No back warm-up'}` })), h('p', { class: 'small muted', text: d.focus }));
     const list = h('div', { class: 'plist' });
     for (const it of dayItems(p, k)) list.append(programItem(p.exercises[it.id], it.slot));
     card.append(list); root.append(card);
   }
-  root.append(h('div', { class: 'card' }, h('h3', { text: 'Back prep' }), h('ol', { style: 'margin:0;padding-left:1.2rem;display:flex;flex-direction:column;gap:6px' }, (p.prep || []).map((s, i) => {
+  const needDays = p.rotation.filter(k => backWarmNeeded(p, dayItems(p, k).map(it => ({ exId: it.id })))).map(k => p.days[k].name);
+  const skipDays = p.rotation.filter(k => !needDays.includes(p.days[k].name)).map(k => p.days[k].name);
+  root.append(h('div', { class: 'card', id: 'back-warm-card' }, h('div', { class: 'spread' }, h('h3', { text: 'Back warm-up' }), h('span', { class: 'small muted', text: 'About 6 minutes' })),
+    h('p', { class: 'small' }, h('b', { text: 'Do it: ' }), `before ${needDays.join(', ')}, and any custom workout with a lift that loads your lower back. The app adds it to those sessions on its own.`),
+    h('p', { class: 'small' }, h('b', { text: 'Skip it: ' }), `${skipDays.join(', ')}. Nothing there loads your lower back.`),
+    h('p', { class: 'small muted', text: 'Been sitting for hours, like a full day at the factory? Walk 5 minutes before any session. Rest days: this warm-up plus a 20–30 minute walk, and practise the dowel hinge (2 × 8) and the half-kneeling hip-flexor stretch (2 × 30 seconds a side), which the Phase 2 gate checks.' }),
+    h('ol', { style: 'margin:0;padding-left:1.2rem;display:flex;flex-direction:column;gap:6px' }, (p.prep || []).map((s, i) => {
       const vid = (p.prepVideos || [])[i];
       return h('li', {}, h('div', { class: 'prep-row' }, h('span', { text: s }), vid ? h('a', { class: 'vid', href: vid, target: '_blank', rel: 'noopener noreferrer', 'aria-label': `Video for step ${i + 1}` }, PLAY_SVG(), 'Video') : null));
-    })),
-    h('p', { class: 'small muted', text: 'Steps 1–6 before every session, all 8 on leg days, 2–6 on rest days plus a 20–30 minute walk.' })));
+    }))));
   if (p.warmups) {
-    const wc = h('div', { class: 'card' }, h('h3', { text: 'Warm-ups' }), h('p', { class: 'small muted', text: 'After the back prep. Leg days use the leg warm-up; every other day uses the shoulder warm-up.' }));
+    const wc = h('div', { class: 'card' }, h('h3', { text: 'Warm-ups' }), h('p', { class: 'small muted', text: 'After the back warm-up, when the session has one. Leg days use the leg warm-up; every other day uses the shoulder warm-up. Then the warm-up sets on each exercise card.' }));
     for (const [k, label] of [['lower', 'Leg days'], ['upper', 'Upper days']]) {
       wc.append(h('div', { class: 'stack', style: 'gap:6px' }, h('b', { text: label }),
         h('ol', { style: 'margin:0;padding-left:1.2rem;display:flex;flex-direction:column;gap:6px' }, (p.warmups[k] || []).map(s =>
@@ -2201,25 +2913,35 @@ function viewProgram() {
 function programItem(ex, slot) {
   const p = S.program; const pr = prescription(p, ex);
   const editing = S.editing === ex.id;
+  const cs = cuesOf(ex);
   const item = h('div', { class: 'pitem' },
     h('div', { style: 'min-width:0' }, h('b', { text: ex.name }), slot ? h('span', { class: 'small muted', text: ` · ${p.slots[slot].label}, Phase ${slotPhaseOf(p, slot)} version` }) : null,
       h('div', { class: 'meta', text: `${pr.sets} × ${repsLabel(ex)} · ${rirLabel(ex.rirLo, ex.rirHi)} · ${fmtW(ex, ex.weight)}${ex.aim != null && ex.unit !== 'bw' ? ` · aim ${ex.aim}` : ''}` }),
+      cs.length ? h('details', { class: 'cues small' }, h('summary', { text: 'Form cues' }), h('ul', { class: 'cue-list' }, cs.map(c => h('li', { text: c })))) : null,
+      ex.myCues ? h('div', { class: 'small my-line' }, h('b', { text: 'My cues: ' }), ex.myCues) : null,
       videoLink(ex)),
     h('button', { class: 'link', type: 'button', text: editing ? 'Close' : 'Edit', onclick: () => { S.editing = editing ? null : ex.id; renderMain(); } }));
   if (editing) {
     const f = (key, label, val, step) => h('label', { for: `ed-${ex.id}-${key}` }, label, h('input', { type: 'number', id: `ed-${ex.id}-${key}`, step: step || '1', value: val == null ? '' : fmtNum(val), inputmode: 'decimal' }));
+    const lb = isLb(ex); const u = wUnit(ex);
+    const unitSel = ex.unit === 'bw' ? null : h('label', { for: `ed-${ex.id}-unit` }, 'Weights in', h('select', { id: `ed-${ex.id}-unit` }, [['kg', 'Kilograms'], ['lb', 'Pounds']].map(([v, t]) => h('option', { value: v, selected: v === u ? 'selected' : null, text: t }))));
     const ed = h('div', { class: 'editor' },
-      ex.unit === 'bw' ? null : f('weight', 'Weight (kg)', ex.weight, '0.5'), f('sets', 'Sets', ex.sets), f('lo', 'Reps low', ex.lo), f('hi', 'Reps high', ex.hi), f('rirLo', 'RIR low', ex.rirLo), f('rirHi', 'RIR high', ex.rirHi), f('inc', 'Step (kg)', ex.inc, '0.5'));
+      ex.unit === 'bw' ? null : f('weight', `Weight (${u})`, toD(ex, ex.weight), '0.5'), f('sets', 'Sets', ex.sets), f('lo', 'Reps low', ex.lo), f('hi', 'Reps high', ex.hi), f('rirLo', 'RIR low', ex.rirLo), f('rirHi', 'RIR high', ex.rirHi),
+      f('inc', `Step (${u})`, lb ? (ex.incLb || 5) : ex.inc, '0.5'), unitSel);
+    const my = h('textarea', { id: `ed-${ex.id}-my`, placeholder: 'My cues: your own reminders, shown every session', value: ex.myCues || '' });
+    ed.append(h('label', { for: `ed-${ex.id}-my`, style: 'grid-column:1/-1' }, 'My cues', my));
     ed.append(h('div', { style: 'grid-column:1/-1', class: 'row' }, h('button', { class: 'btn primary', type: 'button', text: 'Save', onclick: async () => {
       const g = k => num(document.getElementById(`ed-${ex.id}-${k}`)?.value);
       const before = `${ex.sets}×${ex.lo}-${ex.hi} ${fmtW(ex, ex.weight)}`;
-      if (ex.unit !== 'bw') { const w = g('weight'); ex.weight = w; }
+      if (ex.unit !== 'bw') { const w = g('weight'); ex.weight = w == null ? null : fromD(ex, w); }
       const sets = g('sets'), lo = g('lo'), hi = g('hi'), rl = g('rirLo'), rh = g('rirHi'), inc = g('inc');
       if (sets >= 1 && sets <= 8) ex.sets = Math.round(sets);
       if (lo >= 1 && hi >= lo && hi <= 60) { ex.lo = Math.round(lo); ex.hi = Math.round(hi); }
       if (rl != null && rh != null && rl >= 0 && rh >= rl && rh <= 5) { ex.rirLo = rl; ex.rirHi = rh; }
-      if (inc != null && inc >= 0 && inc <= 20) ex.inc = inc;
+      if (inc != null && inc >= 0 && inc <= 50) { if (lb) ex.incLb = inc; else if (inc <= 20) ex.inc = inc; }
       ex.aim = Math.min(ex.hi, Math.max(ex.lo, ex.aim ?? ex.hi));
+      const us = document.getElementById(`ed-${ex.id}-unit`); if (us) { if (us.value === 'lb') ex.lb = true; else delete ex.lb; }
+      const mv = my.value.trim().slice(0, 600); if (mv) ex.myCues = mv; else delete ex.myCues;
       S.editing = null;
       try { await saveProgram(); addLog('you', `${ex.name}: ${before} → ${ex.sets}×${ex.lo}-${ex.hi} ${fmtW(ex, ex.weight)}.`); toast('Saved.'); } catch (e) { toast('Couldn’t save. Try again.'); }
     } }), h('button', { class: 'btn', type: 'button', text: 'Cancel', onclick: () => { S.editing = null; renderMain(); } })));
@@ -2275,7 +2997,7 @@ function viewRank() {
     h('div', { class: 'stat' }, h('b', { text: (st.tonnage / 1000).toFixed(1) }), h('span', { text: 'Tonnes lifted' })),
     h('div', { class: 'stat' }, h('b', { text: fmtInt(st.prs) }), h('span', { text: 'PRs' })),
     h('div', { class: 'stat' }, h('b', { text: fmtInt(st.bestStreak) }), h('span', { text: 'Best streak, weeks' })),
-    h('div', { class: 'stat' }, h('b', { text: fmtInt(st.prepFull) }), h('span', { text: 'Full back preps' }))));
+    h('div', { class: 'stat' }, h('b', { text: fmtInt(st.prepFull) }), h('span', { text: 'Full back warm-ups' }))));
 
   const bc = h('div', { class: 'card' }, h('div', { class: 'spread' }, h('h3', { text: 'Badges' }), h('span', { class: 'small muted', text: `${g.badges.filter(b => b.got).length} of ${g.badges.length}` })));
   const bg = h('div', { class: 'badges' });
@@ -2298,7 +3020,7 @@ function viewRank() {
   lad.append(ll); root.append(lad);
 
   const how = h('div', { class: 'card' }, h('h3', { text: 'How you earn XP' }));
-  const rows = [['Finish a session', XP.finish], ['Each working set (up to the planned number)', XP.set], ['Full back prep', XP.prepFull], ['Full warm-up', XP.warmFull], ['Readiness check', XP.readiness],
+  const rows = [['Finish a session', XP.finish], ['Each working set (up to the planned number)', XP.set], ['Full back warm-up, or a session that doesn’t need one', XP.prepFull], ['Full warm-up', XP.warmFull], ['Readiness check', XP.readiness],
     ['Rate every tracked pain (any number counts)', XP.honest], ['Each weight increase you earn', XP.up], [`Each PR (up to ${XP.prMax} a session)`, XP.pr], ['Next-morning back check', XP.morning],
     ...QUESTS.map(q => [`Weekly quest: ${q.name.toLowerCase()}`, q.xp])];
   how.append(h('table', { class: 'xptable' }, h('tbody', {}, rows.map(([a, b]) => h('tr', {}, h('td', { text: a }), h('td', { text: `+${b}` }))))));
@@ -2313,9 +3035,10 @@ async function exportCsv() {
   const rows = [['date', 'start_time', 'time_of_day', 'duration_min', 'session', 'exercise', 'set', 'weight_kg', 'unit', 'reps', 'done', 'last_set_rir', 'back_pain', 'shoulder_pain', 'source', 'note']];
   for (const s of [...S.sessions].sort((a, b) => (a.date < b.date ? -1 : 1))) {
     for (const e of s.entries || []) {
-      const ex = p.exercises[e.exId]; const unit = ex ? ex.unit : '';
+      const ex = p.exercises[e.exId]; const unit = ex ? ex.unit + (isLb(ex) ? ' (shown in lb)' : '') : '';
       const base = [s.date.slice(0, 10), (s.startedAt || s.date).slice(11, 16), todOf(s) || '', s.durationMin ?? '', s.dayName || '', e.name];
       if (e.skipped) { rows.push([...base, '', '', unit, '', 'skipped', '', e.pain ?? '', e.shoulderPain ?? '', s.source || 'app', e.note || '']); continue; }
+      (e.wu || []).forEach((x, i) => rows.push([...base, `W${i + 1}`, x.w ?? '', unit, x.r ?? '', 'warm-up', '', '', '', s.source || 'app', '']));
       const sets = e.sets || [];
       sets.forEach((x, i) => rows.push([...base, i + 1, x.w ?? '', unit, x.r ?? '', x.done === false ? 'no' : 'yes', i === sets.length - 1 ? (e.rir ?? '') : '', e.pain ?? '', e.shoulderPain ?? '', s.source || 'app', i === 0 ? (e.note || '') : '']));
     }
@@ -2389,7 +3112,7 @@ function allTrends() {
       if (v != null && (!best || v > best.v)) best = { v, w, r };
     }
     let t = by.get(key);
-    if (!t) { t = { key, name, unit: ex ? ex.unit : (topW != null ? 'kg' : 'bw'), exIds: new Set(), pts: [] }; by.set(key, t); }
+    if (!t) { t = { key, name, unit: ex ? ex.unit : (topW != null ? 'kg' : 'bw'), lb: isLb(ex), exIds: new Set(), pts: [] }; by.set(key, t); }
     if (e.exId) t.exIds.add(e.exId);
     const prev = t.pts.find(q => q.sid === s.id);
     if (prev) continue;
@@ -2412,16 +3135,19 @@ const METRICS = {
   reps: { label: 'Most reps in a set', short: 'Best reps', unit: 'reps', get: q => q.maxR },
 };
 function metricsFor(t) { return t.hasLoad ? ['e1', 'top', 'vol'] : ['reps']; }
+/* Trend values are kept in kg; an exercise shown in pounds gets its trends in pounds too. */
+function dispMetric(t, m, v) { return t && t.lb && m !== 'reps' && v != null ? v / KG_PER_LB : v; }
 function fmtMetric(m, v, t) {
   if (v == null) return '–';
   if (m === 'reps') return `${Math.round(v)} reps`;
-  if (m === 'vol') return `${fmtInt(v)} kg`;
-  if (m === 'top' && t && t.unit === 'kg added') return `+${fmtNum(r05(v))} kg`;
-  return `${fmtNum(Math.round(v * 2) / 2)} kg`;
+  const u = t && t.lb ? 'lb' : 'kg'; v = dispMetric(t, m, v);
+  if (m === 'vol') return `${fmtInt(v)} ${u}`;
+  if (m === 'top' && t && t.unit === 'kg added') return `+${fmtNum(r05(v))} ${u}`;
+  return `${fmtNum(Math.round(v * 2) / 2)} ${u}`;
 }
 function setText(t, q) {
   if (q.bw == null) return `${q.maxR} reps`;
-  return `${t.unit === 'kg added' ? '+' : ''}${fmtNum(q.bw)} kg × ${q.br}`;
+  return `${t.unit === 'kg added' ? '+' : ''}${fmtNum(Math.round(dispMetric(t, 'top', q.bw) * 10) / 10)} ${t.lb ? 'lb' : 'kg'} × ${q.br}`;
 }
 function trendCard(t) {
   const m = metricsFor(t)[0]; const vals = t.pts.map(q => METRICS[m].get(q)).filter(v => v != null);
@@ -2430,7 +3156,7 @@ function trendCard(t) {
   const card = h('button', { class: 'trend', type: 'button', 'data-name': t.name.toLowerCase(), 'aria-label': `${t.name}: open details`, onclick: () => { S.trendKey = t.key; S.trendRange = 'all'; S.trendMetric = null; S.trendTod = 'any'; renderMain(); window.scrollTo(0, 0); } },
     h('div', { class: 'spread', style: 'align-items:center' }, h('b', { text: t.name }), (() => { const R = exerciseRank(t); return R ? h('span', { class: 'mini-rank' }, emblem(R.tierObj, 0, 20, { noDiv: true, label: R.tierObj.name }), R.tierObj.name) : h('span', { class: 'small muted', text: 'Unranked' }); })()),
     h('div', { class: 'row', style: 'align-items:baseline;gap:10px' }, h('span', { class: 'big', text: fmtMetric(m, vals[vals.length - 1], t) }),
-      delta != null ? h('span', { class: 'small muted', text: `${delta >= 0 ? '+' : '−'}${m === 'reps' ? Math.abs(Math.round(delta)) : fmtNum(Math.abs(Math.round(delta)))} since ${fmtDate(t.pts[0].date)}` }) : null),
+      delta != null ? h('span', { class: 'small muted', text: `${delta >= 0 ? '+' : '−'}${m === 'reps' ? Math.abs(Math.round(delta)) : fmtNum(Math.abs(Math.round(dispMetric(t, m, delta))))} since ${fmtDate(t.pts[0].date)}` }) : null),
     pts.length ? sparkline(pts) : null,
     h('span', { class: 'small muted', text: `${METRICS[m].short}, ${t.pts.length} session${t.pts.length > 1 ? 's' : ''}. Last: ${setText(t, last)}, ${fmtDate(last.date)}` }));
   return card;
@@ -2484,7 +3210,8 @@ function trendChart(t, pts, m) {
   const NS = 'http://www.w3.org/2000/svg';
   const el = (n, a = {}) => { const x = document.createElementNS(NS, n); for (const [k, v] of Object.entries(a)) x.setAttribute(k, v); return x; };
   const W = 340, H = 220, L = 42, R = 14, T = 14, B = 28;
-  const vals = pts.map(q => METRICS[m].get(q));
+  const raw = pts.map(q => METRICS[m].get(q));
+  const vals = raw.map(v => dispMetric(t, m, v));
   const ticks = niceTicks(Math.min(...vals), Math.max(...vals));
   const y0 = ticks[0], y1 = ticks[ticks.length - 1];
   // x by date so gaps in training show as gaps
@@ -2515,7 +3242,7 @@ function trendChart(t, pts, m) {
     sel = Math.max(0, Math.min(pts.length - 1, i)); const q = pts[sel];
     cross.setAttribute('x1', X(sel)); cross.setAttribute('x2', X(sel));
     dots.forEach((d, k) => { d.classList.toggle('on', k === sel); d.setAttribute('r', k === sel ? 6 : 4); });
-    tip.replaceChildren(...[h('b', { text: fmtMetric(m, vals[sel], t) }), q.pr && m === 'e1' ? h('span', { class: 'pr-flag', text: 'PR' }) : null].filter(Boolean),
+    tip.replaceChildren(...[h('b', { text: fmtMetric(m, raw[sel], t) }), q.pr && m === 'e1' ? h('span', { class: 'pr-flag', text: 'PR' }) : null].filter(Boolean),
       h('span', { class: 'small muted', text: `${fmtDate(q.date)}${q.time ? ` ${q.time}` : ''}, best ${setText(t, q)}${q.src === 'strong' ? ', from Strong' : ''}` }));
   };
   const nearest = ev => {
@@ -2553,9 +3280,9 @@ function exampleSet(t, e1) {
   const exId = [...t.exIds][0]; const ex = exId ? S.program.exercises[exId] : null; if (!ex) return null;
   const reps = ex.hi || 8; let w = e1 / (1 + Math.min(reps, 15) / 30);
   if (ex.unit === 'kg added') w -= (S.program.bodyweight || 0);
-  const inc = ex.inc || 2.5; w = Math.ceil(w / inc - 1e-9) * inc;
+  w = toD(ex, w); const inc = isLb(ex) ? (ex.incLb || 5) : (ex.inc || 2.5); w = Math.ceil(w / inc - 1e-9) * inc;
   if (ex.unit === 'kg added' && w <= 0) return `bodyweight × ${reps}`;
-  return `${ex.unit === 'kg added' ? '+' : ''}${fmtNum(w)} kg${ex.unit === 'kg each' ? ' each' : ''} × ${reps}`;
+  return `${ex.unit === 'kg added' ? '+' : ''}${fmtNum(w)} ${wUnit(ex)}${ex.unit === 'kg each' ? ' each' : ''} × ${reps}`;
 }
 function exRankCard(t) {
   const R = exerciseRank(t);
@@ -2581,7 +3308,7 @@ function exRankCard(t) {
   if (R.sessLeft) todo.push(`log ${R.sessLeft} more session${R.sessLeft > 1 ? 's' : ''} of it`);
   if (R.valLeft > 0.01) {
     if (R.m === 'reps') todo.push(`get ${Math.ceil(R.target)} reps in a set`);
-    else { const ex = exampleSet(t, R.target); todo.push(`reach about ${fmtNum(Math.round(R.target * 2) / 2)} kg estimated 1-rep max${ex ? `, for example ${ex}` : ''}`); }
+    else { const ex = exampleSet(t, R.target); todo.push(`reach about ${fmtMetric('e1', R.target, t)} estimated 1-rep max${ex ? `, for example ${ex}` : ''}`); }
   }
   box.append(h('p', { class: 'small', text: todo.length ? `To get there: ${todo.join(' and ')}. The plan raises your weights as you hit the top of the rep range, so following it gets you there. There’s no need to test a max.` : 'You’ve met the requirements. It updates after your next session.' }));
   card.append(box);
@@ -2622,9 +3349,10 @@ function viewHistory() {
     for (const e of s.entries || []) {
       if (e.skipped) { body.append(h('div', { class: 'muted', text: `${e.name}: skipped` })); continue; }
       const ex = p.exercises[e.exId];
-      const setsTxt = (e.sets || []).filter(x => x.done !== false).map(x => `${x.w == null ? 'BW' : (ex && ex.unit === 'kg added' ? '+' : '') + fmtNum(x.w)}×${x.r}`).join(', ');
+      const setsTxt = (e.sets || []).filter(x => x.done !== false).map(x => `${wTxt(ex, x.w)}×${x.r}`).join(', ');
+      const wuTxt = (e.wu || []).filter(x => x.done !== false).map(x => `${wTxt(ex, x.w)}×${x.r}`).join(', ');
       const extra = [e.rir != null ? `RIR ${rirText(e.rir)}` : null, e.pain != null ? `back ${e.pain}` : null, e.shoulderPain != null ? `shoulder ${e.shoulderPain}` : null].filter(Boolean).join(' · ');
-      body.append(h('div', { class: 'sess-line' }, h('span', {}, h('b', { text: e.name }), ` ${setsTxt}`), extra ? h('span', { class: 'muted small', text: extra }) : null, e.note ? h('span', { class: 'small', text: `“${e.note}”` }) : null));
+      body.append(h('div', { class: 'sess-line' }, h('span', {}, h('b', { text: e.name }), ` ${setsTxt}`), wuTxt ? h('span', { class: 'muted small', text: `Warm-up: ${wuTxt}` }) : null, extra ? h('span', { class: 'muted small', text: extra }) : null, e.note ? h('span', { class: 'small', text: `“${e.note}”` }) : null));
     }
     if (s.backPain != null) body.append(h('div', { class: 'muted', text: `Back pain overall: ${s.backPain}/10` }));
     if (s.morning) body.append(h('div', { class: 'muted', text: `Next morning: ${s.morning === 'normal' ? 'normal' : s.morning === 'stiff' ? 'stiffer, settled' : 'worse'}` }));
@@ -2641,25 +3369,36 @@ const FORMAT = `Reply with only one JSON object and no other text:
 {"reply": "2 to 5 short, plain sentences to him",
  "changes": [{"type": "weight", "exerciseId": "u_bench", "value": 80, "reason": "why, in one sentence"}],
  "questions": [{"id": "q1", "text": "the question", "options": ["short option", "short option"], "allowText": true}]}
-Change types: "weight" (value = next working weight), "sets" (value), "reps" (lo, hi), "rir" (lo, hi), "swap" (name = new exercise, weight = starting weight or null), "note" (text = coaching cue shown on the exercise). Use only exerciseIds from the program list. At most 4 changes and 3 questions; use [] when none apply. Ask a question only when his answer would change what you recommend, with 2-4 short options; set allowText true when a free answer would help.`;
+Change types: "weight" (value = next working weight, in that exercise's own unit: pounds where the program list says "in lb", otherwise kg), "sets" (value), "reps" (lo, hi), "rir" (lo, hi), "swap" (name = new exercise, weight = starting weight or null, cues = 2-4 short form cues for the new exercise), "note" (text = a coaching note shown on the exercise), "cues" (cues = 2-4 short form cues that replace the exercise's current form cues). Never rewrite "his own cues": those are his. Use only exerciseIds from the program list. At most 4 changes and 3 questions; use [] when none apply. Ask a question only when his answer would change what you recommend, with 2-4 short options; set allowText true when a free answer would help.`;
 
+function wTxt(ex, w) { return w == null ? 'BW' : `${ex && ex.unit === 'kg added' ? '+' : ''}${fmtD(ex, w)}${isLb(ex) ? 'lb' : ''}`; }
 function sessionLine(s) {
   const p = S.program;
   const bits = [`${s.date.slice(0, 10)} ${s.dayName || s.dayKey}${s.source === 'strong' ? ' (imported from Strong, before this plan; no pain data)' : ''}`];
   if (fmtTime(s)) bits.push(`started ${(s.startedAt || s.date).slice(11, 16)} (${todOf(s)})${s.durationMin ? `, ${s.durationMin} min` : ''}`);
   if (s.readiness && Object.keys(s.readiness).length) bits.push(`readiness sleep ${s.readiness.sleep || '?'}, energy ${s.readiness.energy || '?'}, back before ${s.readiness.back || '?'}`);
+  if (s.prepSteps != null) bits.push(s.prepSteps ? `back warm-up ${(s.prep || []).filter(i => i < s.prepSteps).length}/${s.prepSteps} steps` : 'no back warm-up needed');
   if (s.backPain != null) bits.push(`overall back pain ${s.backPain}/10`);
   if (s.morning) bits.push(`next morning ${s.morning}`);
   if (s.note) bits.push(`note: "${s.note.slice(0, 300)}"`);
   const lines = [bits.join('; ')];
   for (const e of s.entries || []) {
-    if (e.skipped) { lines.push(`  ${e.exId || ''} ${e.name}: skipped`); continue; }
+    const notes = Array.isArray(e.notes) && e.notes.length
+      ? e.notes.map(n => `note${n.state === 'sent' ? ' (already sent to you during the session and answered)' : ''} "${String(n.text).slice(0, 200)}"`)
+      : e.note ? [`note "${e.note.slice(0, 200)}"`] : [];
+    if (e.skipped) { lines.push(`  ${e.exId || ''} ${e.name}: skipped${notes.length ? ' | ' + notes.join('; ') : ''}`); continue; }
     const ex = p.exercises[e.exId];
-    const sets = (e.sets || []).filter(x => x.done !== false).map(x => `${x.w == null ? 'BW' : (ex && ex.unit === 'kg added' ? '+' : '') + fmtNum(x.w)}x${x.r}`).join(', ');
-    const extra = [e.rir != null ? `last-set RIR ${rirText(e.rir)}` : null, e.pain != null ? `back pain ${e.pain}/10` : null, e.shoulderPain != null ? `left shoulder pain ${e.shoulderPain}/10` : null, e.verdict && e.verdict !== 'skipped' ? `app: ${e.msg}` : null, e.note ? `note "${e.note.slice(0, 200)}"` : null].filter(Boolean).join('; ');
+    const sets = (e.sets || []).filter(x => x.done !== false).map(x => `${wTxt(ex, x.w)}x${x.r}`).join(', ');
+    const wu = (e.wu || []).filter(x => x.done !== false).map(x => `${wTxt(ex, x.w)}x${x.r}`).join(', ');
+    const extra = [wu ? `warm-up ${wu}` : null, e.rir != null ? `last-set RIR ${rirText(e.rir)}` : null, e.pain != null ? `back pain ${e.pain}/10` : null, e.shoulderPain != null ? `left shoulder pain ${e.shoulderPain}/10` : null, e.verdict && e.verdict !== 'skipped' ? `app: ${e.msg}` : null, ...notes].filter(Boolean).join('; ');
     lines.push(`  ${e.exId ? e.exId + ' ' : ''}${e.name}: ${sets}${extra ? ' | ' + extra : ''}`);
   }
   return lines.join('\n');
+}
+function exContext(ex) {
+  const cs = cuesOf(ex);
+  return [ex.back ? 'back-monitored' : null, ex.shoulder ? 'left-shoulder-monitored' : null, isLb(ex) ? 'in lb' : null,
+    cs.length ? `form cues: ${cs.join('; ')}` : null, ex.note ? `coach note: ${ex.note}` : null, ex.myCues ? `his own cues: ${ex.myCues.replace(/\s+/g, ' ')}` : null].filter(Boolean).join(' | ');
 }
 function buildContext() {
   const p = S.program; const today = todayStr(); const wk = weekNo(p);
@@ -2668,10 +3407,11 @@ function buildContext() {
   const holds = (p.holds || []).filter(x => x.until >= today);
   if (holds.length) out.push('Temporary step-backs: ' + holds.map(x => `${x.slot} at Phase ${x.phase} until ${x.until}`).join('; '));
   const g = gateStatus(p); if (g) out.push(`Gate to Phase ${g.next}: ${g.weekOk ? 'week reached' : 'week not reached'}; recent leg sessions ${g.count}, ${g.green ? 'all green' : 'not all green'}.`);
-  out.push('\nPROGRAM (current phase). id | day | exercise | sets x reps | RIR | next weight | flags');
+  out.push('Back warm-up (about 6 minutes) runs only before sessions with a back-monitored lift; the app logs warm-up sets on each exercise, which never count toward progression.');
+  out.push('\nPROGRAM (current phase). id | day | exercise | sets x reps | RIR | next weight | flags, cues and notes');
   for (const k of p.rotation) for (const it of dayItems(p, k)) {
     const ex = p.exercises[it.id]; const pr = prescription(p, ex);
-    out.push(`${ex.id} | ${p.days[k].name}${p.days[k].optional ? ' (optional)' : ''} | ${ex.name} | ${pr.sets}x${ex.lo}-${ex.hi}${ex.perSide ? ' per side' : ''} | ${ex.rirLo}-${ex.rirHi} | ${fmtW(ex, ex.weight)} | ${[ex.back ? 'back-monitored' : null, ex.shoulder ? 'left-shoulder-monitored' : null, pr.tag].filter(Boolean).join(', ')}`);
+    out.push(`${ex.id} | ${p.days[k].name}${p.days[k].optional ? ' (optional)' : ''} | ${ex.name} | ${pr.sets}x${ex.lo}-${ex.hi}${ex.perSide ? ' per side' : ''} | ${ex.rirLo}-${ex.rirHi} | ${fmtW(ex, ex.weight)} | ${[pr.tag, exContext(ex)].filter(Boolean).join(' | ')}`);
   }
   const other = [];
   for (const slot of Object.keys(p.slots)) for (const [ph, id] of Object.entries(p.slots[slot].phases)) if (Number(ph) !== p.phase) { const ex = p.exercises[id]; other.push(`${id} = ${ex.name} (Phase ${ph} ${slot})`); }
@@ -2680,9 +3420,15 @@ function buildContext() {
   if (cds.length) out.push('\nCUSTOM WORKOUTS he saved: ' + cds.map(t => `${t.name}: ${(t.items || []).map(id => (p.exercises[id] || {}).name).filter(Boolean).join(', ')}`).join(' | '));
   const usedC = new Set(); for (const t of cds) for (const id of t.items || []) usedC.add(id);
   for (const s of S.sessions.slice(0, 30)) for (const e of s.entries || []) if (p.exercises[e.exId] && p.exercises[e.exId].custom) usedC.add(e.exId);
+  if (S.active) for (const e of S.active.entries) if (p.exercises[e.exId] && p.exercises[e.exId].custom) usedC.add(e.exId);
   if (usedC.size) {
     out.push('CUSTOM EXERCISES (his own picks from the library; same id rules apply). id | exercise | sets x reps | RIR | next weight | flags');
-    for (const id of usedC) { const ex = p.exercises[id]; if (!ex) continue; out.push(`${ex.id} | ${ex.name} | ${ex.sets}x${ex.lo}-${ex.hi}${ex.repUnit === 's' ? ' s' : ex.repUnit === 'm' ? ' m' : ''} | ${ex.rirLo}-${ex.rirHi} | ${fmtW(ex, ex.weight)} | ${[ex.back ? 'back-monitored' : null, ex.shoulder ? 'left-shoulder-monitored' : null].filter(Boolean).join(', ')}`); }
+    for (const id of usedC) { const ex = p.exercises[id]; if (!ex) continue; out.push(`${ex.id} | ${ex.name} | ${ex.sets}x${ex.lo}-${ex.hi}${ex.repUnit === 's' ? ' s' : ex.repUnit === 'm' ? ' m' : ''} | ${ex.rirLo}-${ex.rirHi} | ${fmtW(ex, ex.weight)} | ${exContext(ex)}`); }
+  }
+  if (S.active) {
+    const a = S.active;
+    out.push(`\nIN PROGRESS RIGHT NOW: ${a.dayName}, started ${(a.startedAt || a.date).slice(11, 16)}. Exercises in order:`);
+    for (const e of a.entries) { const n = e.sets.filter(x => x.done).length; out.push(`  ${e.exId} ${e.name}: ${e.skipped ? 'skipped' : `${n}/${e.presSets || e.sets.length} sets done`}${e.swappedFrom ? ` (swapped in for ${e.swappedFrom})` : ''}`); }
   }
   const since = addDays(today, -21);
   const recent = S.sessions.filter(s => s.date.slice(0, 10) >= since).slice(0, 18);
@@ -2691,45 +3437,63 @@ function buildContext() {
   const log = (S.log.items || []).slice(0, 12);
   if (log.length) { out.push('\nRECENT PROGRAM CHANGES:'); for (const l of log) out.push(`${l.ts.slice(0, 10)} ${l.source}: ${l.text}`); }
   let txt = out.join('\n');
-  if (txt.length > 45000) txt = txt.slice(0, 45000) + '\n[trimmed]';
+  if (txt.length > 60000) txt = txt.slice(0, 60000) + '\n[trimmed]';
   return txt;
 }
-function basePrompt(kind, text) {
+function basePrompt(kind, text, opts = {}) {
+  const live = S.active ? ` He is in the middle of a session right now (see IN PROGRESS). If he asks to swap an exercise he's doing or about to do, use a swap change on its exerciseId: when he applies it, the app also puts it into today's session.` : '';
   const task = kind === 'review'
-    ? 'Review his most recent session in this app (the newest non-imported session) against the last three weeks. Say what went well, what to watch, and whether anything beyond the automatic progression should change.'
+    ? 'Review his most recent session in this app (the newest non-imported session) against the last three weeks. Say what went well, what to watch, and whether anything beyond the automatic progression should change. Read every note he left on an exercise: when a note shows the movement needs different cues, set new form cues (type "cues") or a coaching note (type "note"); when it shows the exercise doesn\'t suit him (pain, equipment, how it feels), propose a swap for next time. Notes marked as already sent were answered during the session, so don\'t repeat those changes.'
     : kind === 'weekly'
       ? 'Weekly check-in: look at the last 7-10 days as a whole (sets per muscle against the targets, progression, back status, readiness, notes) and say what to adjust for next week.'
-      : `He wrote to you:\n"""${String(text).slice(0, 4000)}"""\nAnswer him directly. Propose program changes only if warranted.`;
+      : kind === 'exnote'
+        ? `During today's session he left these notes on ${opts.entryName || 'an exercise'} (exerciseId ${opts.exId}):\n"""${String(text).slice(0, 2000)}"""\nAnswer him in 1 to 3 short sentences. Whatever you change applies from his next session on, not to the exercise in front of him now, so say "next time". Decide what the notes call for: new form cues (type "cues"), a coaching note (type "note"), a weight, sets or reps change, or a swap to a different exercise for next time. Change only what the notes justify, and only this exercise unless he says otherwise. Ask a question only if you can't tell what he means.`
+        : `He wrote to you:\n"""${String(text).slice(0, 4000)}"""\nAnswer him directly. Propose program changes only if warranted.${live}`;
   return `${(S.program && S.program.coachRules) || RULES}\n\n=== APP DATA ===\n${buildContext()}\n\n=== TASK ===\n${task}\n\n${FORMAT}`;
 }
-function validateChange(c) {
+function cleanCues(v) {
+  const arr = Array.isArray(v) ? v : typeof v === 'string' ? v.split(/\n|;/) : [];
+  return arr.map(x => String(x || '').trim().replace(/^[-•*]\s*/, '')).filter(Boolean).slice(0, 5).map(x => x.slice(0, 140));
+}
+/* opts.kg: the values are already in kg (the Sunday check-in writes kg); otherwise they're in the exercise's own unit. */
+function validateChange(c, opts = {}) {
   const p = S.program; if (!c || typeof c !== 'object') return null;
   const ex = p.exercises[c.exerciseId]; if (!ex) return null;
-  const base = { type: c.type, exerciseId: ex.id, reason: String(c.reason || '').slice(0, 300), state: 'pending' };
+  const toKg = v => (v == null ? null : opts.kg ? v : fromD(ex, v));
+  const base = { type: c.type, exerciseId: ex.id, exName: ex.name, reason: String(c.reason || '').slice(0, 300), state: 'pending' };
   switch (c.type) {
-    case 'weight': { const v = num(c.value); return v == null || v < 0 || v > 500 ? null : { ...base, value: v }; }
+    case 'weight': { const v = num(c.value); return v == null || v < 0 || v > 1000 ? null : { ...base, value: toKg(v) }; }
     case 'sets': { const v = Math.round(num(c.value)); return v >= 1 && v <= 8 ? { ...base, value: v } : null; }
     case 'reps': { const lo = Math.round(num(c.lo)), hi = Math.round(num(c.hi)); return lo >= 1 && hi >= lo && hi <= 60 ? { ...base, lo, hi } : null; }
     case 'rir': { const lo = num(c.lo), hi = num(c.hi); return lo == null || hi == null || lo < 0 || hi > 5 || hi < lo ? null : { ...base, lo, hi }; }
-    case 'swap': { const name = String(c.name || '').trim().slice(0, 80); if (!name) return null; const w = c.weight == null ? null : num(c.weight); return { ...base, name, weight: w, fromName: ex.name }; }
+    case 'swap': { const name = String(c.name || '').trim().slice(0, 80); if (!name) return null; const w = c.weight == null ? null : num(c.weight); const cues = cleanCues(c.cues); return { ...base, name, weight: toKg(w), fromName: ex.name, ...(cues.length ? { cues } : {}) }; }
     case 'note': { const t = String(c.text || '').trim().slice(0, 300); return t ? { ...base, text: t } : null; }
+    case 'cues': { const cues = cleanCues(c.cues); return cues.length ? { ...base, cues } : null; }
     default: return null;
   }
 }
 function describeChange(c) {
-  const ex = S.program.exercises[c.exerciseId]; const n = ex ? ex.name : c.exerciseId;
+  const ex = S.program.exercises[c.exerciseId]; const n = c.exName || (ex ? ex.name : c.exerciseId);
   switch (c.type) {
     case 'weight': return `${n}: next weight ${fmtW(ex, c.value)}`;
     case 'sets': return `${n}: ${c.value} sets`;
     case 'reps': return `${n}: ${c.lo}–${c.hi} reps`;
     case 'rir': return `${n}: ${rirLabel(c.lo, c.hi)}`;
-    case 'swap': return `Swap ${c.fromName || n} for ${c.name}${c.weight != null ? ` at ${fmtNum(c.weight)} kg` : ''}`;
-    case 'note': return `${n}: cue “${c.text}”`;
+    case 'swap': return `Swap ${c.fromName || n} for ${c.name}${c.weight != null ? ` at ${fmtW(ex, c.weight)}` : ''}`;
+    case 'note': return `${n}: coach note “${c.text}”`;
+    case 'cues': return `${n}: new form cues “${(c.cues || []).join('; ')}”`;
     default: return n;
   }
 }
 const CHANGE_FIELDS = { weight: ['weight', 'aim', 'missStreak'], sets: ['sets'], reps: ['lo', 'hi', 'aim'], rir: ['rirLo', 'rirHi'],
-  swap: ['name', 'weight', 'aim', 'missStreak', 'prevName', 'video'], note: ['note'] };
+  swap: ['name', 'weight', 'aim', 'missStreak', 'prevName', 'video', 'cues'], note: ['note'], cues: ['cues'] };
+/* Form cues for a swapped-in exercise: the coach's, or the library's when the name matches a movement there. */
+function swapCues(c) {
+  if (c.cues && c.cues.length) return c.cues;
+  const nm = c.name.toLowerCase().replace(/\s*\(.*\)\s*$/, '');
+  const m = LIB.find(x => x.name.toLowerCase() === nm);
+  return m ? [...m.cues] : [];
+}
 /* Applies one change to the program and returns the previous values of the fields it touched (for Undo). */
 function applyChangeTo(p, c) {
   const ex = p.exercises[c.exerciseId]; if (!ex || !CHANGE_FIELDS[c.type]) return null;
@@ -2739,38 +3503,106 @@ function applyChangeTo(p, c) {
     case 'sets': ex.sets = c.value; break;
     case 'reps': ex.lo = c.lo; ex.hi = c.hi; ex.aim = Math.min(c.hi, Math.max(c.lo, ex.aim ?? c.hi)); break;
     case 'rir': ex.rirLo = c.lo; ex.rirHi = c.hi; break;
-    case 'swap': ex.prevName = ex.prevName || ex.name; ex.name = c.name; ex.weight = c.weight; ex.aim = ex.hi; ex.missStreak = 0; ex.video = null; break;
+    case 'swap': ex.prevName = ex.prevName || ex.name; ex.name = c.name; ex.weight = c.weight; ex.aim = ex.hi; ex.missStreak = 0; ex.video = null; ex.cues = swapCues(c); break;
     case 'note': ex.note = c.text; break;
+    case 'cues': ex.cues = [...c.cues]; break;
   }
   return prev;
 }
+function restoreFields(ex, prev) { for (const [k, v] of Object.entries(prev)) { if (v == null && k !== 'weight' && k !== 'video' && k !== 'note') delete ex[k]; else ex[k] = v; } }
 /* Automatic reviews apply everything except swaps and weight jumps over 15%, which wait for a tap. */
 function needsTap(c) {
   if (c.type === 'swap') return true;
   const ex = S.program.exercises[c.exerciseId];
   return c.type === 'weight' && ex && ex.weight > 0 && Math.abs(c.value - ex.weight) / ex.weight > 0.15;
 }
+/* A swap applied from the Coach tab during a session also replaces that exercise in today's session, if he hasn't started it.
+   Notes sent from an exercise card only change future sessions. */
+function swapInSession(c, undo) {
+  const a = S.active; const p = S.program; const ex = p.exercises[c.exerciseId]; if (!a || !ex) return null;
+  let swapped = false, started = false;
+  for (const e of a.entries) {
+    if (e.exId !== c.exerciseId) continue;
+    if (e.sets.some(x => x.done)) { started = true; continue; }
+    if (undo) { if (!e.swappedFrom) continue; e.name = e.swappedFrom; delete e.swappedFrom; }
+    else { e.swappedFrom = e.swappedFrom || e.name; e.name = ex.name; if (e.swappedFrom === e.name) delete e.swappedFrom; }
+    e.pres = { ...(e.pres || {}), weight: ex.weight };
+    e.sets = e.sets.map(x => ({ ...x, w: ex.unit === 'bw' ? null : ex.weight }));
+    e.wu = undefined; swapped = true;
+  }
+  if (swapped) { fillWarm(p, a.entries); saveDraftSoon(); }
+  return swapped ? 'swapped' : started ? 'started' : null;
+}
 async function applyChanges(item, list, opts = {}) {
-  const desc = [];
+  const desc = []; const inSession = [];
   for (const c of list) {
     if (c.state !== 'pending') continue;
     const prev = applyChangeTo(S.program, c);
-    if (prev) { c.state = 'applied'; c.prev = prev; if (opts.auto) c.auto = true; desc.push(describeChange(c)); } else c.state = 'dismissed';
+    if (prev) {
+      c.state = 'applied'; c.prev = prev; if (opts.auto) c.auto = true; desc.push(describeChange(c));
+      if (c.type === 'swap' && !item.viaNote) { const r = swapInSession(c, false); if (r) inSession.push([c, r]); }
+    } else c.state = 'dismissed';
   }
   try {
     if (desc.length) { await saveProgram(); for (const d of desc) await addLog('claude', d); }
     await saveThread();
-    if (desc.length && !opts.quiet) toast(desc.length === 1 ? 'Change applied.' : `${desc.length} changes applied.`);
+    if (inSession.length) { const [c, r] = inSession[0]; toast(r === 'swapped' ? `Swapped in today’s session: ${c.name} replaces ${c.fromName}.` : `You’ve already done ${c.fromName} today, so ${c.name} starts next time.`); }
+    else if (desc.length && !opts.quiet) toast(desc.length === 1 ? 'Change applied.' : `${desc.length} changes applied.`);
   } catch (e) { toast('Couldn’t save the changes. Try again.'); }
-  renderMain();
+  if (opts.render !== false) renderMain();
+}
+function undoOne(item, c) {
+  const ex = S.program.exercises[c.exerciseId];
+  if (!ex || !c.prev || c.state !== 'applied') return false;
+  restoreFields(ex, c.prev); c.state = 'undone';
+  if (c.type === 'swap' && !item.viaNote) swapInSession(c, true);
+  return true;
 }
 async function undoChange(item, c) {
-  const ex = S.program.exercises[c.exerciseId];
-  if (!ex || !c.prev) return;
-  Object.assign(ex, c.prev); c.state = 'undone';
+  if (!undoOne(item, c)) return;
   try { await saveProgram(); await addLog('you', `Undid: ${describeChange(c)}`); await saveThread(); toast('Change undone.'); }
   catch (e) { toast('Couldn’t undo that. Try again.'); }
+  if (item.viaNote && S.active && S.tab === 'today') { const rid = rootOf(item).id; const e = S.active.entries.find(x => (x.notes || []).some(n => n.batch === rid)); if (e) { rerenderCard(entryIdx(e)); return; } }
   renderMain();
+}
+/* Answers to a message's questions are part of it: deleting or editing the message removes them too. */
+function followUps(item) {
+  const out = []; let cur = [item.id];
+  while (cur.length) { const nx = (S.thread.items || []).filter(x => cur.includes(x.prevId) && !x.deleted); out.push(...nx); cur = nx.map(x => x.id); }
+  return out;
+}
+function rootOf(item) { let it = item; const seen = new Set(); while (it && it.prevId && !seen.has(it.id)) { seen.add(it.id); const pv = threadItem(it.prevId); if (!pv) break; it = pv; } return it; }
+async function deleteItem(item, opts = {}) {
+  const chain = [item, ...followUps(item)].reverse();
+  let n = 0;
+  for (const it of chain) {
+    for (const c of [...(it.changes || [])].reverse()) if (undoOne(it, c)) n++;
+    it.deleted = true; it.deletedAt = nowIso();
+  }
+  try {
+    if (n) { await saveProgram(); await addLog('you', `Deleted a coach message and undid ${n} change${n === 1 ? '' : 's'}: “${String(item.prompt || '').slice(0, 80)}”`); }
+    Store.set('coach/thread', { items: chain.map(clone) });
+    S.thread.items = (S.thread.items || []).filter(x => !x.deleted);
+  } catch (e) { toast('Couldn’t save that. Try again.'); }
+  if (!opts.keepNotes && S.active) for (const e of S.active.entries) {
+    if (Array.isArray(e.notes) && e.notes.some(x => chain.some(it => it.id === x.batch))) { e.notes = e.notes.filter(x => !chain.some(it => it.id === x.batch)); syncNoteText(e); saveDraftSoon(); }
+  }
+  if (!opts.quiet) toast(n ? `Deleted. ${n} change${n === 1 ? '' : 's'} it made ${n === 1 ? 'is' : 'are'} undone.` : 'Deleted.');
+  if (opts.render !== false) renderMain();
+  return n;
+}
+/* Editing a message: its answer and every change it made are undone, then the coach answers the new text. */
+async function editItem(item, text) {
+  text = String(text || '').trim(); if (!text) return;
+  const root = rootOf(item);
+  await deleteItem(root, { quiet: true, keepNotes: true, render: false });
+  toast('Edited. The earlier answer and its changes are undone.');
+  if (root.kind === 'exnote') {
+    const e = S.active && S.active.entries.find(x => (x.notes || []).some(n => n.batch === root.id));
+    if (e) { e.notes = e.notes.filter(n => n.batch !== root.id); e.notes.push({ id: 'n' + Date.now().toString(36), text: text.slice(0, 400), ts: nowIso(), state: 'draft' }); syncNoteText(e); saveDraftSoon(); }
+    const item2 = await askCoach('exnote', text, null, { exId: root.exId, entryName: root.entryName, sessionId: root.sessionId });
+    if (e && item2 && item2.status === 'done') { for (const n of e.notes) if (n.state === 'draft' && n.text === text.slice(0, 400)) { n.state = 'sent'; n.batch = item2.id; } saveDraftSoon(); }
+  } else await askCoach('ask', text);
 }
 function errorCopy(e) {
   const c = e && e.code;
@@ -2787,34 +3619,42 @@ function errorCopy(e) {
 async function askCoach(kind, text, prev, opts = {}) {
   if (!coachReady()) { if (!opts.auto) toast('Add your Claude API key in Settings to use the coach.'); return null; }
   if (S.coachBusy) return null;
+  const root = prev ? rootOf(prev) : null;
   const item = { id: 'c' + Date.now(), ts: nowIso(), kind, auto: !!opts.auto,
-    prompt: kind === 'ask' || kind === 'answers' ? text : kind === 'review' ? (opts.auto ? 'Automatic review after your session' : 'Review my last session') : 'Weekly check-in',
+    prompt: kind === 'ask' || kind === 'answers' ? text : kind === 'exnote' ? `${opts.entryName || 'Exercise'}: ${text}` : kind === 'review' ? (opts.auto ? 'Automatic review after your session' : 'Review my last session') : 'Weekly check-in',
     reply: '', changes: [], questions: [], status: 'thinking', prevId: prev ? prev.id : null };
+  if (kind === 'exnote') Object.assign(item, { exId: opts.exId, entryName: opts.entryName || '', sessionId: opts.sessionId || null, noteText: text });
+  // Notes sent from an exercise are his own call to change things: what the coach answers applies straight away, with Undo.
+  const applyAll = kind === 'exnote' || (root && root.kind === 'exnote');
+  if (applyAll) item.viaNote = true;
   S.thread.items = [...(S.thread.items || []), item];
   S.coachBusy = true; S.ctl = new AbortController();
   if (opts.auto && S.lastSummary && (!opts.sessionId || S.lastSummary.id === opts.sessionId)) S.lastSummary.reviewId = item.id;
+  const rerender = () => { if (opts.onUpdate) opts.onUpdate(); else renderMain(); };
   let deferred = false;
-  if (!opts.auto && S.tab !== 'coach') setTab('coach'); else renderMain();
+  if (opts.stay) rerender(); else if (!opts.auto && S.tab !== 'coach') setTab('coach'); else renderMain();
   try {
     let input;
     if (kind === 'answers' && prev) {
       const prior = prev.raw || JSON.stringify({ reply: prev.reply, changes: prev.changes, questions: prev.questions });
-      const baseKind = prev.kind === 'answers' ? 'ask' : prev.kind;
-      const baseText = prev.kind === 'ask' || prev.kind === 'answers' ? prev.prompt : '';
-      input = [{ role: 'user', content: basePrompt(baseKind, baseText) }, { role: 'assistant', content: prior },
+      const rk = root ? root.kind : prev.kind;
+      const first = rk === 'exnote' ? basePrompt('exnote', root.noteText, { exId: root.exId, entryName: root.entryName })
+        : rk === 'ask' || rk === 'answers' ? basePrompt('ask', root ? root.prompt : prev.prompt) : basePrompt(rk, '');
+      input = [{ role: 'user', content: first }, { role: 'assistant', content: prior },
         { role: 'user', content: `His answers:\n${text}\n\nUpdate your reply and changes in light of these answers. Same JSON format. Ask further questions only if essential.` }];
-    } else input = basePrompt(kind, text);
+    } else input = basePrompt(kind, text, opts);
     const res = await Coach.json(input, { signal: S.ctl.signal });
     const r = res && typeof res === 'object' ? res : {};
     item.reply = String(r.reply || '').slice(0, 2500) || 'No comments this time.';
-    item.changes = (Array.isArray(r.changes) ? r.changes : []).slice(0, 6).map(validateChange).filter(Boolean);
+    item.changes = (Array.isArray(r.changes) ? r.changes : []).slice(0, 6).map(c => validateChange(c)).filter(Boolean);
+    if (kind === 'exnote') item.changes = item.changes.filter(c => c.exerciseId === opts.exId || /\b(all|every|other)\b/i.test(text));
     item.questions = (Array.isArray(r.questions) ? r.questions : []).slice(0, 3).filter(q => q && q.text).map((q, i) => ({ id: String(q.id || 'q' + (i + 1)), text: String(q.text).slice(0, 300), options: (Array.isArray(q.options) ? q.options : []).map(String).slice(0, 5), allowText: q.allowText !== false, answer: null, answerText: '' }));
     item.raw = JSON.stringify({ reply: item.reply, changes: item.changes.map(({ state, ...c }) => c), questions: item.questions.map(q => ({ id: q.id, text: q.text, options: q.options })) }).slice(0, 8000);
     item.status = 'done';
     if (opts.auto) {
       const now = item.changes.filter(c => !needsTap(c));
-      if (now.length) await applyChanges(item, now, { auto: true, quiet: true });
-    }
+      if (now.length) await applyChanges(item, now, { auto: true, quiet: true, render: false });
+    } else if (applyAll && item.changes.length) await applyChanges(item, item.changes, { render: false });
   } catch (e) {
     if (opts.auto && e && e.code === 'offline') {
       deferred = true;
@@ -2825,9 +3665,24 @@ async function askCoach(kind, text, prev, opts = {}) {
   } finally {
     S.coachBusy = false; S.ctl = null;
     if (deferred) deferReview(opts.sessionId || (S.lastSummary && S.lastSummary.id) || 'last');
-    else { await saveThread(); renderMain(); }
+    else { await saveThread(); rerender(); }
   }
   return deferred ? null : item;
+}
+function itemLabel(it) {
+  return it.kind === 'ask' ? 'You' : it.kind === 'answers' ? 'Your answers' : it.kind === 'exnote' ? `Exercise note · ${it.entryName || ''}` : it.kind === 'review' ? 'Session review'
+    : it.kind === 'weekly' ? 'Weekly check-in' : it.kind === 'reminder' ? 'Pre-workout reminder' : 'Coach';
+}
+function itemNeedsYou(it) {
+  return it.status === 'thinking' || it.status === 'error' || (it.changes || []).some(c => c.state === 'pending') || ((it.questions || []).length > 0 && !it.answersSent);
+}
+/* A finished conversation folds into one line; tapping it opens it again with Edit and Delete. */
+function coachFold(it) {
+  const applied = (it.changes || []).filter(c => c.state === 'applied').length;
+  const what = it.kind === 'ask' || it.kind === 'answers' ? it.prompt : it.kind === 'exnote' ? it.noteText : it.reply;
+  return h('button', { class: 'coach-fold', type: 'button', 'aria-expanded': 'false', onclick: () => { S.coachOpen = S.coachOpen || {}; S.coachOpen[it.id] = true; renderMain(); } },
+    h('span', { class: 'fold-main' }, h('span', { class: 'small muted', text: `${itemLabel(it)} · ${fmtDate(it.ts)}` }), h('span', { class: 'clamp', text: String(what || '').replace(/\s+/g, ' ') })),
+    h('span', { class: 'small muted', style: 'white-space:nowrap', text: `${applied ? `${applied} change${applied === 1 ? '' : 's'}` : ''} ▾` }));
 }
 function viewCoach() {
   const root = h('div', { class: 'stack' });
@@ -2844,43 +3699,67 @@ function viewCoach() {
       } }),
       h('span', {}, h('b', { text: 'Review every session automatically' }), h('br'), h('span', { class: 'small muted', text: 'Runs when you tap Finish. Small changes apply straight away with an Undo; exercise swaps and weight jumps over 15% wait for you. A weekly check-in also runs every Sunday night.' }))));
   }
+  if (S.active && avail) root.append(h('div', { class: 'warn', text: `You’re mid-session (${S.active.dayName}). Ask here to swap an exercise: once you apply the swap, it replaces that exercise in today’s session too.` }));
   if (avail) root.append(h('div', { class: 'row' },
     h('button', { class: 'btn', type: 'button', text: 'Review my last session', disabled: S.coachBusy || !ownSessions().length, onclick: () => askCoach('review') }),
     h('button', { class: 'btn', type: 'button', text: 'Weekly check-in', disabled: S.coachBusy, onclick: () => askCoach('weekly') })));
-  const items = S.thread.items || [];
+  const items = (S.thread.items || []).filter(it => !it.deleted);
   if (!items.length) root.append(h('p', { class: 'muted small', text: 'After a session, ask for a review. The coach suggests changes you can apply or dismiss, and asks you questions when it needs more to go on.' }));
-  for (const it of items) root.append(coachItem(it));
+  const last = items[items.length - 1];
+  S.coachOpen = S.coachOpen || {};
+  for (const it of items) {
+    const open = S.coachOpen[it.id] != null ? S.coachOpen[it.id] : (it === last || itemNeedsYou(it));
+    root.append(open ? coachItem(it, { foldable: true }) : coachFold(it));
+  }
   if (avail) {
     const ta = h('textarea', { id: 'coach-input', placeholder: 'Tell the coach something or ask a question. For example: “The leg press machine was taken, what should I use instead?”' });
     if (S.coachDraft) ta.value = S.coachDraft;
     ta.addEventListener('input', () => { S.coachDraft = ta.value; });
     const comp = h('div', { class: 'composer card' }, h('label', { class: 'q-label', for: 'coach-input', text: 'Message the coach' }), ta,
-      h('div', { class: 'row' }, h('button', { class: 'btn primary', type: 'button', text: 'Send', disabled: S.coachBusy, onclick: () => { const t = ta.value.trim(); if (!t) return; S.coachDraft = ''; askCoach('ask', t); } }),
+      h('div', { class: 'row' }, h('button', { class: 'btn primary', type: 'button', text: 'Send', disabled: S.coachBusy, onclick: () => { const t = ta.value.trim(); if (!t) return; S.coachDraft = ''; for (const x of items) if (S.coachOpen[x.id] === true && !itemNeedsYou(x)) delete S.coachOpen[x.id]; askCoach('ask', t); } }),
         S.coachBusy ? h('button', { class: 'btn', type: 'button', text: 'Stop', onclick: () => { S.ctl && S.ctl.abort(); } }) : null));
     root.append(comp);
   }
   return root;
 }
 function coachItem(it, opts = {}) {
-  const box = h('div', { class: 'stack' });
+  const box = h('div', { class: 'stack', id: opts.bare ? null : 'ci-' + it.id });
+  const foldable = opts.foldable && it.status !== 'thinking';
   if (!opts.bare) {
-    if (it.kind === 'ask' || it.kind === 'answers') box.append(h('div', { class: 'msg you' }, h('span', { class: 'who', text: it.kind === 'answers' ? 'Your answers' : 'You' }), h('div', { class: 'bubble', text: it.prompt })));
-    else box.append(h('div', { class: 'small muted', text: `${it.prompt} · ${fmtDate(it.ts)}` }));
+    const head = foldable ? h('div', { class: 'spread', style: 'align-items:center' }, h('span', { class: 'small muted', text: `${itemLabel(it)} · ${fmtDate(it.ts)}` }),
+      h('button', { class: 'link', type: 'button', text: 'Fold ▴', onclick: () => { S.coachOpen = S.coachOpen || {}; S.coachOpen[it.id] = false; renderMain(); } })) : null;
+    if (head) box.append(head);
+    if (S.coachEdit === it.id) {
+      const ta = h('textarea', { id: 'edit-' + it.id, value: it.kind === 'exnote' ? it.noteText : it.prompt, 'aria-label': 'Edit your message' });
+      setTimeout(() => ta.focus(), 30);
+      box.append(h('div', { class: 'msg you' }, ta, h('p', { class: 'small muted', text: 'Saving undoes this answer and every change it made, then asks the coach again.' }),
+        h('div', { class: 'row' }, h('button', { class: 'btn primary', type: 'button', text: 'Save and resend', disabled: S.coachBusy, onclick: () => { const t = ta.value.trim(); S.coachEdit = null; if (t) editItem(it, t); else renderMain(); } }),
+          h('button', { class: 'link', type: 'button', text: 'Cancel', onclick: () => { S.coachEdit = null; renderMain(); } }))));
+      return box;
+    }
+    if (it.kind === 'ask' || it.kind === 'answers' || it.kind === 'exnote') box.append(h('div', { class: 'msg you' }, head ? null : h('span', { class: 'who', text: itemLabel(it) }), h('div', { class: 'bubble', text: it.kind === 'exnote' ? it.noteText : it.prompt })));
+    else if (!head) box.append(h('div', { class: 'small muted', text: `${it.prompt} · ${fmtDate(it.ts)}` }));
   }
-  const card = opts.bare ? h('div', { class: 'msg' }) : h('div', { class: 'card msg' }, h('span', { class: 'who', text: 'Coach' }));
+  const card = opts.bare ? h('div', { class: 'msg' }) : h('div', { class: 'card msg' }, h('span', { class: 'who', text: it.kind === 'reminder' ? 'Sent to your phone' : 'Coach' }));
   if (it.status === 'thinking') {
     card.append(h('p', { class: 'muted', text: 'Thinking… this can take up to a minute.' }));
     card.append(h('div', {}, h('button', { class: 'btn', type: 'button', text: 'Stop', onclick: () => { S.ctl && S.ctl.abort(); } })));
     box.append(card); return box;
   }
   card.append(h('p', { class: 'reply', text: it.reply }));
-  if (it.status === 'error' && it.reply !== 'Stopped.' && coachReady()) card.append(h('div', {}, h('button', { class: 'btn', type: 'button', text: 'Try again', disabled: S.coachBusy, onclick: () => { S.thread.items = S.thread.items.filter(x => x !== it); const prev = it.prevId ? S.thread.items.find(x => x.id === it.prevId) : null; askCoach(it.kind, it.kind === 'ask' || it.kind === 'answers' ? it.prompt : '', prev); } })));
+  if (it.status === 'error' && it.reply !== 'Stopped.' && coachReady()) card.append(h('div', {}, h('button', { class: 'btn', type: 'button', text: 'Try again', disabled: S.coachBusy, onclick: () => {
+    S.thread.items = S.thread.items.filter(x => x !== it); it.deleted = true; Store.set('coach/thread', { items: [clone(it)] });
+    const prev = it.prevId ? S.thread.items.find(x => x.id === it.prevId) : null;
+    if (it.kind === 'exnote') askCoach('exnote', it.noteText, null, { exId: it.exId, entryName: it.entryName, sessionId: it.sessionId });
+    else askCoach(it.kind, it.kind === 'ask' || it.kind === 'answers' ? it.prompt : '', prev);
+  } })));
   const pending = (it.changes || []).filter(c => c.state === 'pending');
   if ((it.changes || []).length) {
-    const cl = h('div', {}, h('div', { class: 'eyebrow', text: 'Suggested changes' }));
+    const cl = h('div', {}, h('div', { class: 'eyebrow', text: it.kind === 'exnote' ? 'Changes for next time' : 'Suggested changes' }));
     for (const c of it.changes) {
+      const live = c.type === 'swap' && S.active && !it.viaNote && S.active.entries.some(e => e.exId === c.exerciseId && !e.sets.some(x => x.done));
       const right = c.state === 'pending'
-        ? h('div', { class: 'row' }, h('button', { class: 'btn primary', type: 'button', text: 'Apply', onclick: () => applyChanges(it, [c]) }), h('button', { class: 'btn', type: 'button', text: 'Dismiss', onclick: async () => { c.state = 'dismissed'; await saveThread(); renderMain(); } }))
+        ? h('div', { class: 'row' }, h('button', { class: 'btn primary', type: 'button', text: live ? 'Swap it in today' : 'Apply', onclick: () => applyChanges(it, [c]) }), h('button', { class: 'btn', type: 'button', text: 'Dismiss', onclick: async () => { c.state = 'dismissed'; await saveThread(); renderMain(); } }))
         : c.state === 'applied'
           ? h('div', { class: 'row' }, h('span', { class: 'pill go', text: c.auto ? 'Applied automatically' : 'Applied' }), c.prev ? h('button', { class: 'link', type: 'button', text: 'Undo', onclick: () => undoChange(it, c) }) : null)
           : h('span', { class: 'pill', text: c.state === 'undone' ? 'Undone' : 'Dismissed' });
@@ -2910,11 +3789,22 @@ function coachItem(it, opts = {}) {
     if (!answered) qb.append(h('button', { class: 'btn primary', type: 'button', text: 'Send answers', disabled: S.coachBusy, onclick: () => {
       for (const q of qs) { const d = draft(q); q.answer = d.answer; q.answerText = (d.text || '').trim(); }
       const lines = qs.map(q => `${q.text} → ${[q.answer, q.answerText].filter(Boolean).join('; ') || 'no answer'}`).join('\n');
-      it.answersSent = true; askCoach('answers', lines, it);
+      it.answersSent = true; askCoach('answers', lines, it, opts.bare && S.tab === 'today' ? { stay: true } : {});
     } }));
     card.append(qb);
   }
   box.append(card);
+  if (foldable && !opts.noActions && it.status !== 'thinking') {
+    const canEdit = (it.kind === 'ask' || it.kind === 'exnote') && !S.coachBusy;
+    if (S.coachDel === it.id) {
+      const n = [it, ...followUps(it)].reduce((k, x) => k + (x.changes || []).filter(c => c.state === 'applied').length, 0);
+      box.append(h('div', { class: 'warn' }, n ? `Delete this message? The ${n} change${n === 1 ? '' : 's'} it made will be undone.` : 'Delete this message?',
+        h('div', { class: 'row', style: 'margin-top:8px' }, h('button', { class: 'btn danger', type: 'button', text: 'Delete', onclick: () => { S.coachDel = null; deleteItem(it); } }),
+          h('button', { class: 'btn', type: 'button', text: 'Keep it', onclick: () => { S.coachDel = null; renderMain(); } }))));
+    } else box.append(h('div', { class: 'row msg-acts' },
+      canEdit ? h('button', { class: 'link', type: 'button', text: 'Edit', onclick: () => { S.coachEdit = it.id; renderMain(); } }) : null,
+      h('button', { class: 'link danger-link', type: 'button', text: 'Delete', onclick: () => { S.coachDel = it.id; renderMain(); } })));
+  }
   return box;
 }
 
@@ -2997,6 +3887,16 @@ function viewSettings() {
       finally { Settings.apiKey = keep.apiKey; Settings.model = keep.model; btn.disabled = false; }
     } })), keyMsg);
   root.append(keyCard);
+
+  // pre-workout notification
+  const st2 = S.reminders.standing || { on: true };
+  const remCard = h('div', { class: 'card', id: 'remind-settings' }, h('h3', { text: 'Pre-workout notification' }),
+    h('label', { class: 'check', for: 'standing-remind' }, h('input', { type: 'checkbox', id: 'standing-remind', checked: st2.on !== false, onchange: ev => {
+      S.reminders.standing = { ...(S.reminders.standing || {}), on: ev.target.checked }; saveReminders();
+      toast(ev.target.checked ? 'Evening reminder on.' : 'Evening reminder off. Cues you queue still get sent.'); } }),
+      h('span', {}, h('b', { text: 'Evening reminder on days I haven’t trained' }), h('br'), h('span', { class: 'small muted', text: 'At about 6 pm, if nothing is logged that day: eat a carb-and-protein snack now, and which session is next.' }))),
+    h('p', { class: 'small muted', text: 'It comes as a Claude notification from a scheduled task that reads your sheet every evening. Cues you queue in a session’s finish notes go out with it on the day you pick.' }));
+  root.append(remCard);
 
   if (!isStandalone()) root.append(installHint());
   root.append(h('p', { class: 'small muted', text: 'Everything you log is saved on this phone first and uploads to the sheet when you’re online. The Sunday check-in reads the sheet.' }));
