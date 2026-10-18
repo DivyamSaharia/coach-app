@@ -400,6 +400,15 @@ details.cues[open] summary{margin-bottom:6px}
 .fold-open{color:var(--accent);font-weight:600;flex:none}
 .coach-fold{background:var(--surface);box-shadow:var(--shadow)}
 .clamp{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.clamp3{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.conv{display:flex;flex-direction:column;gap:10px;min-width:0}
+.conv.waiting{border-left:3px solid var(--hold);padding-left:10px}
+.conv-head{display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:32px}
+.conv-head .link,.conv-head .pill{white-space:nowrap}
+.conv-list{display:flex;flex-direction:column;gap:8px;margin-left:6px;padding-left:10px;border-left:2px solid var(--line)}
+.coach-fold.day-fold{background:var(--raised);box-shadow:none}
+.tab{position:relative}
+.tab.waiting::after{content:"";position:absolute;top:5px;left:calc(50% + 8px);width:9px;height:9px;border-radius:50%;background:var(--hold);box-shadow:0 0 0 2px var(--surface)}
 .msg-acts{gap:18px}
 details.remind{border:1px solid var(--line);border-radius:var(--r-sm)}
 details.remind summary{cursor:pointer;padding:12px 14px;font:600 1rem var(--display);list-style:none;display:flex;justify-content:space-between;align-items:center;gap:10px}
@@ -2127,6 +2136,9 @@ function renderTop() {
   const p = S.program;
   const showRank = p && S.tab !== 'rank' && !(S.tab === 'today' && !S.active);
   if (!showRank) brand.textContent = 'Size & Rehab Coach';
+  // A dot on the Coach tab while something there is waiting for him (and hasn't hit its deadline).
+  const tc = $('#tab-coach');
+  if (tc) { if (p) expireStale(); tc.classList.toggle('waiting', !!(p && S.thread && (S.thread.items || []).some(x => !x.deleted && x.status !== 'thinking' && itemNeedsYou(x)))); }
   if (!p) return;
   const g = getGame();
   if (showRank) {
@@ -3937,7 +3949,15 @@ async function askCoach(kind, text, prev, opts = {}) {
       input = [{ role: 'user', content: first }, { role: 'assistant', content: prior },
         { role: 'user', content: `His answers:\n${text}\n\nUpdate your reply and changes in light of these answers. Same JSON format. Ask further questions only if essential.` }];
     } else input = basePrompt(kind, text, opts);
-    const res = await Coach.json(input, { signal: S.ctl.signal });
+    let res;
+    try { res = await Coach.json(input, { signal: S.ctl.signal }); }
+    catch (e) {
+      // A reply that isn't valid JSON gets one automatic second try before he sees an error.
+      if (!e || e.code !== 'invalid_json') throw e;
+      const msgs = typeof input === 'string' ? [{ role: 'user', content: input }] : input;
+      res = await Coach.json([...msgs, { role: 'assistant', content: String(e.text || '').trim().slice(0, 6000) || '(empty reply)' },
+        { role: 'user', content: 'The app couldn’t read that reply. Send the same answer again as one valid JSON object in the required format, with no other text.' }], { signal: S.ctl.signal });
+    }
     const r = res && typeof res === 'object' ? res : {};
     item.reply = String(r.reply || '').slice(0, 2500) || 'No comments this time.';
     item.changes = (Array.isArray(r.changes) ? r.changes : []).slice(0, 6).map(c => validateChange(c)).filter(Boolean);
@@ -3967,62 +3987,167 @@ function itemLabel(it) {
   return it.kind === 'ask' ? 'You' : it.kind === 'answers' ? 'Your answers' : it.kind === 'exnote' ? `Exercise note · ${it.entryName || ''}` : it.kind === 'review' ? 'Session review'
     : it.kind === 'weekly' ? 'Weekly check-in' : it.kind === 'reminder' ? 'Pre-workout reminder' : 'Coach';
 }
-function itemNeedsYou(it) {
-  return it.status === 'thinking' || it.status === 'error' || (it.changes || []).some(c => c.state === 'pending') || ((it.questions || []).length > 0 && !it.answersSent);
+/* Deadlines keep the Coach tab short. Questions he hasn't answered close after 24 hours. Changes waiting for a tap
+   expire after 3 days, or as soon as he trains that exercise again, since the suggestion is out of date by then.
+   A message that didn't go through stops asking for attention after 24 hours. */
+const Q_MS = 24 * 3600e3, CHANGE_MS = 3 * 86400e3, ERR_MS = 24 * 3600e3;
+const tsMs = s => { const t = Date.parse(String(s || '')); return Number.isFinite(t) ? t : 0; };
+function qOpen(it) { return (it.questions || []).length > 0 && !it.answersSent && !it.qClosed; }
+function trainedSince(exId, t) {
+  return ownSessions().some(s => tsMs(s.finishedAt || s.date) > t && (s.entries || []).some(e => e.exId === exId && !e.skipped && (e.sets || []).some(x => x.done)));
 }
+function expireStale() {
+  if (!S.thread || !S.program) return false;
+  const now = Date.now(); let changed = false;
+  for (const it of S.thread.items || []) {
+    const t = tsMs(it.ts); if (!t || it.deleted) continue;
+    if (qOpen(it) && now > t + Q_MS) { it.qClosed = 'expired'; changed = true; }
+    for (const c of it.changes || []) {
+      if (c.state !== 'pending') continue;
+      const trained = trainedSince(c.exerciseId, t);
+      if (trained || now > t + CHANGE_MS) { c.state = 'expired'; c.expiredWhy = trained ? 'trained' : 'time'; changed = true; }
+    }
+    if (it.status === 'thinking' && !S.coachBusy && now > t + 3 * 60e3) { it.status = 'error'; it.reply = 'This one didn’t finish. Tap Try again.'; changed = true; }
+  }
+  if (changed) saveThread();
+  return changed;
+}
+function itemNeedsYou(it) {
+  if (it.status === 'thinking') return true;
+  if (it.status === 'error') return it.reply !== 'Stopped.' && Date.now() < tsMs(it.ts) + ERR_MS;
+  return (it.changes || []).some(c => c.state === 'pending') || qOpen(it);
+}
+function leftText(ms) {
+  const m = Math.max(1, Math.round(ms / 60000));
+  if (m < 60) return `${m} min`;
+  const hr = Math.round(m / 60); if (hr < 36) return `${hr} h`;
+  const d = Math.round(hr / 24); return `${d} day${d === 1 ? '' : 's'}`;
+}
+/* A question, the coach's reply, his answers and the follow-up reply are one conversation. */
+function conversations(items) {
+  const byId = new Map(items.map(x => [x.id, x])); const groups = new Map();
+  for (const it of items) {
+    let r = it; const seen = new Set([it.id]);
+    while (r.prevId && byId.has(r.prevId) && !seen.has(r.prevId)) { r = byId.get(r.prevId); seen.add(r.id); }
+    if (!groups.has(r.id)) groups.set(r.id, { id: r.id, root: r, items: [] });
+    groups.get(r.id).items.push(it);
+  }
+  return [...groups.values()].map(c => {
+    c.items.sort((a, b) => tsMs(a.ts) - tsMs(b.ts));
+    c.ts = c.root.ts; c.day = String(c.root.ts || '').slice(0, 10);
+    c.needs = c.items.some(itemNeedsYou);
+    c.applied = c.items.reduce((k, x) => k + (x.changes || []).filter(ch => ch.state === 'applied').length, 0);
+    return c;
+  }).sort((a, b) => tsMs(a.ts) - tsMs(b.ts));
+}
+/* The most urgent thing a conversation is waiting on, and how long is left. */
+function convDue(c) {
+  const now = Date.now();
+  const q = c.items.find(qOpen); if (q) return { text: `Answer within ${leftText(tsMs(q.ts) + Q_MS - now)}`, cls: 'hold' };
+  const p = c.items.find(x => (x.changes || []).some(ch => ch.state === 'pending'));
+  if (p) return { text: `Decide within ${leftText(tsMs(p.ts) + CHANGE_MS - now)}`, cls: 'hold' };
+  const last = c.items[c.items.length - 1];
+  if (last.status === 'error' && last.reply !== 'Stopped.') return { text: 'Didn’t go through', cls: 'stop' };
+  return null;
+}
+function convWhen(c, short) { return short ? fmtTime(c.ts) : fmtDate(c.day); }
+function convText(c) { const r = c.root; return String((r.kind === 'ask' || r.kind === 'answers' ? r.prompt : r.kind === 'exnote' ? r.noteText : r.reply) || '').replace(/\s+/g, ' '); }
+function setConvOpen(id, v) { S.coachOpen = S.coachOpen || {}; S.coachOpen[id] = v; renderMain(); }
 /* A finished conversation folds into one line; tapping it opens it again with Edit and Delete. */
-function coachFold(it) {
-  const applied = (it.changes || []).filter(c => c.state === 'applied').length;
-  const what = it.kind === 'ask' || it.kind === 'answers' ? it.prompt : it.kind === 'exnote' ? it.noteText : it.reply;
-  return h('button', { class: 'coach-fold', type: 'button', 'aria-expanded': 'false', onclick: () => { S.coachOpen = S.coachOpen || {}; S.coachOpen[it.id] = true; renderMain(); } },
-    h('span', { class: 'fold-main' }, h('span', { class: 'small muted', text: `${itemLabel(it)} · ${fmtDate(it.ts)}` }), h('span', { class: 'clamp', text: String(what || '').replace(/\s+/g, ' ') })),
-    h('span', { class: 'small muted', style: 'white-space:nowrap', text: `${applied ? `${applied} change${applied === 1 ? '' : 's'}` : ''} ▾` }));
+function convFold(c, short) {
+  const due = c.needs ? convDue(c) : null;
+  const right = due ? due.text : c.applied ? `${c.applied} change${c.applied === 1 ? '' : 's'}` : '';
+  return h('button', { class: 'coach-fold', type: 'button', 'aria-expanded': 'false', onclick: () => setConvOpen(c.id, true) },
+    h('span', { class: 'fold-main' }, h('span', { class: 'small muted', text: `${itemLabel(c.root)} · ${convWhen(c, short)}` }), h('span', { class: 'clamp', text: convText(c) })),
+    h('span', { class: 'small muted', style: 'white-space:nowrap', text: `${right} ▾` }));
+}
+function convView(c, short) {
+  const due = c.needs ? convDue(c) : null;
+  const busy = c.items.some(x => x.status === 'thinking');
+  const box = h('div', { class: 'conv' + (c.needs ? ' waiting' : ''), id: 'cv-' + c.id });
+  box.append(h('div', { class: 'conv-head' },
+    h('span', { class: 'small muted', text: `${itemLabel(c.root)} · ${convWhen(c, short)}` }),
+    h('span', { class: 'row', style: 'gap:12px;flex-wrap:nowrap' }, due ? h('span', { class: 'pill ' + due.cls, text: due.text }) : null,
+      busy ? null : h('button', { class: 'link', type: 'button', text: 'Fold ▴', onclick: () => setConvOpen(c.id, false) }))));
+  if (S.coachEdit === c.root.id) { box.append(coachItem(c.root, { inConv: true, first: true })); return box; }
+  // While it's waiting on him, only the parts that need him are shown; the rest is one tap away.
+  S.convFull = S.convFull || {};
+  const compact = c.needs && !busy && !S.convFull[c.id];
+  c.items.forEach((it, i) => box.append(coachItem(it, { inConv: true, first: i === 0, compact, answeredBelow: i < c.items.length - 1 })));
+  if (busy) return box;
+  const r = c.root;
+  const canEdit = (r.kind === 'ask' || r.kind === 'exnote') && !S.coachBusy;
+  if (S.coachDel === r.id) {
+    const n = c.applied;
+    box.append(h('div', { class: 'warn' }, n ? `Delete this conversation? The ${n} change${n === 1 ? '' : 's'} it made will be undone.` : 'Delete this conversation?',
+      h('div', { class: 'row', style: 'margin-top:8px' }, h('button', { class: 'btn danger', type: 'button', text: 'Delete', onclick: () => { S.coachDel = null; deleteItem(r); } }),
+        h('button', { class: 'btn', type: 'button', text: 'Keep it', onclick: () => { S.coachDel = null; renderMain(); } }))));
+  } else box.append(h('div', { class: 'row msg-acts' },
+    c.needs ? h('button', { class: 'link', type: 'button', text: compact ? 'Show everything' : 'Show less', onclick: () => { S.convFull[c.id] = compact; renderMain(); } }) : null,
+    canEdit ? h('button', { class: 'link', type: 'button', text: 'Edit', onclick: () => { S.coachEdit = r.id; renderMain(); } }) : null,
+    h('button', { class: 'link danger-link', type: 'button', text: 'Delete', onclick: () => { S.coachDel = r.id; renderMain(); } })));
+  return box;
 }
 function viewCoach() {
+  expireStale();
   const root = h('div', { class: 'stack' });
   root.append(h('div', {}, h('div', { class: 'eyebrow', text: 'Claude reads your program and the last three weeks' }), h('h2', { text: 'Coach' })));
   const avail = coachReady();
   if (!avail) root.append(h('div', { class: 'card' }, h('p', { text: 'Add your Claude API key in Settings to turn the coach on. Logging, automatic weight changes and the Sunday check-in work without it.' }),
     h('div', {}, h('button', { class: 'btn primary', type: 'button', text: 'Open Settings', onclick: () => setTab('settings') }))));
-  if (avail) {
-    const on = S.program.settings?.autoReview !== false;
-    root.append(h('label', { class: 'check card', for: 'auto-review', style: 'flex-direction:row' },
-      h('input', { type: 'checkbox', id: 'auto-review', checked: on, onchange: async ev => {
-        S.program.settings = { ...(S.program.settings || {}), autoReview: ev.target.checked };
-        try { await saveProgram(); toast(ev.target.checked ? 'The coach will review each session when you finish.' : 'Automatic reviews are off.'); } catch (e) { toast('Couldn’t save that setting.'); }
-      } }),
-      h('span', {}, h('b', { text: 'Review every session automatically' }), h('br'), h('span', { class: 'small muted', text: 'Runs when you tap Finish. Small changes apply straight away with an Undo; exercise swaps and weight jumps over 15% wait for you. A weekly check-in also runs every Sunday night.' }))));
-  }
   if (S.active && avail) root.append(h('div', { class: 'warn', text: `You’re mid-session (${S.active.dayName}). Ask here to swap an exercise: once you apply the swap, it replaces that exercise in today’s session too.` }));
   if (avail) root.append(h('div', { class: 'row' },
     h('button', { class: 'btn', type: 'button', text: 'Review my last session', disabled: S.coachBusy || !ownSessions().length, onclick: () => askCoach('review') }),
     h('button', { class: 'btn', type: 'button', text: 'Weekly check-in', disabled: S.coachBusy, onclick: () => askCoach('weekly') })));
   const items = (S.thread.items || []).filter(it => !it.deleted);
   if (!items.length) root.append(h('p', { class: 'muted small', text: 'After a session, ask for a review. The coach suggests changes you can apply or dismiss, and asks you questions when it needs more to go on.' }));
-  const last = items[items.length - 1];
-  S.coachOpen = S.coachOpen || {};
-  for (const it of items) {
-    const open = S.coachOpen[it.id] != null ? S.coachOpen[it.id] : (it === last || itemNeedsYou(it));
-    root.append(open ? coachItem(it, { foldable: true }) : coachFold(it));
+  const convs = conversations(items); const today = todayStr();
+  S.coachOpen = S.coachOpen || {}; S.coachDays = S.coachDays || {};
+  const waiting = convs.filter(c => c.needs);
+  const todays = convs.filter(c => !c.needs && c.day === today);
+  const earlier = convs.filter(c => !c.needs && c.day !== today);
+  const newest = convs[convs.length - 1];
+  // Earlier days: one line per day until he opens it.
+  if (earlier.length) {
+    const wrap = h('div', { class: 'stack' }, h('div', { class: 'eyebrow', text: 'Earlier' }));
+    for (const d of [...new Set(earlier.map(c => c.day))]) {
+      const cs = earlier.filter(c => c.day === d); const open = !!S.coachDays[d];
+      const applied = cs.reduce((k, c) => k + c.applied, 0);
+      wrap.append(h('button', { class: 'coach-fold day-fold', type: 'button', 'aria-expanded': String(open), onclick: () => { S.coachDays[d] = !open; renderMain(); } },
+        h('span', { class: 'fold-main' }, h('b', { text: fmtDate(d) }), h('span', { class: 'small muted', text: `${cs.length} conversation${cs.length === 1 ? '' : 's'}${applied ? ` · ${applied} change${applied === 1 ? '' : 's'} made` : ''}` })),
+        h('span', { class: 'small muted', text: open ? '▴' : '▾' })));
+      if (open) wrap.append(h('div', { class: 'conv-list' }, cs.map(c => (S.coachOpen[c.id] === true ? convView(c, true) : convFold(c, true)))));
+    }
+    root.append(wrap);
+  }
+  // Today: folded, except the newest conversation, so a reply he just got stays in view.
+  if (todays.length) {
+    const wrap = h('div', { class: 'stack' }, h('div', { class: 'eyebrow', text: 'Today' }));
+    for (const c of todays) { const open = S.coachOpen[c.id] != null ? S.coachOpen[c.id] : c === newest; wrap.append(open ? convView(c, true) : convFold(c, true)); }
+    root.append(wrap);
+  }
+  // Anything waiting on him sits next to the message box, with its deadline.
+  if (waiting.length) {
+    const wrap = h('div', { class: 'stack' }, h('div', { class: 'eyebrow', text: 'Waiting on you' }));
+    for (const c of waiting) { const open = S.coachOpen[c.id] != null ? S.coachOpen[c.id] : true; wrap.append(open ? convView(c, c.day === today) : convFold(c, c.day === today)); }
+    root.append(wrap);
   }
   if (avail) {
     const ta = h('textarea', { id: 'coach-input', placeholder: 'Tell the coach something or ask a question. For example: “The leg press machine was taken, what should I use instead?”' });
     if (S.coachDraft) ta.value = S.coachDraft;
     ta.addEventListener('input', () => { S.coachDraft = ta.value; });
     const comp = h('div', { class: 'composer card' }, h('label', { class: 'q-label', for: 'coach-input', text: 'Message the coach' }), ta,
-      h('div', { class: 'row' }, h('button', { class: 'btn primary', type: 'button', text: 'Send', disabled: S.coachBusy, onclick: () => { const t = ta.value.trim(); if (!t) return; S.coachDraft = ''; for (const x of items) if (S.coachOpen[x.id] === true && !itemNeedsYou(x)) delete S.coachOpen[x.id]; askCoach('ask', t); } }),
+      h('div', { class: 'row' }, h('button', { class: 'btn primary', type: 'button', text: 'Send', disabled: S.coachBusy, onclick: () => { const t = ta.value.trim(); if (!t) return; S.coachDraft = ''; for (const c of convs) if (S.coachOpen[c.id] === true && !c.needs) delete S.coachOpen[c.id]; askCoach('ask', t); } }),
         S.coachBusy ? h('button', { class: 'btn', type: 'button', text: 'Stop', onclick: () => { S.ctl && S.ctl.abort(); } }) : null));
     root.append(comp);
   }
   return root;
 }
+/* One message and the coach's answer. In the Coach tab it sits inside a conversation (opts.inConv), which carries
+   the label, Fold, Edit and Delete; on the Today tab it's shown bare. */
 function coachItem(it, opts = {}) {
   const box = h('div', { class: 'stack', id: opts.bare ? null : 'ci-' + it.id });
-  const foldable = opts.foldable && it.status !== 'thinking';
   if (!opts.bare) {
-    const head = foldable ? h('div', { class: 'spread', style: 'align-items:center' }, h('span', { class: 'small muted', text: `${itemLabel(it)} · ${fmtDate(it.ts)}` }),
-      h('button', { class: 'link', type: 'button', text: 'Fold ▴', onclick: () => { S.coachOpen = S.coachOpen || {}; S.coachOpen[it.id] = false; renderMain(); } })) : null;
-    if (head) box.append(head);
     if (S.coachEdit === it.id) {
       const ta = h('textarea', { id: 'edit-' + it.id, value: it.kind === 'exnote' ? it.noteText : it.prompt, 'aria-label': 'Edit your message' });
       setTimeout(() => ta.focus(), 30);
@@ -4031,8 +4156,10 @@ function coachItem(it, opts = {}) {
           h('button', { class: 'link', type: 'button', text: 'Cancel', onclick: () => { S.coachEdit = null; renderMain(); } }))));
       return box;
     }
-    if (it.kind === 'ask' || it.kind === 'answers' || it.kind === 'exnote') box.append(h('div', { class: 'msg you' }, head ? null : h('span', { class: 'who', text: itemLabel(it) }), h('div', { class: 'bubble', text: it.kind === 'exnote' ? it.noteText : it.prompt })));
-    else if (!head) box.append(h('div', { class: 'small muted', text: `${it.prompt} · ${fmtDate(it.ts)}` }));
+    // The conversation's own heading already names its first message.
+    const named = opts.inConv && opts.first;
+    if (it.kind === 'ask' || it.kind === 'answers' || it.kind === 'exnote') box.append(h('div', { class: 'msg you' }, named ? null : h('span', { class: 'who', text: itemLabel(it) }), h('div', { class: 'bubble' + (opts.compact ? ' clamp3' : ''), text: it.kind === 'exnote' ? it.noteText : it.prompt })));
+    else if (!opts.inConv) box.append(h('div', { class: 'small muted', text: `${it.prompt} · ${fmtDate(it.ts)}` }));
   }
   const card = opts.bare ? h('div', { class: 'msg' }) : h('div', { class: 'card msg' }, h('span', { class: 'who', text: it.kind === 'reminder' ? 'Sent to your phone' : 'Coach' }));
   if (it.status === 'thinking') {
@@ -4040,7 +4167,7 @@ function coachItem(it, opts = {}) {
     card.append(h('div', {}, h('button', { class: 'btn', type: 'button', text: 'Stop', onclick: () => { S.ctl && S.ctl.abort(); } })));
     box.append(card); return box;
   }
-  card.append(h('p', { class: 'reply', text: it.reply }));
+  card.append(h('p', { class: 'reply' + (opts.compact ? ' clamp3' : ''), text: it.reply }));
   if (it.status === 'error' && it.reply !== 'Stopped.' && coachReady()) card.append(h('div', {}, h('button', { class: 'btn', type: 'button', text: 'Try again', disabled: S.coachBusy, onclick: () => {
     S.thread.items = S.thread.items.filter(x => x !== it); it.deleted = true; Store.set('coach/thread', { items: [clone(it)] });
     const prev = it.prevId ? S.thread.items.find(x => x.id === it.prevId) : null;
@@ -4048,57 +4175,57 @@ function coachItem(it, opts = {}) {
     else askCoach(it.kind, it.kind === 'ask' || it.kind === 'answers' ? it.prompt : '', prev);
   } })));
   const pending = (it.changes || []).filter(c => c.state === 'pending');
-  if ((it.changes || []).length) {
+  const shown = opts.compact ? pending : (it.changes || []);
+  if (shown.length) {
     const cl = h('div', {}, h('div', { class: 'eyebrow', text: it.kind === 'exnote' ? 'Changes for next time' : 'Suggested changes' }));
-    for (const c of it.changes) {
+    for (const c of shown) {
       const live = c.type === 'swap' && S.active && !it.viaNote && S.active.entries.some(e => e.exId === c.exerciseId && !e.sets.some(x => x.done));
       const right = c.state === 'pending'
         ? h('div', { class: 'row' }, h('button', { class: 'btn primary', type: 'button', text: live ? 'Swap it in today' : 'Apply', onclick: () => applyChanges(it, [c]) }), h('button', { class: 'btn', type: 'button', text: 'Dismiss', onclick: async () => { c.state = 'dismissed'; await saveThread(); renderMain(); } }))
         : c.state === 'applied'
           ? h('div', { class: 'row' }, h('span', { class: 'pill go', text: c.auto ? 'Applied automatically' : 'Applied' }), c.prev ? h('button', { class: 'link', type: 'button', text: 'Undo', onclick: () => undoChange(it, c) }) : null)
-          : h('span', { class: 'pill', text: c.state === 'undone' ? 'Undone' : 'Dismissed' });
+          : c.state === 'expired'
+            ? h('div', { class: 'row' }, h('span', { class: 'pill', text: c.expiredWhy === 'trained' ? 'Expired: you’ve trained it since' : 'Expired, not applied' }),
+              c.expiredWhy !== 'trained' ? h('button', { class: 'link', type: 'button', text: 'Apply anyway', onclick: () => { c.state = 'pending'; delete c.expiredWhy; applyChanges(it, [c]); } }) : null)
+            : h('span', { class: 'pill', text: c.state === 'undone' ? 'Undone' : 'Dismissed' });
       cl.append(h('div', { class: 'change' }, h('b', { text: describeChange(c) }), c.reason ? h('div', { class: 'why', text: c.reason }) : null, h('div', {}, right)));
     }
     if (pending.length > 1) cl.append(h('button', { class: 'btn block', type: 'button', text: `Apply all ${pending.length}`, onclick: () => applyChanges(it, pending) }));
     card.append(cl);
   }
   const qs = it.questions || [];
-  if (qs.length) {
+  const answered = it.answersSent; const closed = !answered && it.qClosed;
+  // Answered questions show as one line each, or not at all when his answers follow in the same conversation.
+  if (qs.length && answered && !opts.answeredBelow && !opts.compact) card.append(h('div', { class: 'stack' }, h('div', { class: 'eyebrow', text: 'You answered' }),
+    qs.map(q => h('div', { class: 'small' }, h('span', { class: 'muted', text: `${q.text} ` }), h('span', { text: `→ ${[q.answer, q.answerText].filter(Boolean).join('; ') || 'no answer'}` })))));
+  if (qs.length && !answered && !(opts.compact && closed)) {
     const qb = h('div', { class: 'stack' }, h('div', { class: 'eyebrow', text: 'The coach needs to know' }));
-    const answered = it.answersSent;
     S.qd = S.qd || {};
     const draft = q => (S.qd[`${it.id}:${q.id}`] = S.qd[`${it.id}:${q.id}`] || { answer: q.answer || null, text: q.answerText || '' });
     for (const q of qs) {
-      const d = answered ? { answer: q.answer, text: q.answerText } : draft(q);
-      const g = h('div', { class: 'q' }, h('div', { text: q.text }));
-      if (q.options.length) {
+      const d = draft(q);
+      const g = h('div', { class: 'q' }, h('div', { class: closed ? 'muted' : null, text: q.text }));
+      if (q.options.length && !closed) {
         const chips = h('div', { class: 'chips' });
-        for (const o of q.options) chips.append(h('button', { class: 'chip', type: 'button', disabled: answered, 'aria-pressed': String(d.answer === o), text: o, onclick: () => { d.answer = d.answer === o ? null : o; renderMain(); } }));
+        for (const o of q.options) chips.append(h('button', { class: 'chip', type: 'button', 'aria-pressed': String(d.answer === o), text: o, onclick: () => { d.answer = d.answer === o ? null : o; renderMain(); } }));
         g.append(chips);
       }
-      if (q.allowText && !answered) { const inp = h('input', { type: 'text', id: `qa-${it.id}-${q.id}`, placeholder: 'Or answer in your own words', value: d.text || '' }); inp.addEventListener('input', () => { d.text = inp.value; }); g.append(inp); }
-      else if (answered && q.answerText) g.append(h('div', { class: 'small', text: `“${q.answerText}”` }));
+      if (q.allowText && !closed) { const inp = h('input', { type: 'text', id: `qa-${it.id}-${q.id}`, placeholder: 'Or answer in your own words', value: d.text || '' }); inp.addEventListener('input', () => { d.text = inp.value; }); g.append(inp); }
       qb.append(g);
     }
-    if (!answered) qb.append(h('button', { class: 'btn primary', type: 'button', text: 'Send answers', disabled: S.coachBusy, onclick: () => {
+    if (closed) qb.append(h('p', { class: 'small muted', text: closed === 'skipped' ? 'Skipped. The answer above stands.' : 'Not answered within 24 hours, so these closed. The answer above stands.' }));
+    else qb.append(h('div', { class: 'row' }, h('button', { class: 'btn primary', type: 'button', text: 'Send answers', disabled: S.coachBusy, onclick: () => {
       for (const q of qs) { const d = draft(q); q.answer = d.answer; q.answerText = (d.text || '').trim(); }
       const lines = qs.map(q => `${q.text} → ${[q.answer, q.answerText].filter(Boolean).join('; ') || 'no answer'}`).join('\n');
       it.answersSent = true; askCoach('answers', lines, it, opts.bare && S.tab === 'today' ? { stay: true } : {});
-    } }));
+    } }), h('button', { class: 'link', type: 'button', text: 'Skip', disabled: S.coachBusy, onclick: async () => {
+      it.qClosed = 'skipped'; await saveThread();
+      if (S.active && S.tab === 'today') { const rid = rootOf(it).id; const e = S.active.entries.find(x => (x.notes || []).some(n => n.batch === rid)); if (e) { rerenderCard(entryIdx(e)); return; } }
+      renderMain();
+    } })));
     card.append(qb);
   }
   box.append(card);
-  if (foldable && !opts.noActions && it.status !== 'thinking') {
-    const canEdit = (it.kind === 'ask' || it.kind === 'exnote') && !S.coachBusy;
-    if (S.coachDel === it.id) {
-      const n = [it, ...followUps(it)].reduce((k, x) => k + (x.changes || []).filter(c => c.state === 'applied').length, 0);
-      box.append(h('div', { class: 'warn' }, n ? `Delete this message? The ${n} change${n === 1 ? '' : 's'} it made will be undone.` : 'Delete this message?',
-        h('div', { class: 'row', style: 'margin-top:8px' }, h('button', { class: 'btn danger', type: 'button', text: 'Delete', onclick: () => { S.coachDel = null; deleteItem(it); } }),
-          h('button', { class: 'btn', type: 'button', text: 'Keep it', onclick: () => { S.coachDel = null; renderMain(); } }))));
-    } else box.append(h('div', { class: 'row msg-acts' },
-      canEdit ? h('button', { class: 'link', type: 'button', text: 'Edit', onclick: () => { S.coachEdit = it.id; renderMain(); } }) : null,
-      h('button', { class: 'link danger-link', type: 'button', text: 'Delete', onclick: () => { S.coachDel = it.id; renderMain(); } })));
-  }
   return box;
 }
 
@@ -4180,6 +4307,12 @@ function viewSettings() {
       catch (e) { keyMsg.textContent = errorCopy(e); }
       finally { Settings.apiKey = keep.apiKey; Settings.model = keep.model; btn.disabled = false; }
     } })), keyMsg);
+  if (S.program) keyCard.append(h('label', { class: 'check', for: 'auto-review' },
+    h('input', { type: 'checkbox', id: 'auto-review', checked: S.program.settings?.autoReview !== false, onchange: async ev => {
+      S.program.settings = { ...(S.program.settings || {}), autoReview: ev.target.checked };
+      try { await saveProgram(); toast(ev.target.checked ? 'The coach will review each session when you finish.' : 'Automatic reviews are off.'); } catch (e) { toast('Couldn’t save that setting.'); }
+    } }),
+    h('span', {}, h('b', { text: 'Review every session automatically' }), h('br'), h('span', { class: 'small muted', text: 'Runs when you tap Finish. Small changes apply straight away with an Undo; exercise swaps and weight jumps over 15% wait for you. A weekly check-in also runs every Sunday night.' }))));
   root.append(keyCard);
 
   // pre-workout notification
