@@ -19,3 +19,11 @@ jobs:
           workingDirectory: push
           wranglerVersion: '4.160.1'
           command: deploy
+      - name: Check the live Worker
+        run: |
+          sleep 5
+          curl -fsS https://coach-rest.dsaharia00.workers.dev/key | tee key.json
+          grep -q '"key":"B' key.json
+          code=$(curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/json' -d '{"sub":{"endpoint":"https://evil.example.com/x","keys":{"p256dh":"a","auth":"b"}},"at":0}' https://coach-rest.dsaharia00.workers.dev/schedule)
+          echo "bad subscription -> $code"; test "$code" = 400
+          curl -fsS -o /dev/null -D - -X OPTIONS -H 'Origin: https://divyamsaharia.github.io' https://coach-rest.dsaharia00.workers.dev/schedule | grep -i 'access-control-allow-origin: https://divyamsaharia.github.io'

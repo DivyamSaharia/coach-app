@@ -3906,7 +3906,7 @@ function restNotify() {
    itself then. Instead, each rest's end time goes to a small Cloudflare Worker (push/ in the repo), whose alarm sends a Web Push
    at that moment. Only the phone's push address and the alert text are sent: no training data. No signal when a set is ticked?
    That rest falls back to the in-app chime and notification. */
-const PUSH_URL = '';
+const PUSH_URL = 'https://coach-rest.dsaharia00.workers.dev';
 const Push = {
   armed: false, seq: 0,
   can() { return !!PUSH_URL && Settings.restNotify !== false && 'serviceWorker' in navigator && 'PushManager' in window && typeof Notification !== 'undefined' && Notification.permission === 'granted'; },
