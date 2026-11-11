@@ -187,7 +187,9 @@ textarea{min-height:80px;resize:vertical}
 .sets{display:grid;grid-template-columns:2.8rem minmax(0,1fr) minmax(0,1fr) 3.6rem;gap:8px;align-items:center}
 .sets .hd{font:600 .78rem/1 var(--body);color:var(--muted);text-align:center}
 .setrow{display:contents}
-.set-tag{appearance:none;height:48px;padding:0;border-radius:var(--r-sm);border:1px solid var(--line);background:var(--raised);color:var(--ink);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font:700 1.08rem/1 var(--display)}
+.set-tag{position:relative;box-sizing:border-box;height:48px;padding:0;border-radius:var(--r-sm);border:1px solid var(--line);background:var(--raised);color:var(--ink);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font:700 1.08rem/1 var(--display)}
+.set-tag-pick{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px;border:0;margin:0;padding:0;min-height:0;appearance:none}
+.set-tag:focus-within{outline:2px solid var(--accent);outline-offset:1px}
 .set-tag small{font:600 .68rem/1 var(--body);color:var(--muted)}
 .set-tag[data-t="W"]{color:var(--muted);border-style:dashed}
 .set-tag[data-t="F"]{color:var(--accent);border-color:var(--accent)}
@@ -2880,8 +2882,9 @@ function cuesBox(ex) {
   return d;
 }
 /* ---------- set types and the next-set prompt ----------
-   Every set carries t: W warm-up, N normal, F to failure, D drop set. The first column of the grid is a tap-to-cycle tag. */
-const T_NEXT = { N: 'F', F: 'D', D: 'W', W: 'N' };
+   Every set carries t: W warm-up, N normal, F to failure, D drop set. The first column of the grid is the tag; tapping it opens a picker. */
+const T_ORDER = ['W', 'N', 'F', 'D'];
+const T_LABEL = { W: 'Warm-up', N: 'Normal', F: 'To failure', D: 'Drop set' };
 const T_NAME = { W: 'warm-up', N: 'normal', F: 'to failure', D: 'drop set' };
 const devOpen = new WeakMap(); // entry -> the prompt card open on it (one per exercise; not saved)
 function wShow(ex, kg) { return `${ex.unit === 'kg added' ? '+' : ''}${fmtD(ex, kg)} ${wUnit(ex)}`; }
@@ -2972,11 +2975,15 @@ function setGrid(e, idx, ex) {
     const t = setT(s); const isW = t === 'W'; if (!isW) ord++;
     const n = ord; const label = isW ? 'Warm-up set' : `Set ${n}`;
     const rowEl = h('div', { class: 'setrow' + (s.done ? ' done' : '') + (isPR(s) ? ' pr' : ''), 'data-t': t });
-    const tagBtn = h('button', { class: 'set-tag', 'data-t': t, type: 'button', 'aria-label': `${label} type: ${T_NAME[t]}. Tap to change` }, h('b', { text: t }), isW ? null : h('small', { text: String(n) }));
-    tagBtn.addEventListener('click', () => {
-      const nt = T_NEXT[t]; s.t = nt; if (t === 'W') delete s.why;
+    // the tag looks like a button; an invisible select over it opens the phone's picker with all four types
+    const pick = h('select', { class: 'set-tag-pick', 'aria-label': `${label} type: ${T_NAME[t]}` },
+      T_ORDER.map(k => h('option', { value: k, selected: k === t ? 'selected' : null, text: `${k} · ${T_LABEL[k]}` })));
+    pick.addEventListener('change', () => {
+      const nt = pick.value; if (!T_NAME[nt] || nt === t) return;
+      s.t = nt; if (t === 'W') delete s.why;
       saveDraftSoon(); rerenderCard(idx);
     });
+    const tagBtn = h('span', { class: 'set-tag', 'data-t': t }, h('b', { text: t, 'aria-hidden': 'true' }), isW ? null : h('small', { text: String(n), 'aria-hidden': 'true' }), pick);
     const wIn = bw ? h('span', { class: 'bw-cell', text: ex.cond ? '–' : 'BW' }) : h('input', { class: 'num-in', type: 'number', inputmode: 'decimal', step: '0.5', min: '0', id: `w-${idx}-${si}`, 'aria-label': `${label} weight`, value: s.w == null ? '' : fmtD(ex, s.w), placeholder: isW && s.w == null ? (s.why && /bodyweight/.test(s.why) ? 'BW' : 'light') : '–' });
     const rIn = h('input', { class: 'num-in', type: 'number', inputmode: 'numeric', step: '1', min: '0', id: `r-${idx}-${si}`, 'aria-label': `${label} ${ex.repUnit === 'm' ? 'metres' : ex.repUnit === 's' ? 'seconds' : 'reps'}`, value: s.r == null ? '' : String(s.r), placeholder: '–' });
     const readW = () => { if (!bw && wIn.value !== (s.w == null ? '' : fmtD(ex, s.w))) s.w = fromD(ex, num(wIn.value)); };
