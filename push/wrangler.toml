@@ -1,0 +1,17 @@
+# Coach rest alerts. Deployed by .github/workflows/push-worker.yml on every push that touches push/.
+name = "coach-rest"
+main = "worker.js"
+compatibility_date = "2025-06-01"
+workers_dev = true
+
+[vars]
+SUBJECT = "https://divyamsaharia.github.io/coach-app/"
+ALLOW_ORIGINS = "https://divyamsaharia.github.io"
+
+[[durable_objects.bindings]]
+name = "TIMER"
+class_name = "Timer"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Timer"]

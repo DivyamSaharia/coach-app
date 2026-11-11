@@ -1,6 +1,6 @@
 // Offline support: the app shell is cached so the app opens at the gym without signal.
 // Pages are fetched fresh when online (so updates arrive) and fall back to the cache offline.
-const CACHE = 'coach-v11';
+const CACHE = 'coach-v12';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-180.png', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
@@ -36,5 +36,14 @@ self.addEventListener('notificationclick', e => {
   e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
     for (const c of list) if ('focus' in c) return c.focus();
     return self.clients.openWindow ? self.clients.openWindow('./') : null;
+  }));
+});
+// Rest-over alerts sent by the Cloudflare Worker (push/). Every push must show a notification.
+self.addEventListener('push', e => {
+  let d = {};
+  try { d = e.data ? e.data.json() : {}; } catch (er) { d = {}; }
+  e.waitUntil(self.registration.showNotification(d.title || 'Rest is over', {
+    body: d.body || 'Time for your next set.', tag: d.tag || 'coach-rest', renotify: true,
+    icon: 'icon-192.png', badge: 'icon-192.png', vibrate: [200, 100, 200],
   }));
 });

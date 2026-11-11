@@ -3273,7 +3273,7 @@ function viewLogger() {
   fin.append(h('button', { class: 'btn primary block', type: 'button', text: `Finish session (${doneCount} sets ticked)`, id: 'finish-btn', onclick: finishSession }));
   if (!S.discardConfirm) fin.append(h('button', { class: 'link', type: 'button', text: 'Discard this session', onclick: () => { S.discardConfirm = true; renderMain(); } }));
   else fin.append(h('div', { class: 'row' }, h('span', { class: 'small', text: 'Discard everything logged in this session?' }),
-    h('button', { class: 'btn danger', type: 'button', text: 'Discard', onclick: () => { S.active = null; S.discardConfirm = false; S.restStart = null; clearDraft(); renderTop(); renderMain(); toast('Session discarded.'); } }),
+    h('button', { class: 'btn danger', type: 'button', text: 'Discard', onclick: () => { S.active = null; S.discardConfirm = false; S.restStart = null; Push.cancel(); clearDraft(); renderTop(); renderMain(); toast('Session discarded.'); } }),
     h('button', { class: 'btn', type: 'button', text: 'Keep logging', onclick: () => { S.discardConfirm = false; renderMain(); } })));
   root.append(fin);
   queueMicrotask(updateLive);
@@ -3884,7 +3884,7 @@ function updateFinishCount() {
 
 /* rest timer */
 let restTick = null, restEndTimer = null;
-function startRest(exId, warm) { S.restRang = false; S.restStart = Date.now(); S.restEx = exId; S.restTarget = warm ? (warm.last ? 90 : 60) : (exId === 'u_bench' || exId === 'u_pullup' || exId === 'b_hinge_p3') ? 180 : 120; askNotify(); updateRest(); }
+function startRest(exId, warm) { S.restRang = false; S.restStart = Date.now(); S.restEx = exId; S.restTarget = warm ? (warm.last ? 90 : 60) : (exId === 'u_bench' || exId === 'u_pullup' || exId === 'b_hinge_p3') ? 180 : 120; askNotify(); updateRest(); Push.arm(); }
 /* Rest-over notification. Permission is asked once, the first time a rest timer starts (that tap is the gesture the phone wants).
    It's shown through the service worker, the only way an iPhone Home Screen app can show one. A web app can't schedule a
    notification for later on its own, so this fires only while the app is running: on screen, or (on Android) briefly in the background. */
@@ -3892,7 +3892,7 @@ function askNotify(force) {
   if (Settings.restNotify === false || typeof Notification === 'undefined' || Notification.permission !== 'default') return;
   if (Settings.notifyAsked && !force) return;
   Settings.notifyAsked = true; saveSettings();
-  try { const r = Notification.requestPermission(); if (r && r.then) r.then(v => { if (v === 'denied' && force) toast('Notifications are blocked. Turn them on in your phone’s Settings, under Notifications.'); }).catch(() => {}); } catch (e) {}
+  try { const r = Notification.requestPermission(); if (r && r.then) r.then(v => { if (v === 'granted') { Push.sub().then(() => { if (S.restStart) Push.arm(); }).catch(() => {}); } if (v === 'denied' && force) toast('Notifications are blocked. Turn them on in your phone’s Settings, under Notifications.'); }).catch(() => {}); } catch (e) {}
 }
 function restNotify() {
   if (Settings.restNotify === false || typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
@@ -3902,11 +3902,55 @@ function restNotify() {
   if ('serviceWorker' in navigator && navigator.serviceWorker.getRegistration) navigator.serviceWorker.getRegistration().then(reg => (reg ? reg.showNotification(title, opts) : viaPage())).catch(viaPage);
   else viaPage();
 }
+/* Lock-screen rest alerts. An iPhone pauses a Home Screen app as soon as it leaves the screen, so the app can't fire anything
+   itself then. Instead, each rest's end time goes to a small Cloudflare Worker (push/ in the repo), whose alarm sends a Web Push
+   at that moment. Only the phone's push address and the alert text are sent: no training data. No signal when a set is ticked?
+   That rest falls back to the in-app chime and notification. */
+const PUSH_URL = '';
+const Push = {
+  armed: false, seq: 0,
+  can() { return !!PUSH_URL && Settings.restNotify !== false && 'serviceWorker' in navigator && 'PushManager' in window && typeof Notification !== 'undefined' && Notification.permission === 'granted'; },
+  async key(fresh) {
+    if (!fresh && Settings.pushKey && Date.now() - (Settings.pushKeyAt || 0) < 86400000) return Settings.pushKey;
+    const r = await fetch(PUSH_URL + '/key'); const k = (await r.json()).key;
+    if (k) { Settings.pushKey = k; Settings.pushKeyAt = Date.now(); saveSettings(); }
+    return k || Settings.pushKey;
+  },
+  async sub() {
+    if (!this.can()) return null;
+    const reg = await navigator.serviceWorker.ready;
+    let s = await reg.pushManager.getSubscription();
+    const key = Settings.pushKey || await this.key();
+    if (s && Settings.pushSubKey && Settings.pushSubKey !== key) { await s.unsubscribe().catch(() => {}); s = null; }
+    if (!s) { const raw = atob(key.replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((key.length + 3) % 4)); s = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: Uint8Array.from(raw, c => c.charCodeAt(0)) }); Settings.pushSubKey = key; saveSettings(); }
+    this.key().catch(() => {}); // a daily check that the server still has the same keys
+    return s.toJSON();
+  },
+  post(path, body) { return fetch(PUSH_URL + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }); },
+  /* (Re)schedules the alert for the rest that's running. */
+  async arm(atMs, text) {
+    const n = ++this.seq; this.armed = false;
+    if (!this.can() || (!atMs && !S.restStart)) return false;
+    const at = atMs || S.restStart + S.restTarget * 1000;
+    const ex = S.program && S.restEx ? S.program.exercises[S.restEx] : null;
+    try {
+      const sub = await this.sub(); if (!sub) return false;
+      const r = await this.post('/schedule', { sub, at, title: 'Rest is over', body: text || (ex ? `${ex.name}: time for your next set.` : 'Time for your next set.') });
+      if (n === this.seq) this.armed = r.ok;
+      return r.ok;
+    } catch (e) { return false; }
+  },
+  async cancel() {
+    ++this.seq; this.armed = false;
+    if (!PUSH_URL || !('serviceWorker' in navigator) || typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
+    try { const reg = await navigator.serviceWorker.ready; const s = await reg.pushManager.getSubscription(); if (s) await this.post('/cancel', { endpoint: s.endpoint }); } catch (e) {}
+  },
+};
 /* The moment rest runs out: chime and notification once. Coming back to the app long after (the phone was locked) stays quiet. */
 function restOver(late) {
   if (S.restRang) return; S.restRang = true;
   if (late > 90) return;
-  Fx.snd.rest(); Fx.hap(2); restNotify();
+  Fx.snd.rest(); Fx.hap(2); if (!Push.armed) restNotify();
 }
 function updateRest() {
   const box = $('#rest');
@@ -3929,7 +3973,7 @@ function updateRest() {
   };
   draw(); if (!restTick) restTick = setInterval(draw, 1000);
 }
-$('#rest-close').addEventListener('click', () => { S.restStart = null; updateRest(); });
+$('#rest-close').addEventListener('click', () => { S.restStart = null; Push.cancel(); updateRest(); });
 
 async function finishSession() {
   const a = S.active, p = S.program; if (!a) return;
@@ -3988,7 +4032,7 @@ async function finishSession() {
     const t = sess.custom.templateId ? customDays()[sess.custom.templateId] : null;
     if (ids.length && (!t || JSON.stringify(t.items) !== JSON.stringify(sess.entries.map(e => e.exId)))) S.lastSummary.saveTemplate = { items: [...new Set(ids)], prep: sess.custom.prep, changed: !!t };
   }
-  S.active = null; S.restStart = null; S.resumed = false; clearDraft();
+  S.active = null; S.restStart = null; S.resumed = false; clearDraft(); Push.cancel();
   try { wakeLock && wakeLock.release(); } catch (e) {}
   renderTop(); renderMain(); window.scrollTo(0, 0);
   if (S.program.settings?.autoReview !== false && coachReady()) {
@@ -5362,11 +5406,23 @@ function viewSettings() {
 
   const feel = h('div', { class: 'card', id: 'feel-settings' }, h('h3', { text: 'Sound and feel' }));
   for (const [k, title, sub] of [['sound', 'Sounds', 'Ticks, chimes and the PR fanfare.'], ['haptics', 'Vibration', 'A tick on each set and a longer buzz for PRs and rank-ups, where your phone allows it.'],
-    ['restNotify', 'Rest timer notification', 'When a rest ends, a notification as well as the chime. It arrives while Coach is open on screen; with the phone locked or another app in front, iPhone pauses the app, so it comes when you open Coach again.']])
-    feel.append(h('label', { class: 'check', for: 'feel-' + k }, h('input', { type: 'checkbox', id: 'feel-' + k, checked: Settings[k] !== false, onchange: ev => { Settings[k] = ev.target.checked; saveSettings(); if (ev.target.checked && k === 'sound') Fx.snd.done(); if (ev.target.checked && k === 'haptics') Fx.hap(2); if (k === 'restNotify' && ev.target.checked) askNotify(true); } }),
+    ['restNotify', 'Rest timer notification', PUSH_URL ? 'When a rest ends, a notification as well as the chime, on the lock screen too. Needs signal when you tick the set; without it you get the chime only while Coach is open.' : 'When a rest ends, a notification as well as the chime, while Coach is open on screen.']])
+    feel.append(h('label', { class: 'check', for: 'feel-' + k }, h('input', { type: 'checkbox', id: 'feel-' + k, checked: Settings[k] !== false, onchange: ev => { Settings[k] = ev.target.checked; saveSettings(); if (ev.target.checked && k === 'sound') Fx.snd.done(); if (ev.target.checked && k === 'haptics') Fx.hap(2); if (k === 'restNotify' && ev.target.checked) askNotify(true); if (k === 'restNotify' && !ev.target.checked) Push.cancel(); } }),
       h('span', {}, h('b', { text: title }), h('br'), h('span', { class: 'small muted', text: sub }))));
   if (typeof Notification !== 'undefined' && Notification.permission === 'denied' && Settings.restNotify !== false) feel.append(h('p', { class: 'small muted', text: 'Notifications are blocked for Coach. Turn them on in your phone’s Settings under Notifications, then Coach.' }));
   else if (typeof Notification === 'undefined') feel.append(h('p', { class: 'small muted', text: isStandalone() ? 'This phone doesn’t offer notifications to Coach.' : 'Notifications need Coach opened from its Home Screen icon.' }));
+  if (PUSH_URL && Settings.restNotify !== false && typeof Notification !== 'undefined' && 'PushManager' in window) {
+    const msg = h('p', { class: 'small muted', 'aria-live': 'polite' });
+    feel.append(h('div', { class: 'row', style: 'align-items:center' }, h('button', { class: 'btn', type: 'button', id: 'push-test', text: 'Test the lock-screen alert', onclick: async ev => {
+      const btn = ev.currentTarget; btn.disabled = true;
+      if (Notification.permission === 'default') { const v = await Notification.requestPermission(); if (v !== 'granted') { msg.textContent = 'Allow notifications for Coach first.'; btn.disabled = false; return; } }
+      if (Notification.permission !== 'granted') { msg.textContent = 'Notifications are blocked. Turn them on in your phone’s Settings, under Notifications, then Coach.'; btn.disabled = false; return; }
+      msg.textContent = 'Setting it up…';
+      const ok = await Push.arm(Date.now() + 15000, 'Test: this is how the rest-over alert looks on your lock screen.');
+      msg.textContent = ok ? 'Lock your phone now. The test alert arrives in about 15 seconds.' : 'Couldn’t reach the alert server. Check your signal and try again.';
+      btn.disabled = false;
+    } })), msg);
+  }
   root.append(feel);
 
   // pre-workout notification
@@ -5399,7 +5455,7 @@ for (const b of document.querySelectorAll('.tab')) b.addEventListener('click', (
 $('#brand').addEventListener('click', () => { if (S.program) setTab('rank'); });
 $('#sheet-scrim').addEventListener('click', () => Fx.closeSheet());
 $('#finish-bar').addEventListener('click', () => { const c = document.getElementById('finish-card'); if (c) c.scrollIntoView({ behavior: CALM() ? 'auto' : 'smooth', block: 'start' }); });
-$('#rest-add').addEventListener('click', () => { if (!S.restStart) return; S.restTarget += 15; if ((Date.now() - S.restStart) / 1000 < S.restTarget) S.restRang = false; Fx.snd.tap(); updateRest(); });
+$('#rest-add').addEventListener('click', () => { if (!S.restStart) return; S.restTarget += 15; if ((Date.now() - S.restStart) / 1000 < S.restTarget) { S.restRang = false; Push.arm(); } Fx.snd.tap(); updateRest(); });
 $('#settings-btn').addEventListener('click', () => setTab(S.tab === 'settings' ? 'today' : 'settings'));
 
 function start() {
