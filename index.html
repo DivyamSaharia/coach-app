@@ -478,8 +478,8 @@ input[type=text],input[type=number],input[type=date],input[type=url],input[type=
 .pill{background:var(--sunk)}
 .pr-flag,.toast.pr{color:var(--on-pr)}
 .exlist .t,.pres .w{color:var(--ink)}
-.btn,.chip,.tab,.link,.done-btn,.icon-btn,.ex-fold,.trend,.exbtn,.more-btn,.ringtile,.sheet-item,.pad-btn,.finish-bar,.rest-box button,.brand,.coach-fold,.fold-row,summary{transition:transform .12s var(--ease),filter .12s,background-color .22s,color .22s}
-.btn:active,.chip:active,.tab:active,.done-btn:active,.icon-btn:active,.ex-fold:active,.trend:active,.more-btn:active,.ringtile:active,.pad-btn:active,.finish-bar:active,.rest-box button:active,.coach-fold:active,.fold-row:active{transform:scale(.97);filter:brightness(1.14)}
+.btn,.chip,.tab,.link,.done-btn,.icon-btn,.ex-fold,.trend,.exbtn,.more-btn,.ringtile,.sheet-item,.finish-bar,.rest-box button,.brand,.coach-fold,.fold-row,summary{transition:transform .12s var(--ease),filter .12s,background-color .22s,color .22s}
+.btn:active,.chip:active,.tab:active,.done-btn:active,.icon-btn:active,.ex-fold:active,.trend:active,.more-btn:active,.ringtile:active,.finish-bar:active,.rest-box button:active,.coach-fold:active,.fold-row:active{transform:scale(.97);filter:brightness(1.14)}
 .link:active,.sheet-item:active,.exbtn:active,.brand:active{filter:brightness(1.3)}
 
 /* tab bar with a sliding pill */
@@ -535,7 +535,6 @@ input[type=text],input[type=number],input[type=date],input[type=url],input[type=
 .set-tag[data-t="F"]{box-shadow:inset 0 0 0 1.5px var(--accent)}
 .set-tag[data-t="D"]{box-shadow:inset 0 0 0 1.5px var(--pr)}
 .num-in{background:var(--raised)!important;border:0!important;font-size:1.4rem!important}
-.num-in[readonly]{cursor:pointer;caret-color:transparent}
 .setrow.done .num-in{background:color-mix(in srgb,var(--go) 16%,var(--raised))!important}
 .setrow.pr .num-in{background:color-mix(in srgb,var(--pr) 20%,var(--raised))!important}
 .done-btn{border:0;background:var(--raised)}
@@ -639,12 +638,6 @@ body.sheet-on #sheet{transform:none;visibility:visible;transition:transform .4s 
 .sheet-item{appearance:none;flex:none;background:none;border:0;border-top:1px solid var(--line);color:var(--ink);display:flex;align-items:center;min-height:54px;font:500 1.02rem/1.2 var(--body);text-align:left;text-decoration:none;width:100%;cursor:pointer}
 .sheet-item:first-of-type{border-top:0}
 .sheet-item.danger{color:var(--stop)}
-.pad{display:flex;flex-direction:column;gap:4px;padding-bottom:8px}
-.pad-row{display:grid;grid-template-columns:68px minmax(0,1fr) 68px;gap:10px;align-items:center;padding:6px 0}
-.pad-btn{appearance:none;height:64px;border-radius:18px;background:var(--raised);border:0;color:var(--ink);font:700 1.7rem/1 var(--display);cursor:pointer}
-.pad-val{text-align:center}
-.pad-val b{display:block;font:700 2.5rem/1 var(--display);font-variant-numeric:tabular-nums}
-.pad-val span{font-size:.85rem;color:var(--muted)}
 
 /* effects layer and celebrations */
 #fx{position:fixed;inset:0;z-index:70;pointer-events:none;overflow:hidden}
@@ -807,6 +800,46 @@ details.info p{margin-top:4px}
 .streak{background:color-mix(in srgb,var(--accent2) 18%,transparent);color:var(--accent2)}
 .picker{background:var(--bg)}
 .pick-head{border-bottom:0}
+
+/* ===== Follow-ups, 12 Nov 2026 ===== */
+/* set rows: each row is a real box now, so it can slide left over its Delete button */
+.sets{display:flex;flex-direction:column;gap:8px;background:inherit}
+.sets-hd,.set-cells{display:grid;grid-template-columns:2.6rem minmax(0,1fr) minmax(0,1fr) 60px;gap:8px;align-items:center}
+.setrow{display:flex;flex-direction:column;gap:8px;background:inherit}
+.set-swipe{position:relative;overflow:hidden;border-radius:14px;background:inherit}
+.set-cells{position:relative;z-index:1;background:inherit;touch-action:pan-y;will-change:transform}
+.set-del{position:absolute;top:0;right:0;bottom:0;width:84px;border:0;border-radius:14px;background:var(--stop);color:#fff;font:700 .95rem/1 var(--body);cursor:pointer;visibility:hidden}
+.setrow.sliding .set-del,.setrow.swiped .set-del{visibility:visible}
+.setrow .dev-card{grid-column:auto}
+@media (prefers-reduced-motion: no-preference){ .setrow:not(.sliding) .set-cells{transition:transform .22s var(--ease)} }
+.set-adds{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.btn.set-add{min-height:44px;padding:0 16px;font-weight:600}
+.swipe-hint{margin-left:auto}
+/* kg/lb beside the weight */
+.pres-top{flex-basis:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0}
+.pres-top .w{flex-basis:auto;min-width:0}
+.unit-sw{margin-left:0}
+.unit-sw .seg-b{min-height:40px;min-width:48px;padding:0 14px;font-size:.95rem}
+/* missed-session line under the week */
+.week-pic{display:flex;flex-direction:column;gap:6px}
+.miss-line{margin:0 2px;font-size:.88rem;color:var(--muted)}
+.miss-line.warn-ish{color:var(--hold)}
+.miss-line.cost{color:var(--stop)}
+.xptable td.neg{color:var(--stop)}
+/* folded day lists: Coach history and the Program changes */
+.day-list{display:flex;flex-direction:column;gap:8px}
+details.changes{padding:0}
+details.changes>summary{list-style:none;cursor:pointer;padding:16px;display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:56px}
+details.changes>summary::-webkit-details-marker{display:none}
+details.changes>summary h3{margin:0}
+details.changes[open]>summary .chev{transform:rotate(180deg)}
+details.changes .day-list{padding:0 16px 16px}
+.chev{display:inline-block;transition:transform .2s var(--ease)}
+.day-entries{display:flex;flex-direction:column;gap:8px;padding:4px 4px 8px 12px;border-left:2px solid var(--line);margin-left:6px}
+/* day letters beside the 12-week grid */
+.cons-wrap{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px;align-items:start}
+.cons-days{display:grid;gap:4px}
+.cons-days span{height:14px;font:600 .66rem/14px var(--body);color:var(--muted);text-align:center;width:12px}
 </style>
 </head>
 <body>
@@ -980,7 +1013,8 @@ const Fx = (() => {
     tap: () => tone(620, 0, .04, 'sine', .03),
     tick: () => { tone(880, 0, .06); tone(1320, .04, .08, 'sine', .04); },
     done: () => { tone(660, 0, .09); tone(990, .09, .16); },
-    rest: () => { tone(784, 0, .14); tone(1047, .16, .26); },
+    // rest over: the two-note chime, louder, three times in a row
+    rest: () => { for (const at of [0, .6, 1.2]) { tone(784, at, .18, 'triangle', .22); tone(1047, at + .17, .32, 'triangle', .24); tone(2094, at + .17, .24, 'sine', .05); } },
     rank: () => [392, 523, 659, 784, 1047, 1319].forEach((f, i) => tone(f, i * .09, .26, 'triangle', .08)),
     whoosh: () => noise(.5, 280, 3800, .3),
     fanfare: () => { [[392, 0, .1], [523, .12, .1], [659, .24, .1], [784, .36, .8]].forEach(([f, t, d]) => { brass(f, t, d, .075); brass(f / 2, t, d, .05); });
@@ -1600,7 +1634,10 @@ const TIERS = [
   { key: 'titan', name: 'Titan', c1: '#d9a8ff', c2: '#6a28c2' },
 ];
 const LEGEND = { key: 'legend', name: 'Legend', c1: '#ff9aa0', c2: '#b0102d' };
-const XP = { finish: 100, set: 10, prepFull: 40, prepStep: 5, warmFull: 20, warmStep: 4, readiness: 10, honest: 25, up: 30, pr: 50, prMax: 3, morning: 15 };
+const XP = { finish: 100, set: 10, prepFull: 40, prepStep: 5, warmFull: 20, warmStep: 4, readiness: 10, honest: 25, up: 30, pr: 50, prMax: 3, morning: 15, miss: 100 };
+/* Missed workouts: a week (Monday to Sunday) that ends with fewer than MISS_MIN of his own sessions costs XP.miss per session short.
+   It counts from the week the rule shipped, kept in the program doc as xpMissFrom (that week's Monday), never before it. */
+const MISS_MIN = 4, MISS_FROM = '2026-11-09';
 const STREAK_MIN = 3; // sessions in a week that keep a streak alive and count as an active week
 const DIVS = 3;
 /* Tier starts are set from your real program: at 4 sessions a week a typical week earns about 2,200 XP
@@ -1820,6 +1857,13 @@ function computeGame(p, sessions, opts = {}) {
   while (weeks[k] && weeks[k].all >= STREAK_MIN) { streak++; k = addDays(k, -7); }
   if (p.startDate && weekNo(p) >= 13 && st.own >= 40) st.block = 1;
   const tw = weeks[thisWeek] || { all: 0, own: [] };
+  // missed sessions, from xpMissFrom to the last week that has ended (this week only counts once Sunday is over)
+  const miss = { from: p.xpMissFrom ? weekStart(p.xpMissFrom) : null, weeks: [], xp: 0 };
+  if (miss.from) for (let wk = miss.from; addDays(wk, 7) <= (opts.today || todayStr()); wk = addDays(wk, 7)) {
+    const n = weeks[wk] ? weeks[wk].own.length : 0; const short = Math.max(0, MISS_MIN - n);
+    if (short) { miss.weeks.push({ wk, n, short, xp: short * XP.miss }); miss.xp += short * XP.miss; }
+  }
+  xp = Math.max(0, xp - miss.xp);
   const lifts = LIFT_TIERS.map(L => {
     const ex = p.exercises[L.exId]; const bw = p.bodyweight || 0; const v = best[L.exId];
     if (!ex || !bw || v == null) return null;
@@ -1829,7 +1873,7 @@ function computeGame(p, sessions, opts = {}) {
     return { ...L, name: ex.name, v, tier: TIERS[t], t, nextAt, nextTier: nextAt ? TIERS[t + 1] : null, frac: nextAt ? (v - from) / (nextAt - from) : 1 };
   }).filter(Boolean);
   const badges = BADGES.map(b => ({ ...b, have: Math.min(st[b.stat] || 0, b.goal), got: (st[b.stat] || 0) >= b.goal }));
-  return { xp, rank: rankOf(xp, st), per, best, stats: st, streak, thisWeek, week: tw, quests: questState(p, tw.own), questXP, lifts, badges };
+  return { xp, rank: rankOf(xp, st), per, best, stats: st, streak, thisWeek, week: tw, quests: questState(p, tw.own), questXP, lifts, badges, miss };
 }
 
 /* ---------- rank visuals ---------- */
@@ -1903,7 +1947,17 @@ function weekStrip(g) {
   const left = Math.max(0, STREAK_MIN - g.week.all);
   const fl = h('div', { class: 'flame' + (g.streak > 0 ? '' : ' cold') }, FLAME_SVG(), g.streak > 0 ? h('b', { text: String(g.streak) }) : null,
     h('span', { text: g.streak > 0 ? 'week streak' : left ? `${left} more this week starts a streak` : 'Streak starts this week' }));
-  return h('div', { class: 'week' }, fl, days);
+  return h('div', { class: 'week-pic' }, h('div', { class: 'week' }, fl, days), missLine(g));
+}
+/* One line on the missed-session rule: what last week cost, and what this week still needs by Sunday. */
+function missLine(g) {
+  const m = g.miss; if (!m || !m.from) return null;
+  const ws = weekStart(todayStr()); if (ws < m.from) return null;
+  const lastWk = addDays(ws, -7); const last = lastWk >= m.from ? m.weeks.find(w => w.wk === lastWk) : null;
+  const n = g.week.own.length; const short = Math.max(0, MISS_MIN - n);
+  const now = short ? `${short} more session${short === 1 ? '' : 's'} by Sunday or this week costs ${short * XP.miss} XP` : `${n} sessions this week: no XP lost for missed sessions`;
+  const text = (last ? `Last week cost ${last.xp} XP (${last.n} of ${MISS_MIN} sessions). ` : '') + now + '.';
+  return h('p', { class: 'miss-line' + (last ? ' cost' : short ? ' warn-ish' : ''), text });
 }
 function questCard(g) {
   const sec = h('section', { class: 'stack', id: 'quests' }, h('div', { class: 'spread', style: 'align-items:baseline' }, h('h3', { text: 'Weekly quests' }), h('span', { class: 'small muted', text: 'Reset on Monday' })));
@@ -1979,6 +2033,8 @@ const Store = {
 };
 const Settings = Object.assign({ apiKey: '', model: 'claude-sonnet-5-5' }, lsGet(SET_KEY) || {});
 function saveSettings() { lsSet(SET_KEY, Settings); }
+// the plus and minus pad is gone; its switch goes with it
+if ('keypad' in Settings) { delete Settings.keypad; saveSettings(); }
 
 const Sync = {
   timer: null, running: false,
@@ -2070,7 +2126,10 @@ function loadFromStore() {
   // set types arrive as an app update, not a program version: log it once
   const m6 = prog ? !(prog.flags && prog.flags.setTypes) : false;
   if (m6) prog.flags = { ...(prog.flags || {}), setTypes: true };
-  if (m2 || m3 || m4 || m5 || m6) queueMicrotask(async () => {
+  // the missed-session rule starts the week it shipped; the date lives in the program doc so every device agrees
+  const m7 = prog ? !prog.xpMissFrom : false;
+  if (m7) prog.xpMissFrom = MISS_FROM;
+  if (m2 || m3 || m4 || m5 || m6 || m7) queueMicrotask(async () => {
     try {
       await saveProgram();
       if (m2) await addLog('auto', 'App update: a 6-minute back warm-up only on days that load your back, form cues on every exercise, hip thrust before leg extensions on Lower A.');
@@ -3478,45 +3537,91 @@ async function switchUnit(ex, idx, u) {
   rerenderCard(idx);
   try { await saveProgram(); addLog('you', `${ex.name}: weights shown in ${u === 'lb' ? 'pounds' : 'kilograms'}.`); } catch (er) { toast('Couldn’t save that. Try again.'); }
 }
+function canSwitchUnit(ex) { return !!(ex && S.program.exercises[ex.id] && ex.unit !== 'bw' && !ex.cond); }
+/* The kg/lb switch beside the weight on the card. */
+function unitSwitch(ex, idx) {
+  if (!canSwitchUnit(ex)) return null;
+  const cur = wUnit(ex);
+  return h('div', { class: 'seg unit-sw', role: 'group', 'aria-label': 'Weight unit' }, ['kg', 'lb'].map(u => h('button', { class: 'seg-b', type: 'button', 'aria-pressed': String(cur === u), text: u,
+    onclick: () => { if (u === wUnit(ex)) return; Fx.snd.tap(); Fx.hap(1); switchUnit(ex, idx, u); } })));
+}
+function addSet(e, idx) { const last = loggedSets(e)[loggedSets(e).length - 1] || {}; e.sets.push({ t: 'N', w: last.w ?? null, r: last.r ?? null, done: false }); Fx.snd.tap(); saveDraftSoon(); rerenderCard(idx); }
+function addWarmSet(e, idx) { let at = 0; e.sets.forEach((x, j) => { if (setT(x) === 'W') at = j + 1; }); e.sets.splice(at, 0, { t: 'W', w: null, r: 5, done: false }); Fx.snd.tap(); saveDraftSoon(); rerenderCard(idx); }
+/* Removes one set, any row. Next-set prompt records point at set positions, so the ones after it move up one; a record for the deleted set goes with it. */
+function deleteSet(e, idx, si) {
+  closeSwipe();
+  if (!e.sets[si]) return;
+  e.sets.splice(si, 1);
+  if (Array.isArray(e.devs)) e.devs = e.devs.filter(d => d.si !== si).map(d => (d.si > si ? { ...d, si: d.si - 1 } : d));
+  const d = devOpen.get(e); if (d) { if (d.si === si) devOpen.delete(e); else if (d.si > si) d.si -= 1; }
+  Fx.snd.tap(); Fx.hap(1);
+  if (!Settings.swipeUsed) { Settings.swipeUsed = true; saveSettings(); }
+  saveDraftSoon(); rerenderCard(idx);
+}
+/* Swipe a set row left to reveal Delete. Only a clearly sideways drag slides it; anything else is left to the page's scroll
+   (touch-action: pan-y hands vertical drags to the browser). One row is open at a time; a tap anywhere else, or a swipe back, closes it. */
+const SWIPE_W = 92;
+let swipeOpen = null;
+function closeSwipe() {
+  if (!swipeOpen) return;
+  const { row, cells } = swipeOpen; swipeOpen = null;
+  row.classList.remove('swiped', 'sliding'); cells.style.transform = '';
+}
+document.addEventListener('pointerdown', ev => { if (swipeOpen && !swipeOpen.row.contains(ev.target)) closeSwipe(); }, true);
+function swipeRow(row, cells) {
+  let id = null, x0 = 0, y0 = 0, mode = null, base = 0, dx = 0;
+  const swallow = () => {
+    const kill = ev => { if (cells.contains(ev.target)) { ev.stopPropagation(); ev.preventDefault(); } };
+    window.addEventListener('click', kill, { capture: true, once: true });
+    setTimeout(() => window.removeEventListener('click', kill, { capture: true }), 350);
+  };
+  cells.addEventListener('pointerdown', ev => {
+    if (ev.pointerType === 'mouse' && ev.button !== 0) return;
+    id = ev.pointerId; x0 = ev.clientX; y0 = ev.clientY; mode = null; dx = 0;
+    base = row.classList.contains('swiped') ? -SWIPE_W : 0;
+  });
+  cells.addEventListener('pointermove', ev => {
+    if (ev.pointerId !== id || mode === 'v') return;
+    const mx = ev.clientX - x0, my = ev.clientY - y0;
+    if (!mode) {
+      if (Math.abs(my) > 8 && Math.abs(my) >= Math.abs(mx)) { mode = 'v'; return; }
+      if (!(Math.abs(mx) > 14 && Math.abs(mx) > Math.abs(my) * 2)) return;
+      mode = 'h';
+      try { cells.setPointerCapture(id); } catch (er) {}
+      if (swipeOpen && swipeOpen.row !== row) closeSwipe();
+      if (document.activeElement && cells.contains(document.activeElement)) document.activeElement.blur();
+      row.classList.add('sliding');
+    }
+    ev.preventDefault();
+    dx = Math.max(-SWIPE_W * 1.35, Math.min(0, base + mx));
+    cells.style.transform = `translateX(${dx}px)`;
+  });
+  const end = ev => {
+    if (ev.pointerId !== id) return;
+    id = null; const was = mode; mode = null;
+    if (was === 'h') {
+      swallow(); row.classList.remove('sliding');
+      if (ev.type === 'pointerup' && dx < -SWIPE_W / 2) { row.classList.add('swiped'); cells.style.transform = `translateX(${-SWIPE_W}px)`; swipeOpen = { row, cells }; Fx.hap(1); }
+      else if (ev.type === 'pointercancel' && base) { cells.style.transform = `translateX(${-SWIPE_W}px)`; }
+      else { row.classList.remove('swiped'); cells.style.transform = ''; if (swipeOpen && swipeOpen.row === row) swipeOpen = null; }
+    } else if (!was && ev.type === 'pointerup' && row.classList.contains('swiped')) { swallow(); closeSwipe(); }   // a tap on an open row closes it
+  };
+  cells.addEventListener('pointerup', end); cells.addEventListener('pointercancel', end);
+}
 /* Everything that used to be a row of text links under the card. */
 function exMenu(e, idx, ex) {
   const inProg = !!S.program.exercises[ex.id]; const key = 'my:' + ex.id + ':' + idx;
-  const canUnit = inProg && ex.unit !== 'bw' && !ex.cond; const other = wUnit(ex) === 'lb' ? 'kg' : 'lb';
   const re = () => { saveDraftSoon(); rerenderCard(idx); };
   const vl = inProg || ex.video ? videoLink(ex) : null;
   const rated = entryDone(e) || e.rir != null || e.pain != null || e.shoulderPain != null || e.rateOpen === true;
   Fx.snd.tap();
   Fx.sheet({ title: e.name, items: e.skipped ? [{ label: 'Undo skip', onclick: () => { e.skipped = false; e.open = true; re(); } }] : [
-    { label: 'Add a set', onclick: () => { const last = loggedSets(e)[loggedSets(e).length - 1] || {}; e.sets.push({ t: 'N', w: last.w ?? null, r: last.r ?? null, done: false }); re(); } },
-    { label: 'Add a warm-up set', onclick: () => { let at = 0; e.sets.forEach((x, j) => { if (setT(x) === 'W') at = j + 1; }); e.sets.splice(at, 0, { t: 'W', w: null, r: 5, done: false }); re(); } },
-    e.sets.length > 1 ? { label: 'Remove the last set', onclick: () => { e.sets.pop(); re(); } } : null,
-    canUnit ? { label: `Switch to ${other}`, onclick: () => switchUnit(ex, idx, other) } : null,
     vl && vl.href ? { label: (vl.textContent || 'Form video').trim(), href: vl.href } : null,
     inProg ? { label: ex.myCues ? 'Edit your own cue' : 'Add your own cue (shows every session)', onclick: () => { S.myEdit = key; rerenderCard(idx); } } : null,
     rated ? null : { label: 'Rate this exercise now', onclick: () => { e.rateOpen = true; re(); } },
     entryDone(e) || e.open === true ? { label: 'Fold this card', onclick: () => { e.open = false; re(); } } : null,
     { label: 'Skip this exercise', danger: true, onclick: () => { e.skipped = true; delete e.open; re(); } },
   ] });
-}
-/* Plus and minus buttons for a set's weight and reps. They drive the same inputs the keyboard does. */
-function openPad(e, idx, si) {
-  const ex = S.program.exercises[e.exId] || { unit: 'kg' }; const s = e.sets[si]; if (!s) return;
-  const wIn = () => document.getElementById(`w-${idx}-${si}`), rIn = () => document.getElementById(`r-${idx}-${si}`);
-  const step = isLb(ex) ? (ex.incLb || 5) : (ex.inc || 2.5);
-  let n = 0; e.sets.slice(0, si + 1).forEach(x => { if (setT(x) !== 'W') n++; });
-  const body = h('div', { class: 'pad' });
-  const row = (get, label, d) => {
-    const val = h('b'); const show = () => { const i = get(); val.textContent = i && i.value !== '' ? i.value : '–'; };
-    const bump = dir => { const i = get(); if (!i) return; const nv = Math.max(0, Math.round(((num(i.value) ?? 0) + dir * d) * 100) / 100); i.value = fmtNum(nv); i.dispatchEvent(new Event('input', { bubbles: true })); show(); Fx.snd.tap(); Fx.hap(1); };
-    show();
-    return h('div', { class: 'pad-row' }, h('button', { class: 'pad-btn', type: 'button', 'aria-label': `Less: ${label}`, text: '−', onclick: () => bump(-1) }),
-      h('div', { class: 'pad-val' }, val, h('span', { text: label })), h('button', { class: 'pad-btn', type: 'button', 'aria-label': `More: ${label}`, text: '+', onclick: () => bump(1) }));
-  };
-  if (wIn()) body.append(row(wIn, `${wUnit(ex)}, in steps of ${fmtNum(step)}`, step));
-  body.append(row(rIn, ex.repUnit === 'm' ? 'metres' : ex.repUnit === 's' ? 'seconds' : 'reps', 1));
-  const type = get => () => { const i = get(); if (!i) return; i.readOnly = false; i.focus(); if (i.select) i.select(); i.addEventListener('blur', () => { i.readOnly = true; }, { once: true }); };
-  Fx.sheet({ title: `${e.name} · ${setT(s) === 'W' ? 'warm-up set' : `set ${n}`}`, body,
-    items: [wIn() ? { label: 'Type the weight', onclick: type(wIn) } : null, { label: 'Type the reps', onclick: type(rIn) }, { label: 'Done' }] });
 }
 function myCuesBox(ex, idx) {
   if (!ex || !S.program.exercises[ex.id]) return null;
@@ -3617,7 +3722,8 @@ function devCheck(e, idx, si) {
   const card = document.getElementById('ex-' + idx); if (!card) return;
   card.querySelectorAll('.dev-card').forEach(x => x.remove());
   const btn = card.querySelector(`.done-btn[data-si="${si}"]`);
-  if (btn) btn.after(devCardEl(e, idx, d));
+  const row = btn && btn.closest('.setrow');
+  if (row) row.append(devCardEl(e, idx, d));
 }
 function devClose(e, si) {
   const d = devOpen.get(e); if (!d || (si != null && d.si !== si)) return;
@@ -3630,9 +3736,9 @@ function setGrid(e, idx, ex) {
   const bw = ex.unit === 'bw';
   const g = getGame(); const prior = g ? g.best[exKey(e)] : null;
   const isPR = st => !!T_WORK[setT(st)] && st.done && prior != null && (setE1(S.program, ex, st.w, Number(st.r)) || 0) > prior + 0.5;
-  const grid = h('div', { class: 'sets' },
+  const grid = h('div', { class: 'sets' }, h('div', { class: 'sets-hd' },
     h('span', { class: 'hd', text: 'Type' }), h('span', { class: 'hd', text: ex.unit === 'kg added' ? `+${wUnit(ex)}` : bw ? 'Load' : wUnit(ex) }),
-    h('span', { class: 'hd', text: ex.repUnit === 'm' ? 'Metres' : ex.repUnit === 's' ? 'Seconds' : 'Reps' }), h('span', { class: 'hd', text: 'Done' }));
+    h('span', { class: 'hd', text: ex.repUnit === 'm' ? 'Metres' : ex.repUnit === 's' ? 'Seconds' : 'Reps' }), h('span', { class: 'hd', text: 'Done' })));
   const open = devOpen.get(e);
   let ord = 0;
   list.forEach((s, si) => {
@@ -3658,7 +3764,8 @@ function setGrid(e, idx, ex) {
       saveDraftSoon();
     });
     rIn.addEventListener('input', () => { s.r = num(rIn.value); saveDraftSoon(); });
-    if (Settings.keypad !== false) for (const inp of [wIn, rIn]) { if (inp.tagName !== 'INPUT') continue; inp.readOnly = true; inp.addEventListener('click', () => { if (inp.readOnly) openPad(e, idx, si); }); }
+    // a tap selects what's there, so typing replaces it
+    for (const inp of [wIn, rIn]) if (inp.tagName === 'INPUT') inp.addEventListener('focus', () => setTimeout(() => { try { if (document.activeElement === inp) inp.select(); } catch (er) {} }, 0));
     const doneBtn = h('button', { class: 'done-btn', type: 'button', 'data-si': String(si), 'aria-pressed': String(!!s.done), 'aria-label': `Mark ${isW ? 'warm-up set' : `set ${n}`} done` }, CHECK_SVG());
     doneBtn.addEventListener('click', () => {
       const t = setT(s); const xp0 = liveXp();
@@ -3691,7 +3798,11 @@ function setGrid(e, idx, ex) {
       }
       if (t !== 'W') refold(idx);
     });
-    rowEl.append(tagBtn, wIn, rIn, doneBtn);
+    // swipe left to reveal Delete: the cells slide over a red button
+    const cells = h('div', { class: 'set-cells' }, tagBtn, wIn, rIn, doneBtn);
+    const del = h('button', { class: 'set-del', type: 'button', tabindex: '-1', 'aria-label': `Delete ${isW ? 'this warm-up set' : `set ${n}`}`, text: 'Delete', onclick: () => deleteSet(e, idx, si) });
+    rowEl.append(h('div', { class: 'set-swipe' }, del, cells));
+    swipeRow(rowEl, cells);
     if (open && open.si === si) {
       if (s.done && T_WORK[t] && open.w === (s.w == null ? null : Number(s.w)) && open.r === Number(s.r)) rowEl.append(devCardEl(e, idx, open));
       else devOpen.delete(e);
@@ -3724,8 +3835,9 @@ function exCard(e, idx) {
     h('div', { class: 'stack', style: 'gap:6px' }, h('span', { class: 'ex-num' }, `${idx + 1} of ${S.active.entries.length}`, e.skipped ? null : progEl, prFlag, standingChip(e, ex)), h('h3', { text: e.name })),
     h('button', { class: 'more-btn', type: 'button', 'aria-label': `More actions for ${e.name}`, onclick: () => exMenu(e, idx, ex) }, DOTS_SVG())));
   if (e.swappedFrom) card.append(h('p', { class: 'small muted', text: `Swapped in today for ${e.swappedFrom}.` }));
+  const usw = e.skipped ? null : unitSwitch(ex, idx);
   card.append(h('div', { class: 'pres' },
-    h('span', { class: 'w', text: fmtW(ex, pr.weight) }),
+    usw ? h('div', { class: 'pres-top' }, h('span', { class: 'w', text: fmtW(ex, pr.weight) }), usw) : h('span', { class: 'w', text: fmtW(ex, pr.weight) }),
     h('span', { class: 'sr', text: `${pr.sets} × ${repsLabel({ ...ex, lo: pr.lo, hi: pr.hi })} · ${rirLabel(pr.rirLo, pr.rirHi)}` })));
   if (pr.tag) card.append(h('div', {}, h('span', { class: 'tag', text: pr.tag })));
   if (ex.maxW && pr.weight != null && pr.weight >= ex.maxW - 0.01) card.append(h('div', {}, h('span', { class: 'tag', text: 'The heaviest you have: slow the lowering instead of adding weight' })));
@@ -3743,6 +3855,10 @@ function exCard(e, idx) {
   const wHint = warmSets(e).some(x => !x.done) ? warmSets(e).map((x, i) => x.why ? `W${i + 1} ${x.why}` : null).filter(Boolean).join(' · ') : '';
   if (wHint) card.append(h('div', { class: 'small muted wu-hint', text: wHint }));
   card.append(setGrid(e, idx, ex));
+  card.append(h('div', { class: 'set-adds' },
+    h('button', { class: 'btn set-add set-add-n', type: 'button', text: '+ Set', onclick: () => addSet(e, idx) }),
+    h('button', { class: 'btn set-add set-add-w', type: 'button', text: '+ Warm-up', onclick: () => addWarmSet(e, idx) }),
+    Settings.swipeUsed ? null : h('span', { class: 'small muted swipe-hint', text: 'Swipe a set left to delete it' })));
   // ratings arrive when they are needed: after the last set, or earlier from the menu
   const rateOpen = entryDone(e) || e.rir != null || e.pain != null || e.shoulderPain != null || e.rateOpen === true;
   const rateIn = h('div', {});
@@ -3767,10 +3883,39 @@ function updateFinishCount() {
 }
 
 /* rest timer */
-let restTick = null;
-function startRest(exId, warm) { S.restRang = false; S.restStart = Date.now(); S.restTarget = warm ? (warm.last ? 90 : 60) : (exId === 'u_bench' || exId === 'u_pullup' || exId === 'b_hinge_p3') ? 180 : 120; updateRest(); }
+let restTick = null, restEndTimer = null;
+function startRest(exId, warm) { S.restRang = false; S.restStart = Date.now(); S.restEx = exId; S.restTarget = warm ? (warm.last ? 90 : 60) : (exId === 'u_bench' || exId === 'u_pullup' || exId === 'b_hinge_p3') ? 180 : 120; askNotify(); updateRest(); }
+/* Rest-over notification. Permission is asked once, the first time a rest timer starts (that tap is the gesture the phone wants).
+   It's shown through the service worker, the only way an iPhone Home Screen app can show one. A web app can't schedule a
+   notification for later on its own, so this fires only while the app is running: on screen, or (on Android) briefly in the background. */
+function askNotify(force) {
+  if (Settings.restNotify === false || typeof Notification === 'undefined' || Notification.permission !== 'default') return;
+  if (Settings.notifyAsked && !force) return;
+  Settings.notifyAsked = true; saveSettings();
+  try { const r = Notification.requestPermission(); if (r && r.then) r.then(v => { if (v === 'denied' && force) toast('Notifications are blocked. Turn them on in your phone’s Settings, under Notifications.'); }).catch(() => {}); } catch (e) {}
+}
+function restNotify() {
+  if (Settings.restNotify === false || typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
+  const ex = S.program && S.restEx ? S.program.exercises[S.restEx] : null;
+  const title = 'Rest is over'; const opts = { body: ex ? `${ex.name}: time for your next set.` : 'Time for your next set.', tag: 'coach-rest', renotify: true, icon: 'icon-192.png', badge: 'icon-192.png', vibrate: [200, 100, 200] };
+  const viaPage = () => { try { new Notification(title, opts); } catch (e) {} };
+  if ('serviceWorker' in navigator && navigator.serviceWorker.getRegistration) navigator.serviceWorker.getRegistration().then(reg => (reg ? reg.showNotification(title, opts) : viaPage())).catch(viaPage);
+  else viaPage();
+}
+/* The moment rest runs out: chime and notification once. Coming back to the app long after (the phone was locked) stays quiet. */
+function restOver(late) {
+  if (S.restRang) return; S.restRang = true;
+  if (late > 90) return;
+  Fx.snd.rest(); Fx.hap(2); restNotify();
+}
 function updateRest() {
   const box = $('#rest');
+  // one timer aimed at the exact end, so the chime doesn't wait for a tick, and still rings on the other tabs
+  clearTimeout(restEndTimer); restEndTimer = null;
+  if (S.active && S.restStart && !S.restRang) {
+    const ms = S.restStart + S.restTarget * 1000 - Date.now();
+    restEndTimer = setTimeout(() => { restEndTimer = null; if (!S.active || !S.restStart || S.restRang) return; const s = (Date.now() - S.restStart) / 1000; if (s >= S.restTarget) restOver(s - S.restTarget); updateRest(); }, Math.max(0, ms) + 30);
+  }
   if (!S.active || !S.restStart || S.tab !== 'today') { box.hidden = true; clearInterval(restTick); restTick = null; return; }
   box.hidden = false;
   const draw = () => {
@@ -3780,7 +3925,7 @@ function updateRest() {
     $('#rest-sub').textContent = over ? 'Rested. Go.' : `Rest, of ${Math.floor(S.restTarget / 60)}:${pad(S.restTarget % 60)}`;
     box.classList.toggle('over', over);
     $('#rest-ring').style.strokeDashoffset = String(113.1 * (1 - Math.min(1, s / S.restTarget)));
-    if (over && !S.restRang) { S.restRang = true; Fx.snd.rest(); Fx.hap(2); }
+    if (over && !S.restRang) restOver(s - S.restTarget);
   };
   draw(); if (!restTick) restTick = setInterval(draw, 1000);
 }
@@ -3925,12 +4070,32 @@ function viewProgram() {
     }
     root.append(wc);
   }
-  const lg = h('div', { class: 'card' }, h('h3', { text: 'Changes' }));
-  const items = (S.log.items || []).slice(0, 40);
-  if (!items.length) lg.append(h('p', { class: 'muted small', text: 'Changes made by the app, the coach or you show up here.' }));
-  else { const l = h('div', { class: 'loglist' }); for (const it of items) l.append(h('div', { class: 'logitem' }, h('span', { class: 'pill ' + (it.source === 'claude' ? 'blue' : it.source === 'you' ? '' : 'go'), text: it.source === 'claude' ? 'Coach' : it.source === 'you' ? 'You' : 'Auto' }), h('div', {}, h('div', { text: it.text }), h('div', { class: 'small muted', text: fmtDate(it.ts) })))); lg.append(l); }
-  root.append(lg);
+  root.append(changesCard());
   return root;
+}
+/* The change log, folded: one line per day ("Tue 10 Nov, 3 changes"), newest day first; a day opens to its entries. */
+function changesCard() {
+  const items = (S.log.items || []).filter(it => it && it.text);
+  const byDay = new Map();
+  for (const it of items) { const d = String(it.ts || '').slice(0, 10) || '—'; if (!byDay.has(d)) byDay.set(d, []); byDay.get(d).push(it); }
+  const days = [...byDay.keys()].sort((a, b) => (a < b ? 1 : -1));
+  S.logDays = S.logDays || {};
+  const det = h('details', { class: 'card changes', id: 'changes-card', open: S.changesOpen ? true : null },
+    h('summary', {}, h('h3', { text: 'Changes' }), h('span', { class: 'small muted' }, items.length ? `${days.length} day${days.length === 1 ? '' : 's'} ` : '', h('span', { class: 'chev', 'aria-hidden': 'true', text: '▾' }))));
+  det.addEventListener('toggle', () => { S.changesOpen = det.open; });
+  const list = h('div', { class: 'day-list' });
+  if (!items.length) list.append(h('p', { class: 'muted small', text: 'Changes made by the app, the coach or you show up here.' }));
+  for (const d of days) {
+    const its = byDay.get(d); const open = !!S.logDays[d];
+    list.append(h('button', { class: 'coach-fold day-fold', type: 'button', 'aria-expanded': String(open), onclick: () => { S.logDays[d] = !open; renderMain(); } },
+      h('span', { class: 'fold-main' }, h('b', { text: `${d === '—' ? 'Undated' : fmtDate(d)}, ${its.length} change${its.length === 1 ? '' : 's'}` })),
+      h('span', { class: 'small muted', text: open ? '▴' : '▾' })));
+    if (open) list.append(h('div', { class: 'day-entries loglist' }, its.map(it => h('div', { class: 'logitem' },
+      h('span', { class: 'pill ' + (it.source === 'claude' ? 'blue' : it.source === 'you' ? '' : 'go'), text: it.source === 'claude' ? 'Coach' : it.source === 'you' ? 'You' : 'Auto' }),
+      h('div', {}, h('div', { text: it.text }), h('div', { class: 'small muted', text: fmtTime(it.ts) }))))));
+  }
+  det.append(list);
+  return det;
 }
 function programItem(ex, slot) {
   const p = S.program; const pr = prescription(p, ex);
@@ -4052,8 +4217,11 @@ function viewRank() {
   const how = h('div', { class: 'card' }, h('h3', { text: 'How you earn XP' }));
   const rows = [['Finish a session', XP.finish], ['Each working set (up to the planned number)', XP.set], ['Full back warm-up, or a session that doesn’t need one', XP.prepFull], ['Full warm-up', XP.warmFull], ['Readiness check', XP.readiness],
     ['Rate every tracked pain (any number counts)', XP.honest], ['Each weight increase you earn', XP.up], [`Each PR (up to ${XP.prMax} a session)`, XP.pr], ['Next-morning back check', XP.morning],
-    ...QUESTS.map(q => [`Weekly quest: ${q.name.toLowerCase()}`, q.xp])];
-  how.append(h('table', { class: 'xptable' }, h('tbody', {}, rows.map(([a, b]) => h('tr', {}, h('td', { text: a }), h('td', { text: `+${b}` }))))));
+    ...QUESTS.map(q => [`Weekly quest: ${q.name.toLowerCase()}`, q.xp]),
+    [`Each session short of ${MISS_MIN} in a week (Monday to Sunday)`, -XP.miss]];
+  how.append(h('table', { class: 'xptable' }, h('tbody', {}, rows.map(([a, b]) => h('tr', {}, h('td', { text: a }), h('td', { class: b < 0 ? 'neg' : null, text: b < 0 ? `−${-b}` : `+${b}` }))))));
+  const mf = g.miss.from;
+  how.append(h('p', { class: 'small muted', text: `Missed sessions: a week that ends with fewer than ${MISS_MIN} sessions in the app costs ${XP.miss} XP for each one short, and can drop you a division. ${mf ? `It counts from the week of ${fmtDate(mf)}; earlier weeks never cost anything.` : ''}${g.miss.xp ? ` So far: −${fmtInt(g.miss.xp)} XP (${g.miss.weeks.map(w => `week of ${fmtDate(w.wk)}: ${w.n} session${w.n === 1 ? '' : 's'}, −${w.xp}`).join('; ')}).` : ' Nothing lost so far.'}` }));
   how.append(h('p', { class: 'small muted', text: 'A PR means beating your best estimated 1-rep max on that lift, your Strong history included. A high pain rating never costs XP, and extra sets beyond the plan earn nothing. Stopping an exercise that hurts is the right call.' }));
   root.append(how);
   countUp(root);
@@ -4464,7 +4632,8 @@ function consistency() {
     grid.append(col);
   }
   grid.setAttribute('aria-label', `${total} sessions in the last ${WEEKS} weeks`);
-  return h('section', { class: 'card cons' }, h('div', { class: 'spread', style: 'align-items:baseline' }, h('h3', { text: 'Last 12 weeks' }), h('span', { class: 'small muted', text: `${total} session${total === 1 ? '' : 's'}, ${weeksHit} of ${WEEKS} weeks` })), grid);
+  const days = h('div', { class: 'cons-days', 'aria-hidden': 'true' }, ['M', 'T', 'W', 'T', 'F', 'S', 'S'].map(l => h('span', { text: l })));
+  return h('section', { class: 'card cons' }, h('div', { class: 'spread', style: 'align-items:baseline' }, h('h3', { text: 'Last 12 weeks' }), h('span', { class: 'small muted', text: `${total} session${total === 1 ? '' : 's'}, ${weeksHit} of ${WEEKS} weeks` })), h('div', { class: 'cons-wrap' }, days, grid));
 }
 function viewHistory() {
   if (S.trendKey) { const t = allTrends().find(x => x.key === S.trendKey); if (t) return viewTrendDetail(t); S.trendKey = null; }
@@ -4954,50 +5123,49 @@ function viewCoach() {
   if (!avail) root.append(h('div', { class: 'card' }, h('p', { text: 'Add your Claude API key in Settings to turn the coach on. Logging, automatic weight changes and the Sunday check-in work without it.' }),
     h('div', {}, h('button', { class: 'btn primary', type: 'button', text: 'Open Settings', onclick: () => setTab('settings') }))));
   if (S.active && avail) root.append(h('div', { class: 'warn', text: `You’re mid-session (${S.active.dayName}). Ask here to swap an exercise: once you apply the swap, it replaces that exercise in today’s session too.` }));
-  if (avail) root.append(h('div', { class: 'row' },
-    h('button', { class: 'btn', type: 'button', text: 'Review my last session', disabled: S.coachBusy || !ownSessions().length, onclick: () => askCoach('review') }),
-    h('button', { class: 'btn', type: 'button', text: 'Weekly check-in', disabled: S.coachBusy, onclick: () => askCoach('weekly') })));
   const items = (S.thread.items || []).filter(it => !it.deleted);
-  if (!items.length) root.append(h('p', { class: 'muted small', text: 'After a session, ask for a review. The coach suggests changes you can apply or dismiss, and asks you questions when it needs more to go on.' }));
   const convs = conversations(items); const today = todayStr();
   S.coachOpen = S.coachOpen || {}; S.coachDays = S.coachDays || {};
-  const waiting = convs.filter(c => c.needs);
-  const todays = convs.filter(c => !c.needs && c.day === today);
-  const earlier = convs.filter(c => !c.needs && c.day !== today);
-  const newest = convs[convs.length - 1];
-  // Earlier days: one line per day until he opens it.
-  if (earlier.length) {
-    const wrap = h('div', { class: 'stack' }, h('div', { class: 'eyebrow', text: 'Earlier' }));
-    for (const d of [...new Set(earlier.map(c => c.day))]) {
-      const cs = earlier.filter(c => c.day === d); const open = !!S.coachDays[d];
-      const applied = cs.reduce((k, c) => k + c.applied, 0);
-      wrap.append(h('button', { class: 'coach-fold day-fold', type: 'button', 'aria-expanded': String(open), onclick: () => { S.coachDays[d] = !open; renderMain(); } },
-        h('span', { class: 'fold-main' }, h('b', { text: fmtDate(d) }), h('span', { class: 'small muted', text: `${cs.length} conversation${cs.length === 1 ? '' : 's'}${applied ? ` · ${applied} change${applied === 1 ? '' : 's'} made` : ''}` })),
-        h('span', { class: 'small muted', text: open ? '▴' : '▾' })));
-      if (open) wrap.append(h('div', { class: 'conv-list' }, cs.map(c => (S.coachOpen[c.id] === true ? convView(c, true) : convFold(c, true)))));
-    }
-    root.append(wrap);
-  }
-  // Today: folded, except the newest conversation, so a reply he just got stays in view.
-  if (todays.length) {
-    const wrap = h('div', { class: 'stack' }, h('div', { class: 'eyebrow', text: 'Today' }));
-    for (const c of todays) { const open = S.coachOpen[c.id] != null ? S.coachOpen[c.id] : c === newest; wrap.append(open ? convView(c, true) : convFold(c, true)); }
-    root.append(wrap);
-  }
-  // Anything waiting on him sits next to the message box, with its deadline.
-  if (waiting.length) {
-    const wrap = h('div', { class: 'stack' }, h('div', { class: 'eyebrow', text: 'Waiting on you' }));
-    for (const c of waiting) { const open = S.coachOpen[c.id] != null ? S.coachOpen[c.id] : true; wrap.append(open ? convView(c, c.day === today) : convFold(c, c.day === today)); }
-    root.append(wrap);
-  }
+  // 1. the message box, with the two quick asks under it
   if (avail) {
     const ta = h('textarea', { id: 'coach-input', placeholder: 'Tell the coach something or ask a question. For example: “The leg press machine was taken, what should I use instead?”' });
     if (S.coachDraft) ta.value = S.coachDraft;
     ta.addEventListener('input', () => { S.coachDraft = ta.value; });
     const comp = h('div', { class: 'composer card' }, h('label', { class: 'q-label', for: 'coach-input', text: 'Message the coach' }), ta,
-      h('div', { class: 'row' }, h('button', { class: 'btn primary', type: 'button', text: 'Send', disabled: S.coachBusy, onclick: () => { const t = ta.value.trim(); if (!t) return; S.coachDraft = ''; for (const c of convs) if (S.coachOpen[c.id] === true && !c.needs) delete S.coachOpen[c.id]; askCoach('ask', t); } }),
-        S.coachBusy ? h('button', { class: 'btn', type: 'button', text: 'Stop', onclick: () => { S.ctl && S.ctl.abort(); } }) : null));
+      h('div', { class: 'row' }, h('button', { class: 'btn primary', type: 'button', text: 'Send', disabled: S.coachBusy, onclick: () => { const t = ta.value.trim(); if (!t) return; S.coachDraft = ''; for (const c of convs) if (S.coachOpen[c.id] === true && !c.needs) delete S.coachOpen[c.id]; S.coachDays[today] = true; askCoach('ask', t); } }),
+        S.coachBusy ? h('button', { class: 'btn', type: 'button', text: 'Stop', onclick: () => { S.ctl && S.ctl.abort(); } }) : null),
+      h('div', { class: 'row' },
+        h('button', { class: 'btn', type: 'button', text: 'Review my last session', disabled: S.coachBusy || !ownSessions().length, onclick: () => { S.coachDays[today] = true; askCoach('review'); } }),
+        h('button', { class: 'btn', type: 'button', text: 'Weekly check-in', disabled: S.coachBusy, onclick: () => { S.coachDays[today] = true; askCoach('weekly'); } })));
     root.append(comp);
+  }
+  if (!items.length) root.append(h('p', { class: 'muted small', text: 'After a session, ask for a review. The coach suggests changes you can apply or dismiss, and asks you questions when it needs more to go on.' }));
+  // 2. anything waiting on him, with its deadline, newest first
+  const waiting = convs.filter(c => c.needs).reverse();
+  if (waiting.length) {
+    const wrap = h('div', { class: 'stack' }, h('div', { class: 'eyebrow', text: 'Waiting on you' }));
+    for (const c of waiting) { const open = S.coachOpen[c.id] != null ? S.coachOpen[c.id] : true; wrap.append(open ? convView(c, c.day === today) : convFold(c, c.day === today)); }
+    root.append(wrap);
+  }
+  // 3. history: one line per day, newest day first. Today starts open with its newest conversation showing, so a reply he just got stays in view.
+  const done = convs.filter(c => !c.needs);
+  if (done.length) {
+    const wrap = h('div', { class: 'stack' }, h('div', { class: 'eyebrow', text: 'History' }));
+    const newest = done[done.length - 1];
+    const days = [...new Set(done.map(c => c.day))].sort((a, b) => (a < b ? 1 : -1));
+    const list = h('div', { class: 'day-list' });
+    for (const d of days) {
+      const cs = done.filter(c => c.day === d).reverse(); const open = S.coachDays[d] != null ? !!S.coachDays[d] : d === today;
+      const applied = cs.reduce((k, c) => k + c.applied, 0);
+      list.append(h('button', { class: 'coach-fold day-fold', type: 'button', 'aria-expanded': String(open), onclick: () => { S.coachDays[d] = !open; renderMain(); } },
+        h('span', { class: 'fold-main' }, h('b', { text: d === today ? `Today, ${fmtDate(d)}` : fmtDate(d) }), h('span', { class: 'small muted', text: `${cs.length} conversation${cs.length === 1 ? '' : 's'}${applied ? ` · ${applied} change${applied === 1 ? '' : 's'} made` : ''}` })),
+        h('span', { class: 'small muted', text: open ? '▴' : '▾' })));
+      if (open) list.append(h('div', { class: 'conv-list' }, cs.map(c => {
+        const o = S.coachOpen[c.id] != null ? S.coachOpen[c.id] === true : (d === today && c === newest);
+        return o ? convView(c, true) : convFold(c, true);
+      })));
+    }
+    wrap.append(list); root.append(wrap);
   }
   return root;
 }
@@ -5193,9 +5361,12 @@ function viewSettings() {
   }
 
   const feel = h('div', { class: 'card', id: 'feel-settings' }, h('h3', { text: 'Sound and feel' }));
-  for (const [k, title, sub] of [['sound', 'Sounds', 'Ticks, chimes and the PR fanfare.'], ['haptics', 'Vibration', 'A tick on each set and a longer buzz for PRs and rank-ups, where your phone allows it.'], ['keypad', 'Plus and minus pad', 'Tapping a weight or a rep count opens big plus and minus buttons. Off: the keyboard opens straight away.']])
-    feel.append(h('label', { class: 'check', for: 'feel-' + k }, h('input', { type: 'checkbox', id: 'feel-' + k, checked: Settings[k] !== false, onchange: ev => { Settings[k] = ev.target.checked; saveSettings(); if (ev.target.checked && k === 'sound') Fx.snd.done(); if (ev.target.checked && k === 'haptics') Fx.hap(2); } }),
+  for (const [k, title, sub] of [['sound', 'Sounds', 'Ticks, chimes and the PR fanfare.'], ['haptics', 'Vibration', 'A tick on each set and a longer buzz for PRs and rank-ups, where your phone allows it.'],
+    ['restNotify', 'Rest timer notification', 'When a rest ends, a notification as well as the chime. It arrives while Coach is open on screen; with the phone locked or another app in front, iPhone pauses the app, so it comes when you open Coach again.']])
+    feel.append(h('label', { class: 'check', for: 'feel-' + k }, h('input', { type: 'checkbox', id: 'feel-' + k, checked: Settings[k] !== false, onchange: ev => { Settings[k] = ev.target.checked; saveSettings(); if (ev.target.checked && k === 'sound') Fx.snd.done(); if (ev.target.checked && k === 'haptics') Fx.hap(2); if (k === 'restNotify' && ev.target.checked) askNotify(true); } }),
       h('span', {}, h('b', { text: title }), h('br'), h('span', { class: 'small muted', text: sub }))));
+  if (typeof Notification !== 'undefined' && Notification.permission === 'denied' && Settings.restNotify !== false) feel.append(h('p', { class: 'small muted', text: 'Notifications are blocked for Coach. Turn them on in your phone’s Settings under Notifications, then Coach.' }));
+  else if (typeof Notification === 'undefined') feel.append(h('p', { class: 'small muted', text: isStandalone() ? 'This phone doesn’t offer notifications to Coach.' : 'Notifications need Coach opened from its Home Screen icon.' }));
   root.append(feel);
 
   // pre-workout notification

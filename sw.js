@@ -1,6 +1,6 @@
 // Offline support: the app shell is cached so the app opens at the gym without signal.
 // Pages are fetched fresh when online (so updates arrive) and fall back to the cache offline.
-const CACHE = 'coach-v10';
+const CACHE = 'coach-v11';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-180.png', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
@@ -29,4 +29,12 @@ self.addEventListener('fetch', e => {
     if (res.ok || res.type === 'opaque') { const copy = res.clone(); caches.open(CACHE).then(c => c.put(req, copy)); }
     return res;
   })));
+});
+// Tapping the rest-over notification brings Coach back to the front (or opens it).
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+    for (const c of list) if ('focus' in c) return c.focus();
+    return self.clients.openWindow ? self.clients.openWindow('./') : null;
+  }));
 });
