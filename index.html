@@ -184,10 +184,18 @@ textarea{min-height:80px;resize:vertical}
 .plate{font:700 .78rem/1 var(--display);padding:5px 6px;border-radius:4px;min-width:28px;text-align:center;color:var(--plate-ink)}
 .plate.p25{background:var(--plate-25)} .plate.p20{background:var(--plate-20)} .plate.p15{background:var(--plate-15);color:var(--plate-ink-dark)}
 .plate.p10{background:var(--plate-10)} .plate.p5{background:var(--plate-5);color:var(--plate-ink-dark);box-shadow:inset 0 0 0 1px var(--line)} .plate.p2{background:var(--plate-2);color:var(--plate-ink-dark)}
-.sets{display:grid;grid-template-columns:2rem minmax(0,1fr) minmax(0,1fr) 3.6rem;gap:8px;align-items:center}
+.sets{display:grid;grid-template-columns:2.8rem minmax(0,1fr) minmax(0,1fr) 3.6rem;gap:8px;align-items:center}
 .sets .hd{font:600 .78rem/1 var(--body);color:var(--muted);text-align:center}
 .setrow{display:contents}
-.set-idx{font:600 1.05rem var(--display);color:var(--muted);text-align:center}
+.set-tag{appearance:none;height:48px;padding:0;border-radius:var(--r-sm);border:1px solid var(--line);background:var(--raised);color:var(--ink);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font:700 1.08rem/1 var(--display)}
+.set-tag small{font:600 .68rem/1 var(--body);color:var(--muted)}
+.set-tag[data-t="W"]{color:var(--muted);border-style:dashed}
+.set-tag[data-t="F"]{color:var(--accent);border-color:var(--accent)}
+.set-tag[data-t="D"]{color:var(--pr);border-color:var(--pr)}
+.dev-card{grid-column:1/-1;display:flex;flex-direction:column;gap:6px;padding:10px;font-size:.95rem;background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 45%,var(--line));border-radius:var(--r-sm)}
+.dev-card p{margin:0}
+.dev-card .row{gap:6px 18px;align-items:center}
+.dev-card .btn{min-height:38px;padding:7px 14px;font-size:.93rem}
 .num-in{height:48px;text-align:center;font:600 1.25rem/1 var(--display)!important;font-variant-numeric:tabular-nums;padding:0 6px!important;transition:background-color .2s,border-color .2s}
 .setrow.done .num-in{background:var(--go-soft);border-color:var(--go)}
 .setrow.pr .num-in{background:var(--pr-soft);border-color:var(--pr)}
@@ -376,10 +384,8 @@ details.cues[open] summary{margin-bottom:6px}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;flex:none;margin-left:auto;align-self:center}
 .seg-b{appearance:none;border:0;background:transparent;color:var(--muted);font:600 .82rem/1 var(--body);padding:7px 11px;min-height:32px;cursor:pointer}
 .seg-b[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
-.wu-box{display:flex;flex-direction:column;gap:8px;padding:10px 12px;border:1px dashed var(--line);border-radius:var(--r-sm)}
-.sets.wu .num-in{height:42px;font-size:1.05rem!important;background:var(--raised)}
-.sets.wu .done-btn{height:42px}
-.sets.wu .set-idx{font-size:.9rem}
+.setrow[data-t="W"] .num-in{height:42px;font-size:1.05rem!important;background:var(--raised)}
+.setrow[data-t="W"] .done-btn,.setrow[data-t="W"] .set-tag{height:42px}
 .notes{display:flex;flex-direction:column;gap:8px}
 .note-row{display:flex;flex-direction:column;gap:2px}
 .note-bubble{background:var(--accent-soft);border-radius:var(--r-sm);padding:8px 12px;white-space:pre-wrap;font-size:.95rem}
@@ -655,14 +661,15 @@ function warmPlan(p, entries, opts = {}) {
     else if (W == null && ex.unit !== 'bw' && ex.unit !== 'kg plate') plan = [{ w: null, r: Math.max(8, ex.lo || 10), why: 'light, to dial in the setup' }];
     if (!plan.length && (ex.back || exPress(ex))) plan = feelerSet(ex, W);
     if (comp) for (const g of gs) seen.add(g);
-    return plan.map(x => ({ w: x.w, r: x.r, done: false, why: x.why || '' }));
+    return plan.map(x => ({ t: 'W', w: x.w, r: x.r, done: false, why: x.why || '' }));
   });
 }
-/* Gives entries that don't have warm-up sets yet (new, added, swapped, or from an older draft) their plan, in session order. */
+/* Gives entries that don't have warm-up sets yet (new, added, swapped) their plan, in session order: W sets at the top of e.sets.
+   warmPlanned stops an exercise he cleared of W sets getting them back on the next render. */
 function fillWarm(p, entries) {
   const seen = new Set();
   entries.forEach((e, i) => {
-    if (!Array.isArray(e.wu)) e.wu = warmPlan(p, [e], { seen })[0];
+    if (!e.warmPlanned) { if (!warmSets(e).length) e.sets = [...warmPlan(p, [e], { seen })[0], ...(e.sets || [])]; e.warmPlanned = true; }
     const ex = p.exercises[e.exId];
     if (ex && exCompound(ex)) for (const g of exGroups(ex)) seen.add(g);
   });
@@ -849,7 +856,7 @@ function migrateProgramV3(p) {
 
 /* Double progression with the back rules on top. Mutates ex (and p.holds); returns what happened. */
 function progress(p, ex, entry, date) {
-  const done = entry.sets.filter(s => s.done && (s.r || 0) > 0);
+  const done = workSets(entry).filter(s => s.done && (s.r || 0) > 0);
   const ws = done.map(s => (s.w == null ? 0 : Number(s.w)));
   const W = ws.length ? Math.max(...ws) : 0;
   const atW = done.filter(s => (s.w == null ? 0 : Number(s.w)) === W);
@@ -1070,6 +1077,34 @@ const fmtInt = n => Math.round(n).toLocaleString('en-IN');
 
 function weekStart(dateStr) { const d = parseDay(dateStr); return addDays(String(dateStr).slice(0, 10), -((d.getDay() + 6) % 7)); }
 function exKey(e) { return e.exId || e.name; }
+/* Set types: W warm-up (never counted), N working, F to failure, D drop set (extra volume: XP and the ticked total, nothing else). */
+const T_WORK = { N: 1, F: 1 };                       // counts for progression, PRs, rank, x/y counter
+function setT(s) { return s && s.t ? s.t : 'N'; }
+function workSets(e) { return (e.sets || []).filter(s => T_WORK[setT(s)]); }          // N + F
+function loggedSets(e) { return (e.sets || []).filter(s => setT(s) !== 'W'); }         // N + F + D
+function warmSets(e) { return (e.sets || []).filter(s => setT(s) === 'W'); }
+/* Next-set prompt thresholds, synced with the program. */
+function devSettings(p) {
+  if (!p) return { reps: 3, pct: 10 };
+  p.settings = p.settings || {};
+  const d = p.settings.dev = p.settings.dev || {};
+  if (!(d.reps > 0)) d.reps = 3;
+  if (!(d.pct > 0)) d.pct = 10;
+  return d;
+}
+/* Old entries kept warm-up sets in a separate wu list and had no set types. Read them as the new shape.
+   norm is a runtime flag (not enumerable, so it never reaches the sheet or the draft). In a draft, an old wu list
+   (even an empty one) means its warm-ups were already planned. */
+function normEntry(e, opts) {
+  if (!e || e.norm) return e;
+  const old = e.wu; delete e.wu;
+  const hadWu = Array.isArray(old);
+  const warm = hadWu ? old.map(s => ({ ...s, t: 'W' })) : [];
+  e.sets = [...warm, ...(e.sets || []).map(s => (s.t ? s : { ...s, t: 'N' }))];
+  if (opts && opts.draft && hadWu) e.warmPlanned = true;
+  Object.defineProperty(e, 'norm', { value: true, enumerable: false, configurable: true, writable: true });
+  return e;
+}
 function setE1(p, ex, w, r) {
   if (!(r > 0)) return null;
   if (ex && ex.unit === 'bw') return null;
@@ -1081,7 +1116,7 @@ function entryBest(p, e) {
   if (e.unitMix) return null; // logged with the wrong unit's number: not a PR and not the bar for one
   const ex = p.exercises[e.exId];
   let best = null;
-  for (const st of e.sets || []) {
+  for (const st of workSets(e)) {
     if (st.done === false) continue;
     const v = setE1(p, ex, st.w, Number(st.r));
     if (v != null && (!best || v > best.v)) best = { v, w: st.w, r: st.r };
@@ -1113,7 +1148,7 @@ function sessionXP(p, s, best, opts = {}) {
   let sets = 0;
   for (const e of s.entries || []) {
     if (e.skipped) continue;
-    const done = (e.sets || []).filter(x => x.done && Number(x.r) > 0).length;
+    const done = loggedSets(e).filter(x => x.done && Number(x.r) > 0).length;
     sets += Math.min(done, e.presSets || (e.pres && e.pres.sets) || done);
     const b = entryBest(p, e); const prior = best[exKey(e)];
     if (b && prior != null && b.v > prior + 0.5) prs.push({ name: e.name, exId: e.exId, v: b.v, w: b.w, r: b.r, prior });
@@ -1181,7 +1216,7 @@ function computeGame(p, sessions, opts = {}) {
       const wk = weekStart(s.date); const W = (weeks[wk] = weeks[wk] || { all: 0, own: [] }); W.all++;
       const r = sessionXP(p, s, best); per[s.id] = r; xp += r.xp; W.own.push(s);
       st.own++; if (r.prepFull) st.prepFull++; if (r.honest) st.honest++; st.prs += r.prs.length; st.sets += r.sets;
-      for (const e of s.entries || []) if (!e.skipped) for (const x of e.sets || []) if (x.done && x.r > 0 && x.w > 0) { const ex = p.exercises[e.exId]; st.tonnage += Number(x.w) * Number(x.r) * (ex && ex.unit === 'kg each' ? 2 : 1); }
+      for (const e of s.entries || []) if (!e.skipped) for (const x of loggedSets(e)) if (x.done && x.r > 0 && x.w > 0) { const ex = p.exercises[e.exId]; st.tonnage += Number(x.w) * Number(x.r) * (ex && ex.unit === 'kg each' ? 2 : 1); }
       if (s.week === 12) st.deload = 1;
       if ((s.week || 0) >= 12) st.blockDone = true;
     }
@@ -1341,7 +1376,7 @@ const Store = {
     }
   },
   del(path) { if (path === 'app/draft') { this.data.draft = null; this.saveData(); } },
-  sessions() { return Object.values(this.data.sessions).filter(Boolean).sort((a, b) => (a.date < b.date ? 1 : -1)).map(clone); },
+  sessions() { return Object.values(this.data.sessions).filter(Boolean).sort((a, b) => (a.date < b.date ? 1 : -1)).map(clone).map(s => { (s.entries || []).forEach(e => normEntry(e)); return s; }); },
   pendingCount() { return Object.keys(this.sync.pending).length; },
 };
 const Settings = Object.assign({ apiKey: '', model: 'claude-sonnet-5-5' }, lsGet(SET_KEY) || {});
@@ -1434,7 +1469,10 @@ function loadFromStore() {
   S.loaded.program = true;
   const m2 = prog ? migrateProgram(prog) : false; const m3 = prog ? migrateProgramV3(prog) : false; const m4 = prog ? migrateProgramV4(prog) : false;
   const m5 = prog ? migrateProgramV5(prog) : false;
-  if (m2 || m3 || m4 || m5) queueMicrotask(async () => {
+  // set types arrive as an app update, not a program version: log it once
+  const m6 = prog ? !(prog.flags && prog.flags.setTypes) : false;
+  if (m6) prog.flags = { ...(prog.flags || {}), setTypes: true };
+  if (m2 || m3 || m4 || m5 || m6) queueMicrotask(async () => {
     try {
       await saveProgram();
       if (m2) await addLog('auto', 'App update: a 6-minute back warm-up only on days that load your back, form cues on every exercise, hip thrust before leg extensions on Lower A.');
@@ -1450,6 +1488,7 @@ function loadFromStore() {
         for (const sx of [...fixed, ...mixed.filter(x => !fixed.includes(x))]) await put('sessions/' + sx.id, sx);
         await addLog('you', 'Goblet box squat is in pounds: restarts at 45 lb. Strong’s goblet squats were pounds (50 lb × 15 in August), and Friday’s 40 kg sets stay logged but don’t count for its rank or standing.');
       }
+      if (m6) await addLog('auto', 'App update: set types W/N/F/D on every set, warm-ups in the same list, and next-set prompts when a set lands far from the plan.');
     } catch (e) {}
     S.sessions = Store.sessions(); refresh();
   });
@@ -1940,7 +1979,7 @@ function makeEntry(ex, date) {
   return {
     exId: ex.id, name: ex.name, presSets: pr.sets,
     pres: { sets: pr.sets, lo: ex.lo, hi: ex.hi, rirLo: pr.rirLo, rirHi: pr.rirHi, weight: ex.weight, tag: pr.tag },
-    sets: Array.from({ length: pr.sets }, () => ({ w: ex.unit === 'bw' ? null : (ex.weight ?? null), r: pr.aim ?? null, done: false })),
+    sets: Array.from({ length: pr.sets }, () => ({ t: 'N', w: ex.unit === 'bw' ? null : (ex.weight ?? null), r: pr.aim ?? null, done: false })),
     rir: null, pain: null, shoulderPain: null, note: '', skipped: false,
   };
 }
@@ -2468,7 +2507,7 @@ function viewLogger() {
   const a = S.active, p = S.program;
   const day = p.days[a.dayKey] || { prep: a.custom ? (a.custom.prep ?? 6) : 6, name: a.dayName, warm: a.custom ? a.custom.warm : null };
   if (a.prepSteps == null) a.prepSteps = backWarmNeeded(p, a.entries) ? (p.prep || []).length : 0;
-  if (a.entries.some(e => !Array.isArray(e.wu))) fillWarm(p, a.entries);
+  if (a.entries.some(e => !e.warmPlanned)) fillWarm(p, a.entries);
   const root = h('div', { class: 'stack' });
   root.append(h('div', {},
     h('div', { class: 'eyebrow', text: `${fmtDate(a.date)}, ${todOf(a) || ''} session started ${fmtTime(a)}. Phase ${a.phase}, week ${a.week}` }),
@@ -2546,7 +2585,7 @@ function viewLogger() {
   ta.addEventListener('input', () => { a.note = ta.value; saveDraftSoon(); });
   fin.append(h('label', { class: 'q', for: 'sess-note' }, h('span', { class: 'q-label', text: 'Session note' }), ta));
   fin.append(reminderComposer(a));
-  const doneCount = a.entries.reduce((n, e) => n + (e.skipped ? 0 : e.sets.filter(s => s.done).length), 0);
+  const doneCount = a.entries.reduce((n, e) => n + (e.skipped ? 0 : loggedSets(e).filter(s => s.done).length), 0);
   fin.append(h('button', { class: 'btn primary block', type: 'button', text: `Finish session (${doneCount} sets ticked)`, id: 'finish-btn', onclick: finishSession }));
   if (!S.discardConfirm) fin.append(h('button', { class: 'link', type: 'button', text: 'Discard this session', onclick: () => { S.discardConfirm = true; renderMain(); } }));
   else fin.append(h('div', { class: 'row' }, h('span', { class: 'small', text: 'Discard everything logged in this session?' }),
@@ -2578,7 +2617,7 @@ function updateLive() {
   const el = document.getElementById('live'); if (!el) return;
   const a = S.active; const g = getGame();
   let tot = 0, done = 0;
-  for (const e of a.entries) { if (e.skipped) continue; const ps = e.presSets || e.sets.length; tot += ps; done += Math.min(ps, e.sets.filter(x => x.done && Number(x.r) > 0).length); }
+  for (const e of a.entries) { if (e.skipped) continue; const ps = e.presSets || workSets(e).length; tot += ps; done += Math.min(ps, workSets(e).filter(x => x.done && Number(x.r) > 0).length); }
   const r = sessionXP(S.program, a, g ? g.best : {}, { live: true });
   el.querySelector('#live-sets').textContent = `${done} of ${tot} sets done`;
   el.querySelector('#live-xp').textContent = `+${fmtInt(r.xp)} XP so far`;
@@ -2695,7 +2734,7 @@ function notesBlock(e, idx) {
 /* ---------- live tier-ups ----------
    The moment a ticked set lifts an exercise to a new rank, or to a new strength tier against bodyweight, it's celebrated. */
 function livePoint(p, ex, e) {
-  const done = e.sets.filter(x => x.done && Number(x.r) > 0);
+  const done = workSets(e).filter(x => x.done && Number(x.r) > 0);
   if (!done.length) return null;
   let best = null, maxR = 0;
   for (const x of done) { const r = Number(x.r); maxR = Math.max(maxR, r); const v = setE1(p, ex, x.w, r); if (v != null && (!best || v > best.v)) best = { v, w: x.w, r }; }
@@ -2763,7 +2802,7 @@ function ratingsDone(e) {
   const ex = S.program.exercises[e.exId] || {};
   return e.rir != null && (!ex.back || e.pain != null) && (!ex.shoulder || e.shoulderPain != null);
 }
-function entryDone(e) { const presN = e.presSets || (e.pres && e.pres.sets) || e.sets.length; return e.sets.filter(x => x.done && Number(x.r) > 0).length >= presN; }
+function entryDone(e) { const presN = e.presSets || (e.pres && e.pres.sets) || workSets(e).length; return workSets(e).filter(x => x.done && Number(x.r) > 0).length >= presN; }
 /* A finished exercise folds away once its ratings are in, or once a later exercise has a ticked set. Tapping it opens it again. */
 function isFolded(e, idx) {
   if (e.open === true) return false;
@@ -2791,12 +2830,13 @@ function refold(changedIdx) {
   });
 }
 function setSummary(ex, e) {
-  const sets = e.sets.filter(x => x.done && Number(x.r) > 0);
-  if (!sets.length) return 'No sets ticked';
+  const sets = workSets(e).filter(x => x.done && Number(x.r) > 0);
+  const drops = e.sets.filter(x => setT(x) === 'D' && x.done && Number(x.r) > 0).length;
+  if (!sets.length) return drops ? `${drops} drop${drops === 1 ? '' : 's'}` : 'No sets ticked';
   const ws = [...new Set(sets.map(x => fmtD(ex, x.w)))];
   const reps = sets.map(x => x.r).join(', ');
   const w = ex.unit === 'bw' || sets.every(x => x.w == null) ? 'BW' : ws.length === 1 ? `${ex.unit === 'kg added' ? '+' : ''}${ws[0]} ${wUnit(ex)}` : `${ws.join('/')} ${wUnit(ex)}`;
-  return `${w} × ${reps}${e.rir != null ? ` · RIR ${rirText(e.rir)}` : ''}${e.pain != null ? ` · back ${e.pain}` : ''}${e.shoulderPain != null ? ` · shoulder ${e.shoulderPain}` : ''}`;
+  return `${w} × ${reps}${drops ? ` · ${drops} drop${drops === 1 ? '' : 's'}` : ''}${e.rir != null ? ` · RIR ${rirText(e.rir)}` : ''}${e.pain != null ? ` · back ${e.pain}` : ''}${e.shoulderPain != null ? ` · shoulder ${e.shoulderPain}` : ''}`;
 }
 function unitToggle(ex, idx) {
   if (!ex || ex.unit === 'bw' || ex.cond || !S.program.exercises[ex.id]) return null;
@@ -2805,7 +2845,7 @@ function unitToggle(ex, idx) {
     if (u === 'lb') ex.lb = true; else delete ex.lb;
     // untouched warm-up sets are worked out again so they land on round numbers in the new unit
     const e = S.active && S.active.entries[idx];
-    if (e && Array.isArray(e.wu) && !e.wu.some(x => x.done)) { e.wu = undefined; fillWarm(S.program, S.active.entries); saveDraftSoon(); }
+    if (e && !warmSets(e).some(x => x.done)) { e.sets = loggedSets(e); delete e.warmPlanned; fillWarm(S.program, S.active.entries); saveDraftSoon(); }
     rerenderCard(idx);
     try { await saveProgram(); addLog('you', `${ex.name}: weights shown in ${u === 'lb' ? 'pounds' : 'kilograms'}.`); } catch (er) { toast('Couldn’t save that. Try again.'); }
   };
@@ -2839,43 +2879,138 @@ function cuesBox(ex) {
   d.addEventListener('toggle', () => { Settings.cuesOpen = { ...(Settings.cuesOpen || {}) }; if (d.open) Settings.cuesOpen[ex.id] = true; else delete Settings.cuesOpen[ex.id]; saveSettings(); });
   return d;
 }
-function setGrid(e, idx, ex, list, kind) {
+/* ---------- set types and the next-set prompt ----------
+   Every set carries t: W warm-up, N normal, F to failure, D drop set. The first column of the grid is a tap-to-cycle tag. */
+const T_NEXT = { N: 'F', F: 'D', D: 'W', W: 'N' };
+const T_NAME = { W: 'warm-up', N: 'normal', F: 'to failure', D: 'drop set' };
+const devOpen = new WeakMap(); // entry -> the prompt card open on it (one per exercise; not saved)
+function wShow(ex, kg) { return `${ex.unit === 'kg added' ? '+' : ''}${fmtD(ex, kg)} ${wUnit(ex)}`; }
+/* Rules-based, instant: what the next set should be when a logged N or F set lands far from the plan. null = no prompt. */
+function devEval(p, ex, e, si) {
+  const s = e.sets[si]; if (!s || !ex) return null;
+  if (!T_WORK[setT(s)] || !s.done || !(Number(s.r) > 0) || ex.cond) return null;
+  if (!e.sets.some((x, j) => j > si && !x.done && setT(x) !== 'W')) return null;
+  const pres = e.pres || {}; const lo = pres.lo ?? ex.lo, hi = pres.hi ?? ex.hi;
+  if (lo == null || hi == null) return null;
+  const dev = devSettings(p);
+  const w = s.w == null ? null : Number(s.w), r = Number(s.r);
+  if ((e.devs || []).some(d => d.si === si && d.w === w && d.r === r)) return null; // already shown for these numbers
+  const used = (e.devs || []).filter(d => d.used && d.sugW != null);
+  const base = used.length ? used[used.length - 1].sugW : pres.weight;
+  const noLoad = ex.unit === 'bw' || !(w > 0); // bodyweight, or nothing on the bar to change
+  const short = r <= lo - dev.reps, over = r >= hi + dev.reps; // "outside the range by" dev.reps or more
+  const wKnown = !noLoad && base > 0;
+  const off = wKnown ? (w - base) / base : 0;
+  const heavy = wKnown && off >= dev.pct / 100 - 1e-9, light = wKnown && -off >= dev.pct / 100 - 1e-9;
+  if (!short && !over && !heavy && !light) return null;
+  const step = stepKg(ex); const W = noLoad ? null : wShow(ex, w);
+  const rng = lo === hi ? `${lo}` : `${lo}–${hi}`;
+  const out = { si, w, r, sugR: lo };
+  if (short && noLoad) return { ...out, kind: 'short', sugW: null, pre: `Only ${r}.`, b: `Next set: aim for ${lo}, stop 2 before failure.` };
+  if (short && pres.weight > 0 && w <= pres.weight * 0.8 + 1e-9) return { ...out, kind: 'short-floor', sugW: w, pre: `Still short at ${W}.`, b: `Keep ${W}, stop 2 reps before failure, and note how it felt.` };
+  if (short) {
+    let sugW = roundW(ex, Math.min(w * 0.9, w - step)); if (!(sugW > 0)) sugW = roundW(ex, w * 0.9);
+    return { ...out, kind: 'short', sugW, pre: `Only ${r} at ${W}.`, b: `Next set: ${wShow(ex, sugW)} × ${lo}.` };
+  }
+  if (over && noLoad) return { ...out, kind: 'over', sugW: null, pre: `${r} is well past the range.`, b: 'Make it harder next set: slower, paused, or single-leg.' };
+  if (over) {
+    let sugW = roundW(ex, Math.max(w * 1.05, w + step));
+    if (ex.maxW && sugW > ex.maxW) sugW = ex.maxW;
+    if (sugW <= w + 1e-6) return { ...out, kind: 'over', sugW: w, pre: `${r} at ${W} is well past the range.`, b: 'Heaviest you have: slow the lowering to 3 s instead.' };
+    return { ...out, kind: 'over', sugW, pre: `${r} at ${W} is well past the range.`, b: `Next set: ${wShow(ex, sugW)} × ${rng}.` };
+  }
+  if (heavy) return { ...out, kind: 'heavy', sugW: w, pre: 'Heavier than planned and still in range.', b: `Stay at ${W} for the rest.` };
+  return { ...out, kind: 'light', sugW: base, pre: 'Lighter than planned.', b: `Next set: back to ${wShow(ex, base)} × ${rng}, or keep ${W} if something hurt.` };
+}
+function devRecord(d, used) { return { si: d.si, w: d.w, r: d.r, kind: d.kind, sugW: d.sugW, sugR: d.sugR, used, ts: nowIso() }; }
+function devCardEl(e, idx, d) {
+  const el = h('div', { class: 'dev-card', role: 'status' }, h('p', {}, `${d.pre} `, h('b', { text: d.b })));
+  el.append(h('div', { class: 'row' },
+    h('button', { class: 'btn', type: 'button', text: 'Use it', onclick: () => {
+      let first = true;
+      e.sets.forEach((x, j) => {
+        if (j <= d.si || x.done || setT(x) === 'W') return;
+        if (d.sugW != null) x.w = d.sugW;
+        if (first) { x.r = d.sugR; first = false; }
+      });
+      e.devs = [...(e.devs || []), devRecord(d, true)]; devOpen.delete(e);
+      saveDraftSoon(); rerenderCard(idx);
+    } }),
+    h('button', { class: 'link', type: 'button', text: 'Keep plan', onclick: () => {
+      e.devs = [...(e.devs || []), devRecord(d, false)]; devOpen.delete(e); el.remove(); saveDraftSoon();
+    } })));
+  return el;
+}
+/* Called from the done tap (N and F sets, after the rest timer starts). A new prompt replaces an open one on this exercise. */
+function devCheck(e, idx, si) {
+  const p = S.program; const ex = p.exercises[e.exId];
+  const d = devEval(p, ex, e, si);
+  if (!d) return;
+  devOpen.set(e, d);
+  const card = document.getElementById('ex-' + idx); if (!card) return;
+  card.querySelectorAll('.dev-card').forEach(x => x.remove());
+  const btn = card.querySelector(`.done-btn[data-si="${si}"]`);
+  if (btn) btn.after(devCardEl(e, idx, d));
+}
+function devClose(e, si) {
+  const d = devOpen.get(e); if (!d || (si != null && d.si !== si)) return;
+  devOpen.delete(e);
+  const idx = entryIdx(e); const card = document.getElementById('ex-' + idx);
+  if (card) card.querySelectorAll('.dev-card').forEach(x => x.remove());
+}
+function setGrid(e, idx, ex) {
+  const list = e.sets;
   const bw = ex.unit === 'bw';
-  const warm = kind === 'warm';
   const g = getGame(); const prior = g ? g.best[exKey(e)] : null;
-  const isPR = st => !warm && st.done && prior != null && (setE1(S.program, ex, st.w, Number(st.r)) || 0) > prior + 0.5;
-  const grid = h('div', { class: 'sets' + (warm ? ' wu' : '') },
-    h('span', { class: 'hd', text: warm ? 'Warm' : 'Set' }), h('span', { class: 'hd', text: ex.unit === 'kg added' ? `+${wUnit(ex)}` : bw ? 'Load' : wUnit(ex) }),
+  const isPR = st => !!T_WORK[setT(st)] && st.done && prior != null && (setE1(S.program, ex, st.w, Number(st.r)) || 0) > prior + 0.5;
+  const grid = h('div', { class: 'sets' },
+    h('span', { class: 'hd', text: 'Type' }), h('span', { class: 'hd', text: ex.unit === 'kg added' ? `+${wUnit(ex)}` : bw ? 'Load' : wUnit(ex) }),
     h('span', { class: 'hd', text: ex.repUnit === 'm' ? 'Metres' : ex.repUnit === 's' ? 'Seconds' : 'Reps' }), h('span', { class: 'hd', text: 'Done' }));
+  const open = devOpen.get(e);
+  let ord = 0;
   list.forEach((s, si) => {
-    const pre = warm ? 'ww' : 'w', rpre = warm ? 'wr' : 'r';
-    const rowEl = h('div', { class: 'setrow' + (s.done ? ' done' : '') + (isPR(s) ? ' pr' : '') });
-    const wIn = bw ? h('span', { class: 'bw-cell', text: ex.cond ? '–' : 'BW' }) : h('input', { class: 'num-in', type: 'number', inputmode: 'decimal', step: '0.5', min: '0', id: `${pre}-${idx}-${si}`, 'aria-label': `${warm ? 'Warm-up set' : 'Set'} ${si + 1} weight`, value: s.w == null ? '' : fmtD(ex, s.w), placeholder: warm && s.w == null ? (s.why && /bodyweight/.test(s.why) ? 'BW' : 'light') : '–' });
-    const rIn = h('input', { class: 'num-in', type: 'number', inputmode: 'numeric', step: '1', min: '0', id: `${rpre}-${idx}-${si}`, 'aria-label': `${warm ? 'Warm-up set' : 'Set'} ${si + 1} ${ex.repUnit === 'm' ? 'metres' : ex.repUnit === 's' ? 'seconds' : 'reps'}`, value: s.r == null ? '' : String(s.r), placeholder: '–' });
+    const t = setT(s); const isW = t === 'W'; if (!isW) ord++;
+    const n = ord; const label = isW ? 'Warm-up set' : `Set ${n}`;
+    const rowEl = h('div', { class: 'setrow' + (s.done ? ' done' : '') + (isPR(s) ? ' pr' : ''), 'data-t': t });
+    const tagBtn = h('button', { class: 'set-tag', 'data-t': t, type: 'button', 'aria-label': `${label} type: ${T_NAME[t]}. Tap to change` }, h('b', { text: t }), isW ? null : h('small', { text: String(n) }));
+    tagBtn.addEventListener('click', () => {
+      const nt = T_NEXT[t]; s.t = nt; if (t === 'W') delete s.why;
+      saveDraftSoon(); rerenderCard(idx);
+    });
+    const wIn = bw ? h('span', { class: 'bw-cell', text: ex.cond ? '–' : 'BW' }) : h('input', { class: 'num-in', type: 'number', inputmode: 'decimal', step: '0.5', min: '0', id: `w-${idx}-${si}`, 'aria-label': `${label} weight`, value: s.w == null ? '' : fmtD(ex, s.w), placeholder: isW && s.w == null ? (s.why && /bodyweight/.test(s.why) ? 'BW' : 'light') : '–' });
+    const rIn = h('input', { class: 'num-in', type: 'number', inputmode: 'numeric', step: '1', min: '0', id: `r-${idx}-${si}`, 'aria-label': `${label} ${ex.repUnit === 'm' ? 'metres' : ex.repUnit === 's' ? 'seconds' : 'reps'}`, value: s.r == null ? '' : String(s.r), placeholder: '–' });
     const readW = () => { if (!bw && wIn.value !== (s.w == null ? '' : fmtD(ex, s.w))) s.w = fromD(ex, num(wIn.value)); };
     if (!bw) wIn.addEventListener('input', () => {
       readW();
-      if (!warm) for (let j = si + 1; j < list.length; j++) { if (!list[j].done) { list[j].w = s.w; const o = document.getElementById(`${pre}-${idx}-${j}`); if (o) o.value = s.w == null ? '' : fmtD(ex, s.w); } }
+      // the typed weight carries to later not-done working sets; W rows never cascade, and W and D rows are skipped
+      if (!isW) for (let j = si + 1; j < list.length; j++) { if (!list[j].done && T_WORK[setT(list[j])]) { list[j].w = s.w; const o = document.getElementById(`w-${idx}-${j}`); if (o) o.value = s.w == null ? '' : fmtD(ex, s.w); } }
       saveDraftSoon();
     });
     rIn.addEventListener('input', () => { s.r = num(rIn.value); saveDraftSoon(); });
-    const doneBtn = h('button', { class: 'done-btn', type: 'button', 'aria-pressed': String(!!s.done), 'aria-label': `Mark ${warm ? 'warm-up set' : 'set'} ${si + 1} done` }, CHECK_SVG());
+    const doneBtn = h('button', { class: 'done-btn', type: 'button', 'data-si': String(si), 'aria-pressed': String(!!s.done), 'aria-label': `Mark ${isW ? 'warm-up set' : `set ${n}`} done` }, CHECK_SVG());
     doneBtn.addEventListener('click', () => {
+      const t = setT(s);
       s.done = !s.done; readW(); s.r = num(rIn.value);
       doneBtn.setAttribute('aria-pressed', String(s.done)); rowEl.classList.toggle('done', s.done);
-      if (!warm) {
+      if (T_WORK[t]) {
         const pr = isPR(s); rowEl.classList.toggle('pr', pr);
         if (pr) { const v = setE1(S.program, ex, s.w, Number(s.r)); if (v > (e.prShown || 0)) { e.prShown = v; toast(`New PR on ${e.name}: about ${fmtD(ex, v)} ${wUnit(ex)} estimated 1-rep max`, 'pr'); const pf = document.querySelector(`#ex-${idx} .pr-flag`); if (pf) { pf.hidden = false; pf.classList.remove('fresh'); void pf.offsetWidth; pf.classList.add('fresh'); } } }
-        const prog = document.querySelector(`#ex-${idx} .ex-prog`); const presN = e.presSets || (e.pres && e.pres.sets) || e.sets.length; const dn = e.sets.filter(x => x.done && Number(x.r) > 0).length;
+        const prog = document.querySelector(`#ex-${idx} .ex-prog`); const presN = e.presSets || (e.pres && e.pres.sets) || workSets(e).length; const dn = workSets(e).filter(x => x.done && Number(x.r) > 0).length;
         if (prog) prog.textContent = `${dn}/${presN}`;
         const card = document.getElementById('ex-' + idx); if (card) card.classList.toggle('is-done', dn >= presN);
         if (s.done) { try { tierUpCheck(e); } catch (er) {} }
         const chip = document.querySelector(`#ex-${idx} .pct-chip`); if (chip) { const nc = standingChip(e, ex); if (nc) chip.replaceWith(nc); }
       }
-      if (s.done) startRest(ex.id, warm ? { warm: true, last: list.slice(si + 1).every(x => x.done) } : null);
-      saveDraftSoon(); updateFinishCount(); if (!warm) refold(idx);
+      const nextIsNotW = list.slice(si + 1).every(x => setT(x) !== 'W' || x.done);
+      if (s.done) startRest(ex.id, t === 'W' ? { warm: true, last: nextIsNotW } : null);
+      if (T_WORK[t]) { if (s.done) devCheck(e, idx, si); else devClose(e, si); }
+      saveDraftSoon(); updateFinishCount(); if (t !== 'W') refold(idx);
     });
-    rowEl.append(h('span', { class: 'set-idx', text: warm ? `W${si + 1}` : String(si + 1) }), wIn, rIn, doneBtn);
+    rowEl.append(tagBtn, wIn, rIn, doneBtn);
+    if (open && open.si === si) {
+      if (s.done && T_WORK[t] && open.w === (s.w == null ? null : Number(s.w)) && open.r === Number(s.r)) rowEl.append(devCardEl(e, idx, open));
+      else devOpen.delete(e);
+    }
     grid.append(rowEl);
   });
   return grid;
@@ -2883,10 +3018,10 @@ function setGrid(e, idx, ex, list, kind) {
 function exCard(e, idx) {
   const p = S.program; const ex = p.exercises[e.exId] || { name: e.name, unit: 'kg', lo: 1, hi: 1 };
   const pr = e.pres || {};
-  const presN = e.presSets || pr.sets || e.sets.length;
-  const doneN = () => e.sets.filter(x => x.done && Number(x.r) > 0).length;
+  const presN = e.presSets || pr.sets || workSets(e).length;
+  const doneN = () => workSets(e).filter(x => x.done && Number(x.r) > 0).length;
   const g = getGame(); const prior = g ? g.best[exKey(e)] : null;
-  const anyPR = e.sets.some(st => st.done && prior != null && (setE1(p, ex, st.w, Number(st.r)) || 0) > prior + 0.5);
+  const anyPR = workSets(e).some(st => st.done && prior != null && (setE1(p, ex, st.w, Number(st.r)) || 0) > prior + 0.5);
   const folded = isFolded(e, idx);
   const card = h('section', { class: 'ex' + (e.skipped ? ' is-skipped' : '') + (!e.skipped && doneN() >= presN ? ' is-done' : '') + (folded ? ' folded' : ''), id: 'ex-' + idx });
   if (folded) {
@@ -2924,22 +3059,14 @@ function exCard(e, idx) {
   card.append(h('div', {}, videoLink(ex)));
   if (e.skipped) return card;
 
-  // warm-up sets: logged so the rest timer runs from the last one, never counted for progress or XP
-  const wu = Array.isArray(e.wu) ? e.wu : (e.wu = []);
-  const wbox = h('div', { class: 'wu-box' });
-  if (wu.length) {
-    wbox.append(h('div', { class: 'spread', style: 'align-items:baseline' }, h('span', { class: 'q-label', text: 'Warm-up sets' }), h('span', { class: 'small muted', text: wu.map(x => x.why).filter(Boolean)[0] ? wu.map((x, i) => `W${i + 1} ${x.why}`).join(' · ') : '' })));
-    wbox.append(setGrid(e, idx, ex, wu, 'warm'));
-  }
-  wbox.append(h('div', { class: 'row', style: 'gap:4px 18px' },
-    h('button', { class: 'link', type: 'button', text: '+ Add warm-up set', onclick: () => { const last = wu[wu.length - 1]; wu.push({ w: last ? last.w : null, r: last ? last.r : 5, done: false, why: '' }); saveDraftSoon(); rerenderCard(idx); } }),
-    wu.length && !wu[wu.length - 1].done ? h('button', { class: 'link', type: 'button', text: 'Remove warm-up set', onclick: () => { wu.pop(); saveDraftSoon(); rerenderCard(idx); } }) : null));
-  card.append(wbox);
-
-  card.append(setGrid(e, idx, ex, e.sets, 'work'));
-  card.append(h('div', { class: 'row' },
-    h('button', { class: 'link', type: 'button', text: '+ Add set', onclick: () => { const last = e.sets[e.sets.length - 1] || {}; e.sets.push({ w: last.w ?? null, r: last.r ?? null, done: false }); saveDraftSoon(); rerenderCard(idx); } }),
-    e.sets.length > 1 ? h('button', { class: 'link', type: 'button', text: 'Remove last set', style: 'margin-left:16px', onclick: () => { e.sets.pop(); saveDraftSoon(); rerenderCard(idx); } }) : null));
+  // one grid, W rows first: warm-ups are logged so the rest timer runs from the last one, never counted for progress or XP
+  const wHint = warmSets(e).some(x => !x.done) ? warmSets(e).map((x, i) => x.why ? `W${i + 1} ${x.why}` : null).filter(Boolean).join(' · ') : '';
+  if (wHint) card.append(h('div', { class: 'small muted wu-hint', text: wHint }));
+  card.append(setGrid(e, idx, ex));
+  card.append(h('div', { class: 'row', style: 'gap:4px 18px' },
+    h('button', { class: 'link', type: 'button', text: '+ Add set', onclick: () => { const last = loggedSets(e)[loggedSets(e).length - 1] || {}; e.sets.push({ t: 'N', w: last.w ?? null, r: last.r ?? null, done: false }); saveDraftSoon(); rerenderCard(idx); } }),
+    h('button', { class: 'link', type: 'button', text: '+ Warm-up set', onclick: () => { let at = 0; e.sets.forEach((x, j) => { if (setT(x) === 'W') at = j + 1; }); e.sets.splice(at, 0, { t: 'W', w: null, r: 5, done: false }); saveDraftSoon(); rerenderCard(idx); } }),
+    e.sets.length > 1 ? h('button', { class: 'link', type: 'button', text: 'Remove last set', onclick: () => { e.sets.pop(); saveDraftSoon(); rerenderCard(idx); } }) : null));
   card.append(chipGroup('Last set: reps left in the tank', RIR_OPTS, e.rir, v => { e.rir = v; saveDraftSoon(); refold(idx); }));
   if (ex.back) card.append(chipGroup('Back pain during this exercise (0–10)', PAIN_OPTS, e.pain, v => { e.pain = v; saveDraftSoon(); refold(idx); }, painClass));
   if (ex.shoulder) card.append(chipGroup('Left shoulder pain during this exercise (0–10)', PAIN_OPTS, e.shoulderPain ?? null, v => { e.shoulderPain = v; saveDraftSoon(); refold(idx); }, painClass));
@@ -2954,7 +3081,7 @@ function rerenderCard(idx) {
 }
 function updateFinishCount() {
   const b = document.getElementById('finish-btn'); if (!b || !S.active) return;
-  const n = S.active.entries.reduce((k, e) => k + (e.skipped ? 0 : e.sets.filter(s => s.done).length), 0);
+  const n = S.active.entries.reduce((k, e) => k + (e.skipped ? 0 : loggedSets(e).filter(s => s.done).length), 0);
   b.textContent = `Finish session (${n} sets ticked)`;
 }
 
@@ -2987,13 +3114,16 @@ async function finishSession() {
   const items = [];
   for (const e of sess.entries) {
     const ex = prog.exercises[e.exId];
-    delete e.open; delete e.notesOpen; delete e.sending; delete e.tierShown; delete e.liftTierShown;
-    e.wu = (e.wu || []).filter(s => s.done).map(s => ({ w: num(s.w), r: num(s.r) ?? 0, done: true }));
-    if (!e.wu.length) delete e.wu;
+    delete e.open; delete e.notesOpen; delete e.sending; delete e.tierShown; delete e.liftTierShown; delete e.warmPlanned; delete e.norm;
     if (Array.isArray(e.notes)) { e.notes = e.notes.filter(n => n.text).map(n => ({ text: n.text, state: n.state, batch: n.batch || null })); if (!e.notes.length) delete e.notes; }
-    e.sets = e.sets.map(s => ({ w: num(s.w), r: num(s.r) ?? 0, done: !!s.done }));
+    // every set keeps its type and its place (e.devs points at set positions); the runtime why text goes
+    e.sets = e.sets.map(s => ({ t: setT(s), w: num(s.w), r: num(s.r) ?? 0, done: !!s.done }));
+    if (Array.isArray(e.devs) && !e.devs.length) delete e.devs;
+    // a last set tagged F with no RIR picked is read as RIR 0
+    const lastLogged = loggedSets(e).filter(s => s.done && s.r > 0).pop();
+    if (e.rir == null && lastLogged && lastLogged.t === 'F') e.rir = 0;
     if (!ex) continue;
-    if (e.skipped || !e.sets.some(s => s.done && s.r > 0)) { e.skipped = true; e.verdict = 'skipped'; continue; }
+    if (e.skipped || !workSets(e).some(s => s.done && s.r > 0)) { e.skipped = true; e.verdict = 'skipped'; continue; }
     e.before = { weight: ex.weight, aim: ex.aim };
     const res = progress(prog, ex, e, date);
     e.usedW = res.W; e.verdict = res.verdict; e.msg = res.msg; e.after = { weight: ex.weight, aim: ex.aim };
@@ -3240,9 +3370,9 @@ async function exportCsv() {
       const ex = p.exercises[e.exId]; const unit = ex ? ex.unit + (isLb(ex) ? ' (shown in lb)' : '') : '';
       const base = [s.date.slice(0, 10), (s.startedAt || s.date).slice(11, 16), todOf(s) || '', s.durationMin ?? '', s.dayName || '', e.name];
       if (e.skipped) { rows.push([...base, '', '', unit, '', 'skipped', '', e.pain ?? '', e.shoulderPain ?? '', s.source || 'app', e.note || '']); continue; }
-      (e.wu || []).forEach((x, i) => rows.push([...base, `W${i + 1}`, x.w ?? '', unit, x.r ?? '', 'warm-up', '', '', '', s.source || 'app', '']));
-      const sets = e.sets || [];
-      sets.forEach((x, i) => rows.push([...base, i + 1, x.w ?? '', unit, x.r ?? '', x.done === false ? 'no' : 'yes', i === sets.length - 1 ? (e.rir ?? '') : '', e.pain ?? '', e.shoulderPain ?? '', s.source || 'app', i === 0 ? (e.note || '') : '']));
+      // one row per set in order: the set column is the number among non-W sets (blank for W), done shows the type letter
+      const sets = e.sets || []; let ord = 0;
+      sets.forEach((x, i) => { const t = setT(x); if (t !== 'W') ord++; rows.push([...base, t === 'W' ? '' : ord, x.w ?? '', unit, x.r ?? '', x.done === false ? `${t} (not done)` : t, i === sets.length - 1 ? (e.rir ?? '') : '', e.pain ?? '', e.shoulderPain ?? '', s.source || 'app', i === 0 ? (e.note || '') : '']); });
     }
   }
   const csv = '\ufeff' + rows.map(r => r.map(csvCell).join(',')).join('\r\n');
@@ -3266,7 +3396,7 @@ function trendData(exIds) {
     if (!exIds.includes(e.exId) || e.skipped) continue;
     const ex = p.exercises[e.exId] || {};
     let best = null;
-    for (const st of e.sets || []) {
+    for (const st of workSets(e)) {
       if (st.done === false || !(st.r > 0)) continue;
       const w = (st.w || 0) + (ex.unit === 'kg added' ? (p.bodyweight || 0) : 0);
       if (!(w > 0)) continue;
@@ -3303,7 +3433,7 @@ function allTrends() {
     if (e.skipped) continue;
     const name = trendName(e); const key = name.toLowerCase();
     const ex = p.exercises[e.exId] || null;
-    const done = (e.sets || []).filter(x => x.done !== false && Number(x.r) > 0);
+    const done = workSets(e).filter(x => x.done !== false && Number(x.r) > 0);
     if (!done.length) continue;
     let best = null, topW = null, vol = 0, reps = 0, maxR = 0;
     for (const x of done) {
@@ -3643,7 +3773,7 @@ function viewHistory() {
   if (!S.sessions.length) root.append(h('p', { class: 'muted', text: 'No sessions yet.' }));
   for (const s of S.sessions.slice(0, 120)) {
     const light = s.source === 'strong' ? null : sessionHasBack(s) ? sessionLight(s) : null;
-    const sets = (s.entries || []).reduce((n, e) => n + (e.skipped ? 0 : (e.sets || []).filter(x => x.done !== false).length), 0);
+    const sets = (s.entries || []).reduce((n, e) => n + (e.skipped ? 0 : loggedSets(e).filter(x => x.done !== false).length), 0);
     const sum = h('summary', {}, h('div', {}, h('b', { text: s.dayName || 'Session' }), h('div', { class: 'small muted', text: `${fmtDate(s.date)}, ${whenText(s) || 'time not saved'}${s.durationMin ? `, ${s.durationMin} min` : ''}. ${sets} sets` })),
       h('div', { class: 'row' }, s.source === 'strong' ? h('span', { class: 'pill', text: 'From Strong' }) : null,
         light ? h('span', { class: 'pill ' + (light === 'red' ? 'stop' : light === 'amber' ? 'hold' : 'go'), text: `Back ${light}` }) : null));
@@ -3652,10 +3782,9 @@ function viewHistory() {
     for (const e of s.entries || []) {
       if (e.skipped) { body.append(h('div', { class: 'muted', text: `${e.name}: skipped` })); continue; }
       const ex = p.exercises[e.exId];
-      const setsTxt = (e.sets || []).filter(x => x.done !== false).map(x => `${wTxt(ex, x.w)}×${x.r}`).join(', ');
-      const wuTxt = (e.wu || []).filter(x => x.done !== false).map(x => `${wTxt(ex, x.w)}×${x.r}`).join(', ');
+      const setsTxt = setsLine(ex, e, '×', ' · ', ' │ ');
       const extra = [e.rir != null ? `RIR ${rirText(e.rir)}` : null, e.pain != null ? `back ${e.pain}` : null, e.shoulderPain != null ? `shoulder ${e.shoulderPain}` : null].filter(Boolean).join(' · ');
-      body.append(h('div', { class: 'sess-line' }, h('span', {}, h('b', { text: e.name }), ` ${setsTxt}`), wuTxt ? h('span', { class: 'muted small', text: `Warm-up: ${wuTxt}` }) : null, extra ? h('span', { class: 'muted small', text: extra }) : null, e.note ? h('span', { class: 'small', text: `“${e.note}”` }) : null));
+      body.append(h('div', { class: 'sess-line' }, h('span', {}, h('b', { text: e.name }), ` ${setsTxt}`), extra ? h('span', { class: 'muted small', text: extra }) : null, e.note ? h('span', { class: 'small', text: `“${e.note}”` }) : null));
     }
     if (s.backPain != null) body.append(h('div', { class: 'muted', text: `Back pain overall: ${s.backPain}/10` }));
     if (s.morning) body.append(h('div', { class: 'muted', text: `Next morning: ${s.morning === 'normal' ? 'normal' : s.morning === 'stiff' ? 'stiffer, settled' : 'worse'}` }));
@@ -3675,6 +3804,20 @@ const FORMAT = `Reply with only one JSON object and no other text:
 Change types: "weight" (value = next working weight, in that exercise's own unit: pounds where the program list says "in lb", otherwise kg), "sets" (value), "reps" (lo, hi), "rir" (lo, hi), "swap" (name = new exercise, weight = starting weight or null, cues = 2-4 short form cues for the new exercise), "note" (text = a coaching note shown on the exercise), "cues" (cues = 2-4 short form cues that replace the exercise's current form cues), "max" (value = the heaviest weight he has for that exercise, like the top of the dumbbell rack; the app never prescribes more). Never rewrite "his own cues": those are his. Use only exerciseIds from the program list. At most 4 changes and 3 questions; use [] when none apply. Ask a question only when his answer would change what you recommend, with 2-4 short options; set allowText true when a free answer would help.`;
 
 function wTxt(ex, w) { return w == null ? 'BW' : `${ex && ex.unit === 'kg added' ? '+' : ''}${fmtD(ex, w)}${isLb(ex) ? 'lb' : ''}`; }
+/* Done sets in order: the W block first, then the rest with a letter after F and D sets, e.g. "W 40x8, 60x4 | 89x10, 89x7 F, 70x9 D". */
+function setsLine(ex, e, x, wSep, mid) {
+  const done = (e.sets || []).filter(st => st.done !== false);
+  const one = st => `${wTxt(ex, st.w)}${x}${st.r}`;
+  const w = done.filter(st => setT(st) === 'W').map(one).join(wSep);
+  const rest = done.filter(st => setT(st) !== 'W').map(st => one(st) + (setT(st) === 'F' || setT(st) === 'D' ? ` ${setT(st)}` : '')).join(', ');
+  return w ? `W ${w}${rest ? mid + rest : ''}` : rest;
+}
+/* The next-set prompts an entry showed, for the coach: "set 2 short (89x7) suggested 80x10, used". */
+function devsLine(ex, e) {
+  if (!Array.isArray(e.devs) || !e.devs.length) return '';
+  const ordOf = si => (e.sets || []).slice(0, si + 1).filter(st => setT(st) !== 'W').length;
+  return 'next-set prompt' + (e.devs.length > 1 ? 's' : '') + ': ' + e.devs.map(d => `set ${ordOf(d.si)} ${d.kind} (${wTxt(ex, d.w)}x${d.r}) suggested ${d.sugW != null ? wTxt(ex, d.sugW) + 'x' : 'x'}${d.sugR}, ${d.used ? 'used' : 'kept plan'}`).join('; ');
+}
 function sessionLine(s) {
   const p = S.program;
   const bits = [`${s.date.slice(0, 10)} ${s.dayName || s.dayKey}${s.source === 'strong' ? ' (imported from Strong, before this plan; no pain data)' : ''}`];
@@ -3691,9 +3834,8 @@ function sessionLine(s) {
       : e.note ? [`note "${e.note.slice(0, 200)}"`] : [];
     if (e.skipped) { lines.push(`  ${e.exId || ''} ${e.name}: skipped${notes.length ? ' | ' + notes.join('; ') : ''}`); continue; }
     const ex = p.exercises[e.exId];
-    const sets = (e.sets || []).filter(x => x.done !== false).map(x => `${wTxt(ex, x.w)}x${x.r}`).join(', ');
-    const wu = (e.wu || []).filter(x => x.done !== false).map(x => `${wTxt(ex, x.w)}x${x.r}`).join(', ');
-    const extra = [e.unitMix ? 'done with the program’s kg number by mistake (meant to be pounds); felt wrong, not a guide to his working weight' : null, wu ? `warm-up ${wu}` : null, e.rir != null ? `last-set RIR ${rirText(e.rir)}` : null, e.pain != null ? `back pain ${e.pain}/10` : null, e.shoulderPain != null ? `left shoulder pain ${e.shoulderPain}/10` : null, e.verdict && e.verdict !== 'skipped' ? `app: ${e.msg}` : null, ...notes].filter(Boolean).join('; ');
+    const sets = setsLine(ex, e, 'x', ', ', ' | ');
+    const extra = [e.unitMix ? 'done with the program’s kg number by mistake (meant to be pounds); felt wrong, not a guide to his working weight' : null, e.rir != null ? `last-set RIR ${rirText(e.rir)}` : null, e.pain != null ? `back pain ${e.pain}/10` : null, e.shoulderPain != null ? `left shoulder pain ${e.shoulderPain}/10` : null, e.verdict && e.verdict !== 'skipped' ? `app: ${e.msg}` : null, devsLine(ex, e) || null, ...notes].filter(Boolean).join('; ');
     lines.push(`  ${e.exId ? e.exId + ' ' : ''}${e.name}: ${sets}${extra ? ' | ' + extra : ''}`);
   }
   return lines.join('\n');
@@ -3710,7 +3852,7 @@ function buildContext() {
   const holds = (p.holds || []).filter(x => x.until >= today);
   if (holds.length) out.push('Temporary step-backs: ' + holds.map(x => `${x.slot} at Phase ${x.phase} until ${x.until}`).join('; '));
   const g = gateStatus(p); if (g) out.push(`Gate to Phase ${g.next}: ${g.weekOk ? 'week reached' : 'week not reached'}; recent leg sessions ${g.count}, ${g.green ? 'all green' : 'not all green'}.`);
-  out.push('Back warm-up (about 6 minutes) runs only before sessions with a back-monitored lift; the app logs warm-up sets on each exercise, which never count toward progression.');
+  out.push('Back warm-up (about 6 minutes) runs only before sessions with a back-monitored lift. Sets carry a type: W warm-up (never counted), N working, F to failure, D drop set (extra volume, not counted for progression).');
   out.push('\nPROGRAM (current phase). id | day | exercise | sets x reps | RIR | next weight | flags, cues and notes');
   for (const k of p.rotation) for (const it of dayItems(p, k)) {
     const ex = p.exercises[it.id]; const pr = prescription(p, ex);
@@ -3731,7 +3873,7 @@ function buildContext() {
   if (S.active) {
     const a = S.active;
     out.push(`\nIN PROGRESS RIGHT NOW: ${a.dayName}, started ${(a.startedAt || a.date).slice(11, 16)}. Exercises in order:`);
-    for (const e of a.entries) { const n = e.sets.filter(x => x.done).length; out.push(`  ${e.exId} ${e.name}: ${e.skipped ? 'skipped' : `${n}/${e.presSets || e.sets.length} sets done`}${e.swappedFrom ? ` (swapped in for ${e.swappedFrom})` : ''}`); }
+    for (const e of a.entries) { const n = workSets(e).filter(x => x.done).length; out.push(`  ${e.exId} ${e.name}: ${e.skipped ? 'skipped' : `${n}/${e.presSets || workSets(e).length} sets done`}${e.swappedFrom ? ` (swapped in for ${e.swappedFrom})` : ''}`); }
   }
   const since = addDays(today, -21);
   const recent = S.sessions.filter(s => s.date.slice(0, 10) >= since).slice(0, 18);
@@ -3833,8 +3975,8 @@ function swapInSession(c, undo) {
     if (undo) { if (!e.swappedFrom) continue; e.name = e.swappedFrom; delete e.swappedFrom; }
     else { e.swappedFrom = e.swappedFrom || e.name; e.name = ex.name; if (e.swappedFrom === e.name) delete e.swappedFrom; }
     e.pres = { ...(e.pres || {}), weight: ex.weight };
-    e.sets = e.sets.map(x => ({ ...x, w: ex.unit === 'bw' ? null : ex.weight }));
-    e.wu = undefined; swapped = true;
+    e.sets = loggedSets(e).map(x => ({ ...x, w: ex.unit === 'bw' ? null : ex.weight }));
+    delete e.warmPlanned; swapped = true;
   }
   if (swapped) { fillWarm(p, a.entries); saveDraftSoon(); }
   return swapped ? 'swapped' : started ? 'started' : null;
@@ -4315,6 +4457,25 @@ function viewSettings() {
     h('span', {}, h('b', { text: 'Review every session automatically' }), h('br'), h('span', { class: 'small muted', text: 'Runs when you tap Finish. Small changes apply straight away with an Undo; exercise swaps and weight jumps over 15% wait for you. A weekly check-in also runs every Sunday night.' }))));
   root.append(keyCard);
 
+  // next-set prompts: when a logged set lands this far from the plan, a card suggests the next set
+  if (S.program) {
+    const dv = devSettings(S.program);
+    const devCard = h('div', { class: 'card', id: 'dev-settings' }, h('h3', { text: 'Next-set prompts' }),
+      h('p', { class: 'small muted', text: 'When a working set lands this far from the plan, a card under it suggests the next set.' }));
+    const numField = (id, label, val, min, max) => {
+      const inp = h('input', { type: 'number', id, inputmode: 'numeric', min: String(min), max: String(max), step: '1', value: String(val) });
+      inp.addEventListener('change', async () => {
+        const v = Math.round(Number(inp.value));
+        if (!(v >= min && v <= max)) { inp.value = String(devSettings(S.program)[id === 'dev-reps' ? 'reps' : 'pct']); toast(`Pick a number from ${min} to ${max}.`); return; }
+        const d = devSettings(S.program); d[id === 'dev-reps' ? 'reps' : 'pct'] = v;
+        try { await saveProgram(); addLog('you', `Next-set prompts: fire at ±${d.reps} reps or ±${d.pct}%`); toast('Saved.'); } catch (e) { toast('Couldn’t save that setting.'); }
+      });
+      return h('label', { class: 'q', for: id }, h('span', { class: 'q-label', text: label }), inp);
+    };
+    devCard.append(numField('dev-reps', 'Reps outside the range by', dv.reps, 1, 10), numField('dev-pct', 'Weight off the plan by %', dv.pct, 3, 50));
+    root.append(devCard);
+  }
+
   // pre-workout notification
   const st2 = S.reminders.standing || { on: true };
   const remCard = h('div', { class: 'card', id: 'remind-settings' }, h('h3', { text: 'Pre-workout notification' }),
@@ -4342,7 +4503,7 @@ function start() {
   S.ready = true;
   loadFromStore();
   const d = Store.get('app/draft');
-  if (d && d.session) { S.active = d.session; S.resumed = true; }
+  if (d && d.session) { (d.session.entries || []).forEach(e => normEntry(e, { draft: true })); S.active = d.session; S.resumed = true; }
   if (!S.program && !Store.sync.url) S.tab = 'settings';
   markTab(); renderTop(); renderMain(); updateSyncDot();
   applyIncoming();
