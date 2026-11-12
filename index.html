@@ -912,6 +912,87 @@ html.hold-on,html.hold-on body{overflow:hidden}
 .mus-b.t-s{background:color-mix(in srgb,var(--accent) 40%,var(--raised))}
 .mus-b.t-st{box-shadow:inset 0 0 0 1.5px var(--accent2);color:var(--accent2)}
 .tag-ed-box .bmap-figs{max-width:240px}
+/* ---- avatar (round 3) ---- */
+.av svg{display:block;width:100%;height:100%}
+.avc{appearance:none;width:100%;text-align:left;cursor:pointer;color:var(--ink);font:inherit;display:flex;gap:14px;align-items:stretch;padding:10px 14px 10px 10px;border-radius:var(--r);border:1px solid var(--line);
+  background:radial-gradient(120% 140% at 0% 0%,color-mix(in srgb,var(--tier) 42%,transparent),transparent 60%),var(--surface)}
+.avc:active{transform:scale(.99)}
+.avc-tile{width:118px;height:170px;border-radius:var(--r-sm);overflow:hidden;flex:none;position:relative;background:#000}
+.avc-tile .av{width:118px;height:170px}
+.avc-up{position:absolute;left:6px;bottom:6px;font:700 .7rem/1 var(--body);color:var(--go);background:rgba(14,11,10,.78);padding:4px 6px;border-radius:999px}
+.avc-side{flex:1;min-width:0;display:flex;flex-direction:column;gap:10px;justify-content:center}
+.avc-rank{display:flex;align-items:center;gap:10px}
+.avc-rn{display:flex;flex-direction:column;gap:4px;min-width:0}
+.avc-rn .rank-name{font-size:1.38rem}
+.avc .xpbar{height:8px}
+.avc-block{font:500 .82rem/1.35 var(--body);color:var(--muted)}
+.avc-chips{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.avc-chip{font:600 .75rem/1 var(--body);padding:6px 9px;border-radius:999px;background:var(--hold-soft);color:var(--hold)}
+.avc-chip.shrink{background:var(--stop-soft);color:var(--stop)}
+.avc-map{display:inline-flex;align-items:center;gap:3px;font:600 .75rem/1 var(--body);color:var(--muted)}
+.avc-map span{font-size:1.1rem;line-height:.6}
+.av-view .av-hero{position:relative;border-radius:var(--r);overflow:hidden;border:1px solid var(--line);background:#000}
+.av-big{width:100%;aspect-ratio:2/3;max-height:62vh}
+.av-hero-txt{padding:14px 16px 16px;background:linear-gradient(0deg,var(--surface),color-mix(in srgb,var(--surface) 92%,transparent));display:flex;flex-direction:column;gap:6px}
+.av-hero-txt .rank-line{justify-content:flex-start;align-items:center;margin:0}
+.av-figs{max-width:300px}
+.bm-g0{fill:color-mix(in srgb,var(--accent) 12%,var(--sunk))}
+.bm-g1{fill:color-mix(in srgb,var(--accent) 32%,var(--sunk))}
+.bm-g2{fill:color-mix(in srgb,var(--accent) 55%,var(--sunk))}
+.bm-g3{fill:color-mix(in srgb,var(--accent) 80%,var(--sunk))}
+.bm-g4{fill:color-mix(in srgb,#ffd84a 70%,var(--accent))}
+.av-legend{display:flex;align-items:center;justify-content:center;gap:4px;font-size:.78rem;color:var(--muted)}
+.av-legend i{width:16px;height:10px;border-radius:3px;display:inline-block}
+.av-legend i.bm-g0{background:color-mix(in srgb,var(--accent) 12%,var(--sunk))} .av-legend i.bm-g1{background:color-mix(in srgb,var(--accent) 32%,var(--sunk))}
+.av-legend i.bm-g2{background:color-mix(in srgb,var(--accent) 55%,var(--sunk))} .av-legend i.bm-g3{background:color-mix(in srgb,var(--accent) 80%,var(--sunk))}
+.av-legend i.bm-g4{background:color-mix(in srgb,#ffd84a 70%,var(--accent))}
+.av-regions{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.av-regions li{display:flex;flex-direction:column;gap:5px}
+.av-regions .avc-chip{align-self:flex-start}
+.av-bar{height:8px;border-radius:99px;background:var(--sunk);overflow:hidden}
+.av-bar i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--accent),var(--xp));transition:width .6s var(--ease)}
+.av-bar.lag i{background:var(--hold)}
+.av-pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.av-pair figure{margin:0;display:flex;flex-direction:column;gap:6px;text-align:center}
+.av-pair .av{aspect-ratio:180/284;border-radius:var(--r-sm);overflow:hidden;background:#000}
+.av-pair figcaption{font:600 .78rem/1.2 var(--body);color:var(--muted)}
+.av-chart-box{display:flex;flex-direction:column;gap:4px}
+.av-chart{width:100%;height:auto;display:block}
+.av-chart .ln{fill:none;stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round}
+.av-chart .ar{fill:color-mix(in srgb,var(--accent) 16%,transparent)}
+.av-chart .dt{fill:var(--xp)}
+.av-hist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.av-hist li{display:flex;justify-content:space-between;gap:10px;align-items:baseline;border-top:1px solid var(--line);padding-top:8px}
+.av-hist li>.small{text-align:right;color:var(--go)}
+.cele.av-beat{background:radial-gradient(circle at 50% 40%,rgba(255,122,69,.32),rgba(10,7,6,.96) 62%);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.cele.av-beat.rkup{background:radial-gradient(circle at 50% 40%,color-mix(in srgb,var(--tier) 55%,transparent),rgba(10,7,6,.95) 62%)}
+.cele.av-beat.shrink{background:radial-gradient(circle at 50% 40%,rgba(255,107,107,.22),rgba(10,7,6,.96) 62%)}
+.cele.av-beat.rkup .beam{opacity:1}
+.av-in{position:relative;display:flex;flex-direction:column;align-items:center;gap:10px;padding:0 22px;width:100%;max-width:420px}
+.av-title{font:700 3rem/1 var(--display);letter-spacing:-.02em;margin:0;background:linear-gradient(180deg,#fff 10%,var(--xp) 60%,var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent}
+.av-beat.rkup .av-title{font-size:2.5rem;background:linear-gradient(180deg,#fff,var(--tier1));-webkit-background-clip:text;background-clip:text}
+.av-beat.shrink .av-title{background:linear-gradient(180deg,#fff,#ff9a9a);-webkit-background-clip:text;background-clip:text}
+.av-stage{width:min(62vw,250px);aspect-ratio:2/3;border-radius:22px;overflow:hidden;background:#000;box-shadow:0 18px 50px rgba(0,0,0,.5)}
+.av-stage .av{width:100%;height:100%}
+.av-beat.mirror .av-pair{width:100%;max-width:360px}
+.av-ba{position:relative}
+.av-tag{position:absolute;z-index:1;top:10px;left:10px;font:700 .75rem/1 var(--body);padding:5px 8px;border-radius:99px;background:rgba(14,11,10,.8);color:#fff4ec}
+.av-sub{font-size:.98rem;color:rgba(255,244,236,.85);max-width:32ch;margin:0}
+.av-swell{position:absolute;left:50%;top:44%;width:520px;height:520px;margin:-260px 0 0 -260px;border-radius:50%;background:radial-gradient(circle,rgba(255,122,69,.35),transparent 62%)}
+.av-gains{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.av-gains span{font:700 1.05rem/1 var(--display);padding:9px 13px;border-radius:99px;background:var(--go);color:var(--on-go)}
+.av-xp{font:700 .95rem/1 var(--display);padding:8px 12px;border-radius:99px;background:var(--xp);color:#1b1300}
+.av-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+.av-btns .btn{min-width:130px}
+.pr-av{width:150px;height:200px;border-radius:18px;overflow:hidden;margin:-6px 0 -4px;box-shadow:0 0 40px rgba(255,122,69,.45)}
+.pr-av .av{width:100%;height:100%}
+@media (prefers-reduced-motion: no-preference){
+  .pr-av.in .av{animation:avflex .7s .1s cubic-bezier(.3,1.6,.5,1) 3 alternate;transform-origin:50% 90%}
+  .avc-tile .av{animation:avbreathe 3.6s ease-in-out infinite;transform-origin:50% 92%}
+}
+@keyframes avflex{from{transform:scale(1)}to{transform:scale(1.07)}}
+@keyframes avbreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.015)}}
+@media (max-height: 700px){ .av-stage{width:min(50vw,200px)} .pr-av{width:110px;height:150px} }
 </style>
 </head>
 <body>
@@ -1205,13 +1286,16 @@ const Fx = (() => {
       const gain = d.newV - d.oldV;
       const chips = h('div', { class: 'pr-chips' }, h('span', { class: 'late', text: `+${fmtNum(Math.round(gain * 10) / 10)} ${d.unit.replace(/^\+/, '')}` }), d.pct ? h('span', { class: 'late', text: `Stronger than ${d.pct}` }) : null);
       const title = h('h2', { class: 'pr-title' }, h('span', { text: 'NEW' }), h('span', { text: 'PR' }));
-      const inner = h('div', { class: 'pr-in' }, h('p', { class: 'ce-eye', text: d.name }), title, h('div', { class: 'pr-lift', text: d.lift }), cmp, chips);
+      let av = null;
+      if (d.avatar) { av = h('div', { class: 'pr-av late' }); av.innerHTML = d.avatar; }
+      const inner = h('div', { class: 'pr-in' }, av, h('p', { class: 'ce-eye', text: d.name }), title, h('div', { class: 'pr-lift', text: d.lift }), cmp, chips);
       const hint = h('p', { class: 'hint late', text: 'Tap to continue' }), flash = h('div', { class: 'flash' });
       c.replaceChildren(h('div', { class: 'rays' }), h('div', { class: 'glowb' }), inner, hint, flash);
       const cols = partyCols();
       snd.bigpr(); hap(3);
       if (!CALM()) flash.animate([{ opacity: .95 }, { opacity: 0 }], { duration: 420, easing: 'ease-out' });
       T(300, () => { confetti(title, 60, cols); shock(title, cssv('--xp'), 26, 800); if (!CALM()) inner.animate([0, -9, 8, -6, 5, -3, 0].map(x => ({ transform: `translate(${x}px, ${-x / 2}px)` })), { duration: 380 }); rain(46, cols); });
+      if (av) T(500, () => av.classList.add('in'));
       T(1000, () => cmp.classList.add('in'));
       T(1200, () => { fill.style.width = '100%'; roll(newEl, d.oldV, d.newV, 900, fmtV); });
       T(1650, () => { snd.hit2(); hap(2); confetti(newEl, 40, cols); shock(newEl, cssv('--accent'), 18, 700); });
@@ -1260,7 +1344,15 @@ const Fx = (() => {
     } });
     next();
   }
-  return { snd, hap, roll, fly, confetti, shock, rain, ring, sheet, closeSheet, pr, rankUp, skipAll, busy: () => !!live };
+  /* Any other full-screen moment (the avatar's): o = { cls, style, label, run(c, t, T, end) }. It stays until tapped. */
+  function beat(o, after) {
+    queue.push({ after, run(c, t, T) {
+      c.className = 'cele ' + (o.cls || ''); if (o.style) c.style.cssText = o.style; c.setAttribute('role', 'dialog'); c.setAttribute('aria-label', o.label || '');
+      o.run(c, t, T, () => end(t));
+    } });
+    next();
+  }
+  return { snd, hap, roll, fly, confetti, shock, rain, ring, sheet, closeSheet, pr, rankUp, beat, skipAll, busy: () => !!live };
 })();
 
 /* ---------- state ---------- */
@@ -2172,6 +2264,851 @@ function getGame() {
   const val = computeGame(S.program, S.sessions, { today });
   gameCache = { sessions: S.sessions, program: S.program, today, val };
   return val;
+}
+
+/* ---------- avatar: chunky cartoon (port of cartoon2 from the round 2 generator) ----------
+   Avatar.svg(body, tierKey, opts) -> SVG string, viewBox 0 0 200 300.
+   body: { sh, ch, ar, fa, tr, wa, qu, ca, df } each 0..1.
+   opts: { uid, pose ('rank' = the tier's own pose, or a pose key), bg (default true), ghost (a body drawn behind in orange), label } */
+const Avatar = (() => {
+  const LOOK = { skin: '#b87a52', skin_hi: '#d39a70', skin_sh: '#8f5a3a', skin_deep: '#6e4029', hair: '#1d1412', beard: '#2a1c17',
+    outfit: '#e0522e', outfit_sh: '#a83a1f', outfit_hi: '#ff7a45', shorts: '#2b2321', shorts_hi: '#3a302c', shoe: '#fff4ec', shoe_sh: '#b8a69c', ink: '#1f0700' };
+  /* Tier looks. c1/c2 match the rank emblems. acc: accessories that build up the ladder. */
+  const TIER = {
+    iron:     { c1: '#a3acbd', c2: '#4f5868', pose: 'rookie',  face: 'sheepish', acc: {} },
+    bronze:   { c1: '#e0a06a', c2: '#83461d', pose: 'stand',   face: 'smile', acc: {} },
+    silver:   { c1: '#e6edf6', c2: '#8592a7', pose: 'curl',    face: 'smile', acc: { sole: 1 } },
+    gold:     { c1: '#ffd25a', c2: '#c08410', pose: 'single',  face: 'grin', acc: { sole: 1, wrist: 1 } },
+    platinum: { c1: '#8ef0e1', c2: '#1d8478', pose: 'flex',    face: 'grin', acc: { sole: 1, wrist: 1, head: 1, hem: 1, mark: 'gem' } },
+    diamond:  { c1: '#a9c4ff', c2: '#2f50d1', pose: 'lat',     face: 'grin', acc: { sole: 1, wrist: 1, head: 1, hem: 1, mark: 'gem' } },
+    titan:    { c1: '#d9a8ff', c2: '#6a28c2', pose: 'crab',    face: 'grit', acc: { sole: 1, wrist: 1, head: 1, hem: 1, mark: 'bolt' } },
+    legend:   { c1: '#ff5a4d', c2: '#b0102d', gold: '#ffd25a', pose: 'victory', face: 'shout', acc: { sole: 1, wrist: 1, head: 1, hem: 1, mark: 'star' } },
+  };
+  /* Poses: one arm spec per side, both written for the LEFT side of the figure (x < 100); the right one is mirrored.
+     hang = arm at the side, flex = double-biceps arm, hip = fist on the hip, lat = lat-spread fist at the waist,
+     crab = most-muscular (fists meet in front), up = fist straight up, curl = mid-curl with a dumbbell, neck = hand on the back of the head. */
+  const POSES = {
+    stand:   { L: 'hang', R: 'hang' },
+    rookie:  { L: 'hang', R: 'neck' },
+    curl:    { L: 'hang', R: 'curl' },
+    single:  { L: 'hip', R: 'flex' },
+    flex:    { L: 'flex', R: 'flex' },
+    lat:     { L: 'lat', R: 'lat', flare: 1 },
+    crab:    { L: 'crab', R: 'crab', trapBoost: .22 },
+    victory: { L: 'flex', R: 'up' },
+  };
+  const L = (a, b, t) => a + (b - a) * t;
+  const f = v => (Math.round(v * 10) / 10).toFixed(1);
+  const P = p => `${f(p[0])},${f(p[1])}`;
+  const add = (a, b, s = 1) => [a[0] + b[0] * s, a[1] + b[1] * s];
+  const rot = (v, deg) => { const a = deg * Math.PI / 180; return [v[0] * Math.cos(a) - v[1] * Math.sin(a), v[0] * Math.sin(a) + v[1] * Math.cos(a)]; };
+  const curve = (p0, c, p1) => `M${P(p0)}Q${P(c)} ${P(p1)}`;
+  function along(p0, p1, t, o) {
+    const dx = p1[0] - p0[0], dy = p1[1] - p0[1], Ln = Math.hypot(dx, dy), ux = dx / Ln, uy = dy / Ln;
+    return [p0[0] + dx * t - uy * o, p0[1] + dy * t + ux * o];
+  }
+  /* start = point on the centre line; segs run down the LEFT side and end on the centre line; mirrored about x=100. */
+  function sym(start, segs, cx = 100) {
+    const pts = [start]; const out = [`M${P(start)}`];
+    for (const s of segs) {
+      if (s[0] === 'L') { out.push(`L${P(s[1])}`); pts.push(s[1]); }
+      else if (s[0] === 'C') { out.push(`C${P(s[1])} ${P(s[2])} ${P(s[3])}`); pts.push(s[3]); }
+      else if (s[0] === 'Q') { out.push(`Q${P(s[1])} ${P(s[2])}`); pts.push(s[2]); }
+    }
+    const m = p => [2 * cx - p[0], p[1]];
+    for (let i = segs.length - 1; i >= 0; i--) {
+      const s = segs[i], prev = pts[i];
+      if (s[0] === 'L') out.push(`L${P(m(prev))}`);
+      else if (s[0] === 'C') out.push(`C${P(m(s[2]))} ${P(m(s[1]))} ${P(m(prev))}`);
+      else if (s[0] === 'Q') out.push(`Q${P(m(s[1]))} ${P(m(prev))}`);
+    }
+    out.push('Z'); return out.join('');
+  }
+  function limb(p0, p1, r0, r1, bA, bB, tA = .45, tB = .45, k = 1.22) {
+    const dx = p1[0] - p0[0], dy = p1[1] - p0[1], Ln = Math.hypot(dx, dy), ux = dx / Ln, uy = dy / Ln, nx = -uy, ny = ux;
+    const pt = (t, o) => [p0[0] + ux * Ln * t + nx * o, p0[1] + uy * Ln * t + ny * o];
+    const a0 = pt(0, r0), a1 = pt(1, r1), b0 = pt(0, -r0), b1 = pt(1, -r1);
+    const ca1 = pt(Math.max(tA - .3, .02), bA * k), ca2 = pt(Math.min(tA + .3, .98), bA * k);
+    const cb1 = pt(Math.max(tB - .3, .02), -bB * k), cb2 = pt(Math.min(tB + .3, .98), -bB * k);
+    return `M${P(a0)}C${P(ca1)} ${P(ca2)} ${P(a1)}A${f(r1)} ${f(r1)} 0 0 0 ${P(b1)}C${P(cb2)} ${P(cb1)} ${P(b0)}A${f(r0)} ${f(r0)} 0 0 0 ${P(a0)}Z`;
+  }
+  function deltPath(D, dr) {
+    return `M${f(D[0] + dr * .9)},${f(D[1] - dr * .8)} C${f(D[0] - dr * .4)},${f(D[1] - dr * 1.35)} ${f(D[0] - dr * 1.25)},${f(D[1] - dr * .2)} ${f(D[0] - dr * .9)},${f(D[1] + dr * .9)} `
+      + `C${f(D[0] - dr * .5)},${f(D[1] + dr * 1.7)} ${f(D[0] + dr * .3)},${f(D[1] + dr * 1.9)} ${f(D[0] + dr * .7)},${f(D[1] + dr * 1.6)} `
+      + `C${f(D[0] + dr * 1)},${f(D[1] + dr * .6)} ${f(D[0] + dr * 1.25)},${f(D[1] - dr * .2)} ${f(D[0] + dr * .9)},${f(D[1] - dr * .8)} Z`;
+  }
+  const clamp01 = v => Math.max(0, Math.min(1, Number(v) || 0));
+  function norm(b) { const o = {}; for (const k of ['sh', 'ch', 'ar', 'fa', 'tr', 'wa', 'qu', 'ca', 'df']) o[k] = clamp01(b && b[k]); return o; }
+
+  /* ---------------- geometry */
+  function geo(b, pose) {
+    const g = { head: [100, 42], neckTop: 60, shY: 94 };
+    g.NW = L(11, 16.5, b.tr); g.SW = L(34, 50, b.sh); g.DR = L(11, 16.5, b.sh);
+    g.CW = L(28, 39, b.ch); g.WW = L(28.5, 22.5, b.wa); g.waistY = 166; g.hipY = 182;
+    g.UL = 42; g.FL = 37;
+    g.ua_r = L(7.2, 12.5, b.ar); g.ua_bA = L(7.8, 16, b.ar); g.ua_bB = L(7.4, 15, b.ar);
+    g.pkA = L(11, 21, b.ar); g.pkB = L(8.6, 13, b.ar);
+    g.el_r = L(5.8, 8.2, b.fa); g.fa_bA = L(6.6, 12.2, b.fa); g.fa_bB = L(6, 9.8, b.fa); g.wr_r = L(4.8, 6.4, b.fa);
+    g.fist = L(7.4, 8.6, b.fa);
+    g.hipX = L(14.5, 18.5, b.qu); g.kneeY = 246; g.ankY = 279; g.ground = 291;
+    g.th_r = L(12.5, 17, b.qu); g.th_bA = L(13, 19, b.qu); g.th_bB = L(12, 17, b.qu); g.kn_r = L(8.4, 10.4, b.qu);
+    g.ca_bA = L(8.4, 12.6, b.ca); g.ca_bB = L(8.8, 13.6, b.ca); g.an_r = 5.2;
+    g.shortsY = 236;
+    g.S = [100 - g.SW, g.shY];
+    g.flare = pose.flare ? L(7, 12, b.sh) : 0;
+    g.H = [100 - g.hipX, g.hipY + 30]; g.K = [100 - g.hipX - 1.5, g.kneeY]; g.A = [g.K[0] + 1, g.ankY];
+    g.A0 = add(g.S, [0, g.DR * .1]);
+    return g;
+  }
+  /* Elbow, wrist and how bent the arm is (0 hanging .. 1 full biceps peak), for one LEFT-side arm spec. */
+  function armJoints(g, b, spec) {
+    const S = g.S, UL = g.UL, FL = g.FL; let E, W, bend;
+    if (spec === 'hang') { const a = L(10, 17, b.ar * .5 + b.sh * .5); E = add(S, rot([0, UL], a)); W = add(E, rot([0, FL], a - 7)); bend = 0; }
+    else if (spec === 'flex') { E = add(S, [-UL * .95, -UL * .28]); W = add(E, rot([0, -FL], 18)); bend = 1; }
+    else if (spec === 'up') { E = add(S, [-UL * .42, -UL * .9]); W = add(E, rot([0, -FL], -8)); bend = .55; }
+    else if (spec === 'hip') { E = add(S, rot([0, UL], 44)); W = [100 - g.WW - 3, g.waistY - 2]; bend = .45; }
+    else if (spec === 'lat') { E = add(S, rot([0, UL], 52)); W = [100 - g.WW + 2, g.waistY - 14]; bend = .5; }
+    else if (spec === 'crab') { E = add(S, rot([0, UL * .85], 14)); W = [100 - 6, g.shY + 58]; bend = .75; }
+    else if (spec === 'curl') { E = add(S, rot([0, UL], 8)); W = add(E, [FL * .45, -FL * .82]); bend = .9; }
+    else if (spec === 'neck') { E = add(S, [-UL * .8, -UL * .55]); W = [g.head[0] - 5, g.head[1] - 12]; bend = .6; }
+    else { E = add(S, rot([0, UL], 12)); W = add(E, rot([0, FL], 6)); bend = 0; }
+    // keep the forearm length honest when the wrist is placed by target
+    const d = Math.hypot(W[0] - E[0], W[1] - E[1]);
+    const maxK = spec === 'crab' ? 1.28 : spec === 'neck' ? 1.25 : 1.08;
+    if (d > FL * maxK || d < FL * .7) { const tgt = d > FL * maxK ? FL * maxK : FL; const k0 = tgt / d; W = [E[0] + (W[0] - E[0]) * k0, E[1] + (W[1] - E[1]) * k0]; }
+    return { E, W, bend };
+  }
+
+  /* ---------------- tier scenery: defs + background + an optional glow filter for the figure */
+  function scenery(tk, uid, b) {
+    const t = TIER[tk]; const defs = []; const bg = []; const auras = []; let glow = null; let over = '';
+    const rays = (n, spread, len, cy = 150) => { const out = []; for (let i = 0; i < n; i++) { const a = -90 + (i - (n - 1) / 2) * spread; const p1 = [100 + Math.cos((a - 3) * Math.PI / 180) * len, cy + Math.sin((a - 3) * Math.PI / 180) * len]; const p2 = [100 + Math.cos((a + 3) * Math.PI / 180) * len, cy + Math.sin((a + 3) * Math.PI / 180) * len]; out.push(`M100 ${cy}L${P(p1)}L${P(p2)}Z`); } return out.join(''); };
+    const dots = (list, col) => list.map(([x, y, r, op]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${col}" opacity="${op}"/>`).join('');
+    const glowF = (col, dil, blur, op) => { defs.push(`<filter id="gl${uid}" x="-30%" y="-30%" width="160%" height="160%"><feMorphology in="SourceAlpha" operator="dilate" radius="${dil}" result="d"/><feGaussianBlur in="d" stdDeviation="${blur}" result="b"/><feFlood flood-color="${col}" flood-opacity="${op}"/><feComposite in2="b" operator="in"/></filter>`); glow = `url(#gl${uid})`; };
+    const platform = (col, rx = 74) => { defs.push(`<radialGradient id="pl${uid}" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="${col}" stop-opacity=".9"/><stop offset="1" stop-color="${col}" stop-opacity="0"/></radialGradient>`); return `<ellipse cx="100" cy="291" rx="${rx}" ry="11" fill="url(#pl${uid})" opacity=".55"/><ellipse cx="100" cy="291" rx="${rx - 12}" ry="8" fill="none" stroke="${col}" stroke-opacity=".7" stroke-width="1.2"/>`; };
+    if (tk === 'iron') {
+      bg.push(`<rect width="200" height="300" fill="#151516"/>`, `<rect y="262" width="200" height="38" fill="#1b1c1e"/>`, `<path d="M0 262H200" stroke="#2a2c30" stroke-width="1"/>`,
+        `<path d="M24 276h30M70 284h22M128 272h40M150 288h26" stroke="#232528" stroke-width="1.4" stroke-linecap="round"/>`);
+    } else if (tk === 'bronze') {
+      defs.push(`<radialGradient id="bg${uid}" cx="50%" cy="30%" r="75%"><stop offset="0" stop-color="${t.c2}" stop-opacity=".38"/><stop offset=".7" stop-color="#191413" stop-opacity="0"/></radialGradient>`);
+      bg.push(`<rect width="200" height="300" fill="#191413"/>`, `<rect width="200" height="300" fill="url(#bg${uid})"/>`, `<path d="M0 262 L200 262" stroke="${t.c1}" stroke-opacity=".12" stroke-width="1"/>`);
+    } else if (tk === 'silver') {
+      defs.push(`<linearGradient id="sp${uid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".22"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>`);
+      bg.push(`<rect width="200" height="300" fill="#121419"/>`, `<path d="M84 0H116L178 292H22Z" fill="url(#sp${uid})"/>`,
+        `<ellipse cx="100" cy="291" rx="70" ry="9" fill="${t.c1}" opacity=".14"/>`, dots([[34, 60, 1, .35], [168, 84, 1.2, .3], [150, 30, .9, .3], [26, 180, 1, .25]], t.c1));
+      defs.push(`<filter id="gl${uid}" x="-20%" y="-20%" width="140%" height="140%"><feMorphology in="SourceAlpha" operator="dilate" radius="1.6" result="d"/><feGaussianBlur in="d" stdDeviation="1.2" result="b"/><feFlood flood-color="${t.c1}" flood-opacity=".75"/><feComposite in2="b" operator="in"/></filter>`); glow = `url(#gl${uid})`;
+    } else if (tk === 'gold') {
+      defs.push(`<radialGradient id="bg${uid}" cx="50%" cy="34%" r="72%"><stop offset="0" stop-color="${t.c1}" stop-opacity=".42"/><stop offset=".5" stop-color="${t.c2}" stop-opacity=".22"/><stop offset="1" stop-color="#120d06" stop-opacity="0"/></radialGradient>`);
+      const sparkle = (x, y, r, op) => `<path d="M${x} ${y - r}Q${x} ${y} ${x + r} ${y}Q${x} ${y} ${x} ${y + r}Q${x} ${y} ${x - r} ${y}Q${x} ${y} ${x} ${y - r}Z" fill="${t.c1}" opacity="${op}"/>`;
+      bg.push(`<rect width="200" height="300" fill="#120d06"/>`, `<rect width="200" height="300" fill="url(#bg${uid})"/>`,
+        `<circle cx="100" cy="96" r="78" fill="none" stroke="${t.c1}" stroke-opacity=".28" stroke-width="5"/><circle cx="100" cy="96" r="68" fill="none" stroke="${t.c1}" stroke-opacity=".14" stroke-width="2"/>`,
+        sparkle(30, 70, 5, .8), sparkle(172, 54, 4, .7), sparkle(160, 150, 3, .6), sparkle(38, 190, 3.5, .55), sparkle(140, 24, 2.5, .6), platform(t.c1, 66));
+      glowF(t.c1, 2, 4, .6);
+    } else if (tk === 'platinum') {
+      defs.push(`<radialGradient id="bg${uid}" cx="50%" cy="42%" r="70%"><stop offset="0" stop-color="${t.c1}" stop-opacity=".55"/><stop offset=".45" stop-color="${t.c2}" stop-opacity=".35"/><stop offset="1" stop-color="#0e0b0a" stop-opacity="0"/></radialGradient>`);
+      bg.push(`<rect width="200" height="300" fill="#0e0b0a"/>`, `<rect width="200" height="300" fill="url(#bg${uid})"/>`, `<path d="${rays(14, 13, 260)}" fill="${t.c1}" opacity=".07"/>`,
+        dots([[28, 70, 1.6, .7], [170, 52, 1.2, .6], [44, 160, 1, .5], [160, 138, 1.8, .7], [182, 210, 1.1, .5], [18, 220, 1.4, .6], [132, 28, 1, .5], [64, 32, 1.3, .55]], t.c1), platform(t.c1));
+      glowF(t.c1, 2.5, 5, .85);
+    } else if (tk === 'diamond') {
+      defs.push(`<radialGradient id="bg${uid}" cx="50%" cy="40%" r="72%"><stop offset="0" stop-color="${t.c1}" stop-opacity=".5"/><stop offset=".5" stop-color="${t.c2}" stop-opacity=".4"/><stop offset="1" stop-color="#070a16" stop-opacity="0"/></radialGradient>`);
+      const shard = (x, y, s, r, op) => `<path transform="translate(${x} ${y}) rotate(${r}) scale(${s})" d="M0 -10L4 -2L2 10L-3 4L-4 -3Z" fill="${t.c1}" opacity="${op}" stroke="#fff" stroke-opacity="${op * .6}" stroke-width=".5"/>`;
+      bg.push(`<rect width="200" height="300" fill="#070a16"/>`, `<rect width="200" height="300" fill="url(#bg${uid})"/>`, `<path d="${rays(10, 18, 260)}" fill="${t.c1}" opacity=".06"/>`,
+        shard(26, 64, 1.4, -20, .75), shard(176, 48, 1.1, 25, .7), shard(166, 150, 1.6, 10, .6), shard(30, 176, 1.2, -35, .55), shard(144, 22, .8, 40, .6), shard(56, 28, .9, -10, .5), shard(186, 226, 1, 15, .5), shard(14, 236, .9, -15, .45),
+        `<path d="M30 291L100 278L170 291L100 302Z" fill="${t.c1}" opacity=".18" stroke="${t.c1}" stroke-opacity=".7" stroke-width="1.1"/><path d="M30 291H170M100 278V302" stroke="${t.c1}" stroke-opacity=".35" stroke-width=".8"/>`);
+      glowF(t.c1, 2.6, 5.5, .85);
+    } else if (tk === 'titan') {
+      defs.push(`<radialGradient id="bg${uid}" cx="50%" cy="44%" r="72%"><stop offset="0" stop-color="${t.c1}" stop-opacity=".5"/><stop offset=".5" stop-color="${t.c2}" stop-opacity=".45"/><stop offset="1" stop-color="#0b0614" stop-opacity="0"/></radialGradient>`);
+      const bolt = (pts, w) => `<path d="M${pts.map(P).join('L')}" fill="none" stroke="${t.c1}" stroke-width="${w + 2.4}" stroke-linejoin="round" stroke-linecap="round" opacity=".35"/><path d="M${pts.map(P).join('L')}" fill="none" stroke="#fff" stroke-width="${w}" stroke-linejoin="round" stroke-linecap="round" opacity=".85"/>`;
+      bg.push(`<rect width="200" height="300" fill="#0b0614"/>`, `<rect width="200" height="300" fill="url(#bg${uid})"/>`,
+        bolt([[22, 20], [34, 52], [26, 58], [40, 96]], 1.1), bolt([[180, 30], [166, 64], [176, 70], [160, 110]], 1.1), bolt([[14, 150], [30, 168], [22, 176], [34, 200]], .8), bolt([[188, 160], [172, 184], [182, 190], [168, 214]], .8),
+        `<path d="M100 291L70 286L52 290M100 291L128 284L150 287M100 291L84 298M100 291L122 299M70 286L62 280M128 284L138 279" fill="none" stroke="${t.c1}" stroke-width="1.3" stroke-linecap="round" opacity=".8"/>`,
+        `<ellipse cx="100" cy="291" rx="78" ry="12" fill="${t.c2}" opacity=".45"/>`);
+      glowF(t.c1, 3.2, 7, .95);
+    } else if (tk === 'legend') {
+      defs.push(`<radialGradient id="bg${uid}" cx="50%" cy="46%" r="72%"><stop offset="0" stop-color="${t.c1}" stop-opacity=".55"/><stop offset=".5" stop-color="${t.c2}" stop-opacity=".45"/><stop offset="1" stop-color="#0d0304" stop-opacity="0"/></radialGradient>`);
+      defs.push(`<linearGradient id="fl${uid}" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="${t.gold}"/><stop offset=".35" stop-color="#ff8a3d"/><stop offset=".75" stop-color="${t.c1}"/><stop offset="1" stop-color="${t.c2}" stop-opacity="0"/></linearGradient>`);
+      // flame aura: two copies of the figure, swollen and torn by noise so the flames hug the body
+      const flame = (id, dil, freq, scale, blur, col, op, dy) => `<filter id="${id}${uid}" x="-40%" y="-40%" width="180%" height="180%"><feMorphology in="SourceAlpha" operator="dilate" radius="${dil}" result="d"/><feOffset in="d" dy="${dy}" result="o"/><feTurbulence type="fractalNoise" baseFrequency="${freq}" numOctaves="2" seed="7" result="n"/><feDisplacementMap in="o" in2="n" scale="${scale}" xChannelSelector="R" yChannelSelector="G" result="w"/><feGaussianBlur in="w" stdDeviation="${blur}" result="b"/><feFlood flood-color="${col}" flood-opacity="${op}"/><feComposite in2="b" operator="in"/></filter>`;
+      defs.push(flame('fo', 9, '.035 .09', 34, 3, t.c1, .85, -7), flame('fi', 4, '.05 .12', 20, 2, '#ffb347', .9, -4));
+      auras.push(`url(#fo${uid})`, `url(#fi${uid})`);
+      const embers = [[22, 40, 1.4], [178, 34, 1.2], [40, 120, 1], [166, 104, 1.5], [186, 196, 1.1], [12, 210, 1.3], [120, 14, 1], [74, 22, 1.2], [150, 250, 1], [44, 262, 1.1]];
+      bg.push(`<rect width="200" height="300" fill="#0d0304"/>`, `<rect width="200" height="300" fill="url(#bg${uid})"/>`, `<path d="${rays(16, 11.5, 260)}" fill="${t.gold}" opacity=".06"/>`,
+        embers.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#ffb15a" opacity=".8"/>`).join(''), platform(t.c1, 78));
+      // flickering flame edge on the figure itself
+      defs.push(`<filter id="gl${uid}" x="-35%" y="-35%" width="170%" height="170%"><feMorphology in="SourceAlpha" operator="dilate" radius="3.5" result="d"/><feTurbulence type="fractalNoise" baseFrequency=".06 .11" numOctaves="2" seed="3" result="n"/><feDisplacementMap in="d" in2="n" scale="12" xChannelSelector="R" yChannelSelector="G" result="w"/><feGaussianBlur in="w" stdDeviation="2.6" result="b"/><feFlood flood-color="${t.c1}" flood-opacity=".95"/><feComposite in2="b" operator="in"/></filter>`);
+      glow = `url(#gl${uid})`;
+      // crown of light above the head
+      const hx = 100, hy = 42 - 40;
+      over = `<g transform="translate(100 291) scale(.9) translate(-100 -291)"><path d="M${hx - 22},${hy + 8} Q${hx},${hy - 4} ${hx + 22},${hy + 8}" fill="none" stroke="${t.gold}" stroke-width="7" stroke-linecap="round" opacity=".25"/>`
+        + `<path d="M${hx - 22},${hy + 8} Q${hx},${hy - 4} ${hx + 22},${hy + 8}" fill="none" stroke="#fff3c4" stroke-width="2.4" stroke-linecap="round"/>`
+        + [-16, -8, 0, 8, 16].map((dx, i) => { const y0 = hy + 5 - (2 - Math.abs(i - 2)) * 2.2; const len = i === 2 ? 13 : i % 2 ? 9 : 7; return `<path d="M${hx + dx - 2.4},${f(y0)} L${hx + dx},${f(y0 - len)} L${hx + dx + 2.4},${f(y0)} Z" fill="#fff3c4" stroke="${t.gold}" stroke-width=".8"/>`; }).join('')
+        + `</g>`;
+    }
+    return { defs: defs.join(''), bg: bg.join(''), glow, over, auras };
+  }
+
+  /* ---------------- the figure */
+  function figure(b0, tk, poseKey, uid) {
+    const lk = LOOK, ink = lk.ink, t = TIER[tk] || TIER.bronze, acc = t.acc;
+    const pose = POSES[poseKey] || POSES.stand;
+    const b = pose.trapBoost ? { ...b0, tr: Math.min(1, b0.tr + pose.trapBoost) } : b0;
+    const { skin } = lk, shade = lk.skin_sh, hi = lk.skin_hi, deep = lk.skin_deep;
+    const g = geo(b, pose);
+    const OW = 2.3;
+    const { S, H, K, A, A0 } = g;
+    const dop = L(.15, .8, b.df);
+    const M = 'matrix(-1 0 0 1 200 0)';
+    const clips = []; let cid = 0;
+    const line = (d, w = 1.6, op = null, col = null) => `<path d="${d}" fill="none" stroke="${col || ink}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" opacity="${f(op == null ? dop : op)}"/>`;
+    const outline = (ds, extra = 0) => ds.map(d => `<path d="${d}" fill="${ink}" stroke="${ink}" stroke-width="${f(2 * (OW + extra))}" stroke-linejoin="round"/>`).join('');
+    const clip = d => { cid++; const i = `cp${uid}_${cid}`; clips.push(`<clipPath id="${i}"><path d="${d}"/></clipPath>`); return i; };
+    const shaded = (d, shadows, base = skin, lights = []) => {
+      const c = clip(d);
+      return `<path d="${d}" fill="${base}"/><g clip-path="url(#${c})">` + shadows.map(s => `<path d="${s}" fill="${base === skin ? shade : lk.outfit_sh}"/>`).join('')
+        + lights.map(s => `<path d="${s}" fill="${base === skin ? hi : lk.outfit_hi}" opacity=".55"/>`).join('') + '</g>';
+    };
+    const offsetLimb = (p0, p1, r0, r1, bA, bB, tA, tB, amt) => {
+      const dx = p1[0] - p0[0], dy = p1[1] - p0[1], Ln = Math.hypot(dx, dy), nx = -dy / Ln, ny = dx / Ln;
+      return limb([p0[0] + nx * amt, p0[1] + ny * amt], [p1[0] + nx * amt, p1[1] + ny * amt], r0, r1, bA, bB, tA, tB);
+    };
+    const c = 100, { NW, DR, CW, WW, shY } = g, nt = g.neckTop;
+
+    // ---- legs
+    const thigh = limb(H, K, g.th_r, g.kn_r, g.th_bA, g.th_bB, .45, .7);
+    const calf = limb(K, A, g.kn_r, g.an_r, g.ca_bA, g.ca_bB, .3, .3);
+    const legFill = shaded(thigh, [offsetLimb(H, K, g.th_r, g.kn_r, g.th_bA, g.th_bB, .45, .7, -4.5)])
+      + shaded(calf, [offsetLimb(K, A, g.kn_r, g.an_r, g.ca_bA, g.ca_bB, .3, .3, -4.2)], skin,
+        [limb(along(K, A, .2, -g.ca_bB * .35), along(K, A, .45, -g.ca_bB * .3), 1.8, 1.2, 2.2, 2.2, .5, .5)]);
+    const legLines = line(curve(along(K, A, .14, -g.ca_bB * .55), along(K, A, .33, -g.ca_bB * 1.0), along(K, A, .58, -g.ca_bB * .45)))
+      + line(curve(along(K, A, .16, g.ca_bA * .55), along(K, A, .3, g.ca_bA * .8), along(K, A, .48, g.ca_bA * .4)), 1.4)
+      + line(`M${P(along(H, K, .97, -g.kn_r * .7))}Q${P(along(H, K, 1.08, 0))} ${P(along(H, K, .97, g.kn_r * .55))}`, 1.5, .55)
+      + line(curve(along(H, K, .72, -g.th_bB * .7), along(H, K, .92, -g.th_bB * .85), along(H, K, .99, -g.kn_r * .25)), 1.7);
+    const gx = A[0] + .5, gy = g.ground;
+    const shoe = `M${f(gx - 12)},${f(gy)} C${f(gx - 13)},${f(gy - 8)} ${f(gx - 8)},${f(gy - 13)} ${f(gx - 1)},${f(gy - 13)} C${f(gx + 6)},${f(gy - 13)} ${f(gx + 10)},${f(gy - 7)} ${f(gx + 10.5)},${f(gy)} Z`;
+    const sole = `M${f(gx - 12.4)},${f(gy - 3.2)} L${f(gx + 10.8)},${f(gy - 3.2)} L${f(gx + 10.5)},${f(gy)} L${f(gx - 12)},${f(gy)} Z`;
+    const shoeFill = `<path d="${shoe}" fill="${lk.shoe}"/><path d="${sole}" fill="${acc.sole ? t.c1 : lk.shoe_sh}"/>`
+      + `<path d="M${f(gx - 6)},${f(gy - 10.5)} L${f(gx - 2)},${f(gy - 6.5)} M${f(gx - 3)},${f(gy - 11.5)} L${f(gx + 1)},${f(gy - 7.5)}" stroke="${lk.shoe_sh}" stroke-width="1.3" stroke-linecap="round"/>`;
+
+    // ---- torso
+    const trap = L(1, 10, b.tr);
+    const armPit = [c - CW, shY + 21];
+    const lat = [c - L(CW - 1, CW + 3, b.sh) - g.flare, shY + 42];
+    const waist = [c - WW, g.waistY], hip = [c - WW - 2, g.hipY + 6];
+    const torso = sym([c, nt - 4], [
+      ['L', [c - NW + 1.5, nt - 4]],
+      ['C', [c - NW, nt + 6], [c - NW - 2, shY - 12 - trap], [c - NW - 9, shY - 9 - trap * .7]],
+      ['C', [S[0] + DR * 1.6, shY - DR * .8 - trap * .35], [S[0] + DR * .6, shY - DR * .8], [S[0] + DR * .3, shY - DR * .55]],
+      ['L', armPit],
+      ['C', [armPit[0] - 2 - g.flare * .5, armPit[1] + 10], [lat[0], lat[1] - 9], lat],
+      ['C', [lat[0] + 2, lat[1] + 13], [waist[0] - 1, waist[1] - 16], waist],
+      ['L', hip], ['L', [c, hip[1]]]]);
+    const neckSh = sym([c, nt - 4], [['L', [c - NW + 1.5, nt - 4]], ['C', [c - NW, nt + 6], [c - NW - 1, nt + 10], [c - NW - 2, nt + 14]], ['L', [c, nt + 18]]]);
+    const torsoFill = shaded(torso, [neckSh]);
+
+    // ---- shirt
+    const strap = 8;
+    const topO = [c - NW - strap - 1, shY - 12 - L(0, 3, b.tr)];
+    const topI = [c - NW + 1.5, shY - 13 - L(0, 3, b.tr)];
+    const neckPt = [c, shY + 6];
+    const ah = [armPit[0] + 2.5, armPit[1] + 13];
+    const hem = [hip[0] - 1.5, hip[1] + 3];
+    const shirt = sym(neckPt, [
+      ['C', [c - 8, neckPt[1]], [topI[0] + 1, topI[1] + 11], topI],
+      ['L', topO],
+      ['C', [topO[0] - 1, topO[1] + 17], [ah[0] + 7, ah[1] - 2], ah],
+      ['C', [lat[0] + 3, lat[1] + 2], [lat[0] + 1.5, lat[1] + 5], [lat[0] + 1, lat[1] + 7]],
+      ['C', [lat[0] + 2.5, lat[1] + 18], [waist[0] - .5, waist[1] - 14], [waist[0] - 1, waist[1]]],
+      ['C', [waist[0] - 1.5, waist[1] + 6], [hem[0], hem[1] - 6], hem],
+      ['Q', [c - WW * .5, hem[1] + 2.5], [c, hem[1] + 2]]]);
+    const py = shY + L(26, 33, b.ch);
+    const sband = `M${f(ah[0] - 4)},${f(ah[1] - 4)} C${f(lat[0] + 8)},${f(lat[1] + 4)} ${f(c - WW + 6)},${f(waist[1] - 10)} ${f(c - WW + L(4.5, 6.5, b.wa))},${f(hem[1] + 4)} L${f(c - CW - 20)},${f(hem[1] + 8)} L${f(c - CW - 20)},${f(ah[1] - 4)} Z`;
+    const underPec = `M${f(c - CW + 2)},${f(py - 5)} Q${f(c - CW * .5)},${f(py + L(4, 9.5, b.ch))} ${f(c)},${f(py)} `
+      + `Q${f(c + CW * .5)},${f(py + L(4, 9.5, b.ch))} ${f(c + CW - 2)},${f(py - 5)} `
+      + `L${f(c + CW - 2)},${f(py + L(2, 5, b.ch))} Q${f(c + CW * .5)},${f(py + L(7, 13, b.ch))} ${f(c)},${f(py + L(3.5, 5, b.ch))} `
+      + `Q${f(c - CW * .5)},${f(py + L(7, 13, b.ch))} ${f(c - CW + 2)},${f(py + L(2, 5, b.ch))} Z`;
+    const scp = clip(shirt);
+    const pecLights = [-1, 1].map(sx => `<ellipse cx="${f(c + sx * CW * .48)}" cy="${f(shY + 15)}" rx="${f(CW * .28)}" ry="${f(L(3.5, 6, b.ch))}" fill="${lk.outfit_hi}" opacity="${f(L(.12, .5, b.ch))}"/>`).join('');
+    let stretch = [-1, 1].map(sx => line(curve([c + sx * (CW - 6), ah[1] - 2], [c + sx * CW * .45, py + 8], [c + sx * 6, py + 16]), 1.2, L(0, .35, b.ch), lk.outfit_sh)).join('');
+    stretch += line(`M${f(c - 7)},${f(py + 26)} Q${f(c)},${f(py + 29)} ${f(c + 7)},${f(py + 26)}`, 1.2, .35, lk.outfit_sh);
+    const shirtFill = `<path d="${shirt}" fill="${lk.outfit}"/><g clip-path="url(#${scp})">`
+      + `<path d="${sband}" fill="${lk.outfit_sh}"/><path transform="${M}" d="${sband}" fill="${lk.outfit_sh}"/>`
+      + `<path d="${underPec}" fill="${lk.outfit_sh}" opacity="${f(L(.5, .95, b.ch))}"/>${pecLights}${stretch}</g>`;
+    let trim = `<path d="M${P(topI)} C${f(topI[0] + 1)},${f(topI[1] + 11)} ${f(c - 8)},${f(neckPt[1])} ${P(neckPt)} `
+      + `C${f(c + 8)},${f(neckPt[1])} ${f(200 - topI[0] - 1)},${f(topI[1] + 11)} ${f(200 - topI[0])},${f(topI[1])}" fill="none" stroke="${t.c1}" stroke-width="2.4"/>`;
+    for (const sx of [1, -1]) {
+      const tx = sx === 1 ? topO : [200 - topO[0], topO[1]], ax = sx === 1 ? ah : [200 - ah[0], ah[1]];
+      trim += `<path d="M${P(tx)} C${f(tx[0] - sx)},${f(tx[1] + 17)} ${f(ax[0] + 7 * sx)},${f(ax[1] - 2)} ${P(ax)}" fill="none" stroke="${t.c1}" stroke-width="2.2"/>`;
+    }
+    if (acc.hem) trim += `<path d="M${f(hem[0] + 1)},${f(hem[1] - 1)} Q${f(c - WW * .5)},${f(hem[1] + 1.5)} ${f(c)},${f(hem[1] + 1)} Q${f(c + WW * .5)},${f(hem[1] + 1.5)} ${f(200 - hem[0] - 1)},${f(hem[1] - 1)}" fill="none" stroke="${t.c1}" stroke-width="2.2"/>`;
+    if (acc.mark) {
+      const cx = c + CW * .45, cy = shY + 13, mc = t.gold || t.c1;
+      if (acc.mark === 'gem') trim += `<path d="M${f(cx)},${f(cy - 4)} L${f(cx + 3.4)},${f(cy)} L${f(cx)},${f(cy + 4)} L${f(cx - 3.4)},${f(cy)} Z" fill="${t.c1}"/>`;
+      if (acc.mark === 'bolt') trim += `<path d="M${f(cx + 1)},${f(cy - 5)} L${f(cx - 3)},${f(cy + .8)} L${f(cx - .2)},${f(cy + .8)} L${f(cx - 1.2)},${f(cy + 5)} L${f(cx + 3.2)},${f(cy - 1)} L${f(cx + .4)},${f(cy - 1)} Z" fill="${t.c1}"/>`;
+      if (acc.mark === 'star') trim += `<path transform="translate(${f(cx)} ${f(cy)}) scale(.9)" d="M0,-5 L1.5,-1.6 5,-1.5 2.3,.8 3.1,4.5 0,2.5 -3.1,4.5 -2.3,.8 -5,-1.5 -1.5,-1.6 Z" fill="${mc}"/>`;
+    }
+    const torsoLines = line(curve([topO[0] + 2.5, topO[1] + 11], [topO[0] + 1, ah[1] - 7], [ah[0] + 3, ah[1] - 1.5]), 1.6)
+      + line(curve([c - NW - 4, shY - 6], [c - NW - 11, shY - 3], [topO[0] + 1, shY - 6]), 1.4, L(.3, .7, b.df));
+    const torsoLinesM = `<g transform="${M}">${torsoLines}</g>`;
+
+    // ---- shorts
+    const y0 = g.hipY - 1, y1 = g.shortsY;
+    const outer = [H[0] - g.th_bA * 1.0 - 2.5, y1], inner = [c - 2.5, y1 + 3];
+    const shorts = sym([c, y0], [['L', [c - WW - 3.5, y0]], ['C', [c - WW - 8, y0 + 12], [outer[0] - 2.5, y1 - 22], outer], ['L', [outer[0] + 3, y1 + 4]],
+      ['Q', [(outer[0] + inner[0]) / 2, y1 + 8], inner], ['L', [c, y1 - 13]]]);
+    const soCp = clip(shorts);
+    const stripe = sx => `M${f(c + sx * (WW + 4))},${f(y0 + 2)} Q${f(c + sx * (WW + 10))},${f(y1 - 20)} ${f(c + sx * (c - outer[0] - 1.5))},${f(y1 + 1)}`;
+    const shortsFill = `<path d="${shorts}" fill="${lk.shorts}"/><g clip-path="url(#${soCp})">`
+      + `<path d="M${f(c - 30)},${f(y0)} L${f(c + 30)},${f(y0)} L${f(c + 30)},${f(y0 + 5)} L${f(c - 30)},${f(y0 + 5)} Z" fill="#1a1513"/>`
+      + [-1, 1].map(sx => `<path d="M${f(c + sx * (g.hipX + 6))},${f(y0 + 14)} Q${f(c + sx * (g.hipX + 9))},${f(y1 - 14)} ${f(c + sx * (g.hipX + 4))},${f(y1 - 2)}" fill="none" stroke="${lk.shorts_hi}" stroke-width="5" stroke-linecap="round" opacity=".7"/>`).join('')
+      + `<path d="M${f(c - 4)},${f(y1 - 12)} L${f(c - 9)},${f(y1 - 2)} M${f(c + 4)},${f(y1 - 12)} L${f(c + 9)},${f(y1 - 2)}" stroke="#141010" stroke-width="1.6" stroke-linecap="round"/>`
+      + `<path d="${stripe(-1)}" fill="none" stroke="${t.c1}" stroke-width="3" stroke-linecap="round"/><path d="${stripe(1)}" fill="none" stroke="${t.c1}" stroke-width="3" stroke-linecap="round"/></g>`
+      + line(`M${c},${f(y0 + 8)} L${c},${f(y1 - 13)}`, 1.4, .6);
+
+    // ---- one arm (LEFT-side coordinates): delt + upper arm + forearm + fist, union outline
+    function arm(spec) {
+      const { E, W, bend } = armJoints(g, b, spec);
+      const bA = L(g.ua_bA, g.pkA, bend), bB = L(g.ua_bB, g.pkB, bend), tA = L(.5, .56, bend), tB = L(.45, .5, bend), er = g.el_r + L(1, 1.2, bend);
+      const ua = limb(A0, E, g.ua_r, er, bA, bB, tA, tB);
+      const uaShadow = offsetLimb(A0, E, g.ua_r, er, bA, bB, tA, tB, -L(4.5, 4.8, bend));
+      const fa = limb(E, W, g.el_r, g.wr_r, g.fa_bA, g.fa_bB, .3, .28);
+      const faShadow = offsetLimb(E, W, g.el_r, g.wr_r, g.fa_bA, g.fa_bB, .3, .28, W[1] < E[1] ? 3.6 : -3.6);
+      const D = [S[0] - DR * .05, S[1] + DR * .2];
+      const delt = deltPath(D, DR), deltShadow = deltPath([D[0] - 3.5, D[1] + 2], DR);
+      let fu = [W[0] - E[0], W[1] - E[1]]; const fl = Math.hypot(...fu); fu = [fu[0] / fl, fu[1] / fl];
+      const faAng = Math.atan2(fu[1], fu[0]) * 180 / Math.PI - 90;
+      const r = g.fist;
+      const fistLocal = `M${f(-r)},${f(r * .2)} C${f(-r * 1.15)},${f(r * 1.2)} ${f(-r * .95)},${f(r * 2.05)} ${f(-r * .1)},${f(r * 2.05)} `
+        + `C${f(r * .8)},${f(r * 2.05)} ${f(r * 1.1)},${f(r * 1.4)} ${f(r * 1.05)},${f(r * .4)} C${f(r * 1)},${f(-r * .3)} ${f(-r * .9)},${f(-r * .4)} ${f(-r)},${f(r * .2)} Z`;
+      const tf = `translate(${f(W[0])} ${f(W[1])}) rotate(${f(faAng)})`;
+      const fist = `<path transform="${tf}" d="${fistLocal}" fill="${ink}" stroke="${ink}" stroke-width="${f(2 * OW)}" stroke-linejoin="round"/>`;
+      const fcp = clip(fistLocal);
+      let fistFill = `<g transform="${tf}"><path d="${fistLocal}" fill="${skin}"/><g clip-path="url(#${fcp})">`
+        + `<path d="M${f(-r * .95)},${f(r * 1.2)} C${f(-r * .9)},${f(r * 1.9)} ${f(r * .6)},${f(r * 2.1)} ${f(r * 1.0)},${f(r * 1.3)} L${f(r * 1.05)},${f(r * 2.2)} L${f(-r * 1.2)},${f(r * 2.2)} Z" fill="${shade}"/></g>`
+        + `<path d="M${f(-r * .35)},${f(r * 1.25)} L${f(r * .85)},${f(r * 1.25)} M${f(-r * .3)},${f(r * 1.65)} L${f(r * .75)},${f(r * 1.65)} M${f(-r * .4)},${f(r * .85)} L${f(r * .9)},${f(r * .85)}" stroke="${ink}" stroke-width="1.2" stroke-linecap="round" opacity=".7"/>`
+        + `<path d="M${f(-r * .95)},${f(r * .55)} C${f(-r * .4)},${f(r * .5)} ${f(-r * .1)},${f(r * .9)} ${f(-r * .25)},${f(r * 1.35)}" fill="none" stroke="${ink}" stroke-width="1.4" stroke-linecap="round"/>`;
+      fistFill += '</g>';
+      let bell = '';
+      if (spec === 'curl') { // a dumbbell held level, plates either side of the fist
+        const C = add(W, fu, r * 1.1), pl = '#3d434c', plh = '#5a626d', hw = r * 2.5;
+        bell = `<path d="M${f(C[0] - hw)},${f(C[1] - 1.9)} H${f(C[0] + hw)} V${f(C[1] + 1.9)} H${f(C[0] - hw)} Z" fill="#8b929c" stroke="${ink}" stroke-width="1.4"/>`
+          + [-1, 1].map(sx => { const x0 = C[0] + sx * hw - (sx < 0 ? r * 1.1 : 0); return `<rect x="${f(x0)}" y="${f(C[1] - r * 1.7)}" width="${f(r * 1.1)}" height="${f(r * 3.4)}" rx="2" fill="${pl}" stroke="${ink}" stroke-width="2"/><path d="M${f(x0 + r * .35)},${f(C[1] - r * 1.35)} V${f(C[1] + r * 1.2)}" stroke="${plh}" stroke-width="1.4" stroke-linecap="round"/>`; }).join('');
+      }
+      const armOut = outline([fa, ua, delt]);
+      const armFill = shaded(fa, [faShadow]) + shaded(ua, [uaShadow]) + bell + fist + fistFill
+        + shaded(delt, [deltShadow], skin, [`M${f(D[0] - DR * .55)},${f(D[1] - DR * .35)} Q${f(D[0] - DR * .1)},${f(D[1] - DR * 1.0)} ${f(D[0] + DR * .55)},${f(D[1] - DR * .55)} Q${f(D[0])},${f(D[1] - DR * .55)} ${f(D[0] - DR * .55)},${f(D[1] - DR * .35)} Z`]);
+      let lines, bl;
+      if (bend < .5) {
+        lines = line(curve(along(A0, E, .34, bA * .3), along(A0, E, .62, bA * .38), along(A0, E, .88, bA * .15)))
+          + line(curve(along(A0, E, .55, -bB * .2), along(A0, E, .75, -bB * .35), along(A0, E, .92, -g.el_r * .3)), 1.3, dop * .7);
+        bl = limb(along(A0, E, .5, -bB * .5), along(A0, E, .66, -bB * .5), 1.2, 1.0, 1.6, 1.6, .5, .5);
+      } else {
+        // which side the biceps faces depends on which way the forearm folds
+        const side = Math.sign((E[0] - A0[0]) * (W[1] - A0[1]) - (E[1] - A0[1]) * (W[0] - A0[0])) || 1;
+        const pk = side < 0 ? bA : -bB, back = side < 0 ? -bB : bA;
+        lines = line(curve(along(A0, E, .3, back * .3), along(A0, E, .6, back * .45), along(A0, E, .9, -Math.sign(back) * g.el_r * .3)))
+          + line(curve(along(A0, E, .86, pk * .3), along(A0, E, .95, pk * .1), along(A0, E, .99, -Math.sign(pk) * g.el_r * .2)), 1.4);
+        bl = limb(along(A0, E, .45, pk * .75), along(A0, E, .68, pk * .75), 1.8, 1.5, 2.6, 2.6, .5, .5);
+      }
+      lines += `<path d="${bl}" fill="#fff" opacity="${f(L(.1, .3, b.df))}"/>`;
+      lines += line(curve([D[0] - DR * .25, D[1] + DR * .2], [D[0] + DR * .05, D[1] + DR * .75], [D[0] + DR * .5, D[1] + DR * 1.05]), 1.5);
+      lines += line(curve(along(E, W, .12, g.fa_bA * .38), along(E, W, .36, g.fa_bA * .52), along(E, W, .72, g.wr_r * .2)), 1.4);
+      if (b.df > .55) lines += line(curve(along(E, W, .2, -g.fa_bB * .2), along(E, W, .48, g.fa_bA * .08), along(E, W, .82, -g.wr_r * .25)), 1.3, (b.df - .55) * 1.8, hi);
+      if (acc.wrist) {
+        const w0 = g.wr_r + 2.2, w1 = g.wr_r + 1.6;
+        const pa = along(E, W, .7, w0 * 1.05), pb = along(E, W, .86, w1), pc = along(E, W, .86, -w1), pd = along(E, W, .7, -w0 * 1.05);
+        lines += `<path d="M${P(pa)} L${P(pb)} Q${P(along(E, W, .9, 0))} ${P(pc)} L${P(pd)} Q${P(along(E, W, .74, 0))} ${P(pa)} Z" fill="${t.c1}" stroke="${ink}" stroke-width="1.8" stroke-linejoin="round"/>`;
+      }
+      return `<g>${armOut}${armFill}${lines}</g>`;
+    }
+    const armL = arm(pose.L), armR = `<g transform="${M}">${arm(pose.R)}</g>`;
+
+    // ---- head
+    const [hx, hy] = g.head;
+    const face = t.face;
+    const head = sym([hx, hy - 23], [['C', [hx - 12, hy - 23], [hx - 20.5, hy - 15], [hx - 20.5, hy - 2]], ['C', [hx - 20.5, hy + 10], [hx - 18.5, hy + 18], [hx - 12.5, hy + 23]], ['C', [hx - 8.5, hy + 26.5], [hx - 4, hy + 27.5], [hx, hy + 27.5]]]);
+    const beard = sym([hx, hy + 31], [['C', [hx - 7, hy + 31], [hx - 13.5, hy + 28], [hx - 17.5, hy + 22]], ['C', [hx - 20.5, hy + 17], [hx - 21.2, hy + 8], [hx - 20.8, hy - 1]], ['L', [hx - 18.6, hy - 1]],
+      ['C', [hx - 18, hy + 6], [hx - 15, hy + 11], [hx - 10.5, hy + 12.5]], ['C', [hx - 7, hy + 11.5], [hx - 3, hy + 11], [hx, hy + 11.5]]]);
+    const ears = [-1, 1].map(sx => `M${f(hx + sx * 19.5)},${f(hy - 3)} C${f(hx + sx * 25.5)},${f(hy - 6)} ${f(hx + sx * 26)},${f(hy + 6)} ${f(hx + sx * 19.5)},${f(hy + 8)} Z`);
+    const hair = `M${f(hx - 21.2)},${f(hy - 3)} C${f(hx - 22.2)},${f(hy - 10)} ${f(hx - 22)},${f(hy - 17)} ${f(hx - 19)},${f(hy - 23)} `
+      + `Q${f(hx - 17)},${f(hy - 31)} ${f(hx - 13)},${f(hy - 35)} Q${f(hx - 11)},${f(hy - 31)} ${f(hx - 8)},${f(hy - 31.5)} `
+      + `Q${f(hx - 5)},${f(hy - 39)} ${f(hx + 1)},${f(hy - 39.5)} Q${f(hx + 1.5)},${f(hy - 34)} ${f(hx + 4.5)},${f(hy - 32.5)} `
+      + `Q${f(hx + 9)},${f(hy - 37.5)} ${f(hx + 14)},${f(hy - 36)} Q${f(hx + 12.5)},${f(hy - 32)} ${f(hx + 14.5)},${f(hy - 29)} `
+      + `C${f(hx + 20)},${f(hy - 25)} ${f(hx + 22)},${f(hy - 14)} ${f(hx + 21.2)},${f(hy - 3)} L${f(hx + 19.6)},${f(hy - 4)} `
+      + `C${f(hx + 19.5)},${f(hy - 10)} ${f(hx + 17.5)},${f(hy - 14)} ${f(hx + 12.5)},${f(hy - 15.5)} C${f(hx + 7.5)},${f(hy - 16.8)} ${f(hx + 3.5)},${f(hy - 15.2)} ${f(hx)},${f(hy - 16)} `
+      + `C${f(hx - 3.5)},${f(hy - 15.2)} ${f(hx - 7.5)},${f(hy - 16.8)} ${f(hx - 12.5)},${f(hy - 15.5)} C${f(hx - 17.5)},${f(hy - 14)} ${f(hx - 19.5)},${f(hy - 10)} ${f(hx - 19.6)},${f(hy - 4)} Z`;
+    const hcp = clip(head);
+    const headOut = outline([...ears, head, beard, hair]);
+    const fc = [];
+    fc.push(ears.map(e => `<path d="${e}" fill="${shade}"/>`).join(''));
+    fc.push([-1, 1].map(sx => `<path d="M${f(hx + sx * 21)},${f(hy)} Q${f(hx + sx * 23.5)},${f(hy + 1)} ${f(hx + sx * 21.5)},${f(hy + 4)}" fill="none" stroke="${ink}" stroke-width="1.3" stroke-linecap="round" opacity=".7"/>`).join(''));
+    fc.push(`<path d="${head}" fill="${skin}"/><g clip-path="url(#${hcp})">`
+      + `<path d="M${f(hx - 25)},${f(hy - 30)} L${f(hx - 15)},${f(hy - 30)} C${f(hx - 19)},${f(hy - 10)} ${f(hx - 18)},${f(hy + 8)} ${f(hx - 11)},${f(hy + 30)} L${f(hx - 25)},${f(hy + 30)} Z" fill="${shade}"/>`
+      + `<path d="M${f(hx + 25)},${f(hy - 30)} L${f(hx + 15)},${f(hy - 30)} C${f(hx + 19)},${f(hy - 10)} ${f(hx + 18)},${f(hy + 8)} ${f(hx + 11)},${f(hy + 30)} L${f(hx + 25)},${f(hy + 30)} Z" fill="${shade}" opacity=".6"/></g>`);
+    fc.push([-1, 1].map(sx => `<path d="M${f(hx + sx * 20.6)},${f(hy - 4)} C${f(hx + sx * 20.5)},${f(hy - 9)} ${f(hx + sx * 18.5)},${f(hy - 13)} ${f(hx + sx * 15)},${f(hy - 14.5)} L${f(hx + sx * 16)},${f(hy - 9)} C${f(hx + sx * 18)},${f(hy - 8)} ${f(hx + sx * 19.5)},${f(hy - 5)} ${f(hx + sx * 19.7)},${f(hy)} Z" fill="#4a3a35" opacity=".85"/>`).join(''));
+    fc.push(`<path d="${hair}" fill="${lk.hair}"/>`);
+    fc.push(`<path d="M${f(hx - 12)},${f(hy - 25)} Q${f(hx - 9)},${f(hy - 30)} ${f(hx - 5)},${f(hy - 33)} M${f(hx - 2)},${f(hy - 27)} Q${f(hx + 1)},${f(hy - 31)} ${f(hx + 6)},${f(hy - 32)} M${f(hx + 8)},${f(hy - 25)} Q${f(hx + 11)},${f(hy - 28)} ${f(hx + 13)},${f(hy - 32)} M${f(hx - 16)},${f(hy - 19)} Q${f(hx - 14)},${f(hy - 23)} ${f(hx - 11)},${f(hy - 26)}" fill="none" stroke="#5a4740" stroke-width="1.4" stroke-linecap="round"/>`);
+    fc.push(`<path d="${beard}" fill="${lk.beard}"/>`);
+    fc.push(`<path d="M${f(hx - 6)},${f(hy + 26)} Q${f(hx)},${f(hy + 29)} ${f(hx + 6)},${f(hy + 26)}" fill="none" stroke="#4a3530" stroke-width="1.4" stroke-linecap="round"/>`);
+    // mouth sits under the moustache
+    const open = face === 'shout';
+    if (face === 'grin') fc.push(`<path d="M${f(hx - 7.5)},${f(hy + 16.5)} Q${f(hx)},${f(hy + 25)} ${f(hx + 7.5)},${f(hy + 16.5)} Q${f(hx)},${f(hy + 18)} ${f(hx - 7.5)},${f(hy + 16.5)} Z" fill="#fff4ec" stroke="${ink}" stroke-width="1.6" stroke-linejoin="round"/>`);
+    else if (face === 'grit') fc.push(`<path d="M${f(hx - 8.5)},${f(hy + 16)} L${f(hx + 8.5)},${f(hy + 16)} Q${f(hx + 8)},${f(hy + 22)} ${f(hx)},${f(hy + 22.5)} Q${f(hx - 8)},${f(hy + 22)} ${f(hx - 8.5)},${f(hy + 16)} Z" fill="#fff4ec" stroke="${ink}" stroke-width="1.6" stroke-linejoin="round"/><path d="M${f(hx - 7.6)},${f(hy + 19)} L${f(hx + 7.6)},${f(hy + 19)} M${f(hx - 3)},${f(hy + 16.4)} V${f(hy + 22)} M${f(hx + 3)},${f(hy + 16.4)} V${f(hy + 22)}" stroke="${ink}" stroke-width="1" opacity=".7"/>`);
+    else if (open) fc.push(`<path d="M${f(hx - 7)},${f(hy + 15.5)} Q${f(hx)},${f(hy + 14)} ${f(hx + 7)},${f(hy + 15.5)} Q${f(hx + 6.5)},${f(hy + 27)} ${f(hx)},${f(hy + 27.5)} Q${f(hx - 6.5)},${f(hy + 27)} ${f(hx - 7)},${f(hy + 15.5)} Z" fill="#5a1410" stroke="${ink}" stroke-width="1.6" stroke-linejoin="round"/><path d="M${f(hx - 6.4)},${f(hy + 16)} Q${f(hx)},${f(hy + 18.5)} ${f(hx + 6.4)},${f(hy + 16)}" fill="#fff4ec"/><path d="M${f(hx - 3.5)},${f(hy + 25)} Q${f(hx)},${f(hy + 22.5)} ${f(hx + 3.5)},${f(hy + 25)}" fill="#e0675a"/>`);
+    // moustache
+    fc.push(`<path d="M${f(hx - 9.5)},${f(hy + 15.5)} C${f(hx - 7)},${f(hy + 10.5)} ${f(hx - 2)},${f(hy + 10.5)} ${f(hx)},${f(hy + 12)} C${f(hx + 2)},${f(hy + 10.5)} ${f(hx + 7)},${f(hy + 10.5)} ${f(hx + 9.5)},${f(hy + 15.5)} `
+      + `C${f(hx + 5)},${f(hy + 14)} ${f(hx + 2)},${f(hy + 14.5)} ${f(hx)},${f(hy + 14.5)} C${f(hx - 2)},${f(hy + 14.5)} ${f(hx - 5)},${f(hy + 14)} ${f(hx - 9.5)},${f(hy + 15.5)} Z" fill="${lk.beard}" stroke="${ink}" stroke-width="1.1" stroke-linejoin="round"/>`);
+    if (face === 'smile') fc.push(`<path d="M${f(hx - 5.5)},${f(hy + 18)} Q${f(hx + 1)},${f(hy + 20.5)} ${f(hx + 6)},${f(hy + 16.8)}" fill="none" stroke="${ink}" stroke-width="1.7" stroke-linecap="round"/>`);
+    if (face === 'sheepish') fc.push(`<path d="M${f(hx - 5)},${f(hy + 18.6)} Q${f(hx - 1)},${f(hy + 19.6)} ${f(hx + 2)},${f(hy + 18.6)} Q${f(hx + 4.5)},${f(hy + 17.6)} ${f(hx + 6)},${f(hy + 18.8)}" fill="none" stroke="${ink}" stroke-width="1.6" stroke-linecap="round"/>`);
+    // nose
+    fc.push(`<path d="M${f(hx + .5)},${f(hy + 1)} L${f(hx - 1.8)},${f(hy + 7.5)} Q${f(hx - 1)},${f(hy + 9.5)} ${f(hx + 2.5)},${f(hy + 8.6)}" fill="none" stroke="${deep}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>`);
+    fc.push(`<path d="M${f(hx + 2.4)},${f(hy + 2)} Q${f(hx + 3.6)},${f(hy + 5)} ${f(hx + 3)},${f(hy + 7)}" fill="none" stroke="${hi}" stroke-width="1.3" stroke-linecap="round" opacity=".8"/>`);
+    // eyes and brows
+    const grin = face === 'grin' || face === 'grit' || face === 'shout';
+    const lid = grin ? 1.2 : 0; const look = face === 'sheepish' ? 1.3 : 0; const fierce = face === 'grit' || face === 'shout';
+    for (const sx of [-1, 1]) {
+      const ex = hx + sx * 8.6, ey = hy - 1;
+      fc.push(`<path d="M${f(ex - 4.4)},${f(ey + .3)} Q${f(ex)},${f(ey - 3.6 + lid)} ${f(ex + 4.4)},${f(ey + .3)} Q${f(ex)},${f(ey + 3)} ${f(ex - 4.4)},${f(ey + .3)} Z" fill="#fff4ec"/>`);
+      const pxx = ex - sx * .5 + look;
+      fc.push(`<circle cx="${f(pxx)}" cy="${f(ey + .2)}" r="2.3" fill="#3a2016"/><circle cx="${f(pxx)}" cy="${f(ey + .2)}" r="1.15" fill="${ink}"/><circle cx="${f(pxx + .8)}" cy="${f(ey - .8)}" r=".7" fill="#fff"/>`);
+      fc.push(`<path d="M${f(ex - 4.8)},${f(ey + .6)} Q${f(ex)},${f(ey - 4 + lid)} ${f(ex + 4.8)},${f(ey + .2)}" fill="none" stroke="${ink}" stroke-width="2" stroke-linecap="round"/>`);
+      const tilt = face === 'sheepish' ? (sx < 0 ? -1.6 : 0) : 0; // one brow raised
+      const bi = [hx + sx * 3.2, hy - 6.5 + (grin ? 1.2 : 0) + (fierce ? 1.4 : 0) + tilt], bo = [hx + sx * 13.8, hy - 7.6 - (fierce ? 1.2 : 0) + tilt];
+      fc.push(`<path d="M${P(bi)} Q${f(hx + sx * 8.5)},${f(hy - 10.6 + tilt)} ${P(bo)} Q${f(hx + sx * 8.5)},${f(hy - 8.4 + tilt)} ${f(bi[0])},${f(bi[1] + 2.6)} Z" fill="${lk.hair}" stroke="${lk.hair}" stroke-width="1" stroke-linejoin="round"/>`);
+    }
+    fc.push(line(`M${f(hx - 15)},${f(hy + 6)} Q${f(hx - 13.5)},${f(hy + 9)} ${f(hx - 11)},${f(hy + 10)}`, 1.1, .45, deep));
+    fc.push(line(`M${f(hx + 15)},${f(hy + 6)} Q${f(hx + 13.5)},${f(hy + 9)} ${f(hx + 11)},${f(hy + 10)}`, 1.1, .45, deep));
+    if (face === 'sheepish') fc.push(`<path d="M${f(hx + 20)},${f(hy - 16)} q2 3 0 5 q-2 -2 0 -5z" fill="#9fd3ff" stroke="${ink}" stroke-width=".9"/>`); // sweat drop
+    if (acc.head) {
+      const hb = `M${f(hx - 21.3)},${f(hy - 10)} Q${f(hx)},${f(hy - 18)} ${f(hx + 21.3)},${f(hy - 10)} L${f(hx + 21.1)},${f(hy - 4.6)} Q${f(hx)},${f(hy - 12.4)} ${f(hx - 21.1)},${f(hy - 4.6)} Z`;
+      fc.push(`<path d="${hb}" fill="${t.c1}" stroke="${ink}" stroke-width="1.8" stroke-linejoin="round"/>`);
+    }
+    const heads = `<g>${headOut}${fc.join('')}</g>`;
+    const neckLines = line(`M${f(c - 4)},${f(nt + 10)} Q${f(c)},${f(nt + 13)} ${f(c + 4)},${f(nt + 10)}`, 1.3, .45);
+
+    // ---- assemble: legs, torso, shorts, shirt, arms, head
+    const legsOne = `${outline([thigh, calf])}<g>${legFill}${legLines}</g>`;
+    const shoeOne = `<path d="${shoe}" fill="${ink}" stroke="${ink}" stroke-width="${f(2 * OW)}" stroke-linejoin="round"/>${shoeFill}`;
+    // a raised arm (neck/up) goes behind the head; arms reaching across the body go in front of the shirt (both are)
+    const body = `<g>${legsOne}</g><g transform="${M}">${legsOne}</g><g>${shoeOne}</g><g transform="${M}">${shoeOne}</g>`
+      + outline([torso]) + torsoFill + neckLines + torsoLines + torsoLinesM
+      + outline([shorts]) + shortsFill
+      + outline([shirt], -.2) + shirtFill + trim
+      + armL + armR + heads;
+    return { body, clips: clips.join(''), ground: g.ground, b };
+  }
+
+  function svg(body, tierKey, opts = {}) {
+    const tk = TIER[tierKey] ? tierKey : 'bronze';
+    const uid = (opts.uid || 'av') + '';
+    const b = norm(body);
+    const poseKey = !opts.pose || opts.pose === 'rank' ? TIER[tk].pose : opts.pose;
+    const sc = scenery(tk, uid, b);
+    const fig = figure(b, tk, poseKey, uid);
+    let defs = sc.defs + fig.clips;
+    const sc9 = 'translate(100 291) scale(.9) translate(-100 -291)';
+    const shadow = `<ellipse cx="100" cy="${f(fig.ground + .5)}" rx="${f(44 + b.sh * 8)}" ry="5" fill="#000" opacity=".45"/>`;
+    let ghost = '';
+    if (opts.ghost) {
+      const gf = figure(norm(opts.ghost), tk, poseKey, uid + 'g'); defs += gf.clips;
+      defs += `<filter id="gh${uid}" x="-20%" y="-20%" width="140%" height="140%"><feFlood flood-color="${opts.ghostColor || '#ff7a45'}" flood-opacity=".55"/><feComposite in2="SourceAlpha" operator="in" result="c"/><feGaussianBlur in="c" stdDeviation="1.4"/></filter>`;
+      ghost = `<g filter="url(#gh${uid})">${gf.body}</g>`;
+    }
+    const aura = opts.aura === false ? '' : sc.auras.map(u => `<g filter="${u}">${fig.body}</g>`).join('');
+    const glow = sc.glow && opts.aura !== false ? `<g filter="${sc.glow}">${fig.body}</g>` : '';
+    const vb = opts.crop || '0 0 200 300';
+    const size = (opts.w ? ` width="${opts.w}"` : '') + (opts.h ? ` height="${opts.h}"` : '');
+    const label = opts.label || `Your avatar, ${tk[0].toUpperCase() + tk.slice(1)} look`;
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}"${size} role="img" aria-label="${label}" preserveAspectRatio="xMidYMid slice"><defs>${defs}</defs>`
+      + (opts.bg === false ? '' : sc.bg) + `<g class="av-fig" transform="${sc9}">${shadow}${aura}${ghost}${glow}<g>${fig.body}</g></g>` + (opts.bg === false ? '' : sc.over) + `</svg>`;
+  }
+  return { svg, TIER, POSES, LOOK, norm };
+})();
+/* ---------- avatar growth (round 3) ----------
+   Each body region has a growth meter, 0-100 for the current 12-week block:
+     meter = 35% strength + 65% sets - lag
+   strength: the region's exercises' gain over their baseline (estimated 1RM for reps; seconds or metres × (bodyweight + load) ÷ bodyweight
+             for holds and carries), full credit at +8% (+20% for holds and carries). Baseline = best in the 4 weeks before the block
+             (Strong history counts, like PRs), else the first session in the block. It never goes down.
+   sets:     working sets in the block (N/F 1, D ½, W 0; primary muscle 1, secondary ½) ÷ (weekly target × 11 weeks).
+   lag:      a week with 2+ sessions where a region gets under ⅓ of its target costs 4 points; ⅔ or more wins 8 back (max 30).
+   The drawing: body = 0.10 + earlier blocks + cap × meter − missed-week shrink, never below 0.10.
+   Missed weeks (the XP rule, from xpMissFrom): each session short of 4 shrinks every region 0.015; each session after gives 0.03 back. */
+const GROW = {
+  regions: { sh: { fdelt: 1, sdelt: 1, rdelt: 1 }, ch: { chest: 1 }, ar: { biceps: 1, triceps: 1 }, fa: { forearms: 1 }, tr: { upback: 1 },
+    wa: { lats: 2, abs: 1, obliques: 1 }, qu: { quads: 2, glutes: 1, hams: 1, adductors: .5 }, ca: { calves: 1 } },
+  order: ['ar', 'sh', 'ch', 'tr', 'wa', 'qu', 'ca', 'fa', 'df'],
+  name: { sh: 'shoulders', ch: 'chest', ar: 'arms', fa: 'forearms', tr: 'traps', wa: 'waist taper', qu: 'thighs', ca: 'calves', df: 'definition' },
+  target: { sh: 8, ch: 11, ar: 10, fa: 4, tr: 14, wa: 7, qu: 9, ca: 7 },
+  cap: { sh: .55, ch: .50, ar: .60, fa: .45, tr: .50, wa: .45, qu: .50, ca: .40, df: .55 },
+  blockMult: [1, .6, .35, .2], start: .10,
+  wStrength: .35, gainReps: .08, gainHold: .20, weeks: 11, baseDays: 28,
+  lagHit: 4, lagBack: 8, lagMax: 30, lagMinSessions: 2, lagChip: 20,
+  miss: .015, missBack: .03, missMax: .18,
+};
+const G_KEYS = Object.keys(GROW.regions);
+/* How much of each region one exercise works: per region, the weighted share of its muscles (primary 1, secondary ½). */
+function exRegionShare(ex, name) {
+  const m = musclesOf(ex, name); const out = {};
+  for (const r of G_KEYS) {
+    let a = 0, w = 0;
+    for (const [id, x] of Object.entries(GROW.regions[r])) { w += x; if (m.p.includes(id)) a += x; else if (m.s.includes(id)) a += x * .5; }
+    if (a > 0) out[r] = a / w;
+  }
+  return out;
+}
+/* One number per entry for strength: best estimated 1RM (reps) or best hold/carry score; null when there is none. */
+function entryStrength(p, e) {
+  if (!e || e.skipped || e.unitMix) return null;
+  const ex = p.exercises[e.exId]; if (legacyOther(e, ex)) return null;
+  const mode = entMode(e, ex); let best = null;
+  for (const st of workSets(e)) {
+    if (st.done === false) continue;
+    let v = null;
+    if (mode === 'reps') v = setE1(p, ex, st.w, Number(st.r));
+    else { const q = setQ(st, mode); if (q > 0) { const bw = p.bodyweight || 0; const w = Number(st.w) > 0 ? Number(st.w) : 0; v = bw ? q * (bw + w) / bw : q; } }
+    if (v != null && (best == null || v > best)) best = v;
+  }
+  return best == null ? null : { v: best, mode };
+}
+function blockMult(k) { return GROW.blockMult[Math.min(k, GROW.blockMult.length - 1)]; }
+const START_BODY = () => Object.fromEntries([...G_KEYS, 'df'].map(k => [k, GROW.start]));
+/* Runs the whole history up to `asOf` (a date). Returns the body to draw, the meters, lag, shrink and a history of snapshots. */
+function computeGrowth(p, sessions, opts = {}) {
+  const asOf = opts.asOf || todayStr();
+  const res = { body: START_BODY(), meter: Object.fromEntries([...G_KEYS, 'df'].map(k => [k, 0])), block: 0, blockStart: null, week: 0,
+    lag: Object.fromEntries(G_KEYS.map(k => [k, 0])), missDef: 0, misses: [], lagging: [], history: [], weekSets: {}, started: false };
+  if (!p || !p.startDate) return res;
+  const start = p.startDate; res.started = asOf >= start;
+  const list = [...sessions].filter(s => s && s.date && s.date.slice(0, 10) <= asOf).sort((a, b) => (a.date < b.date ? -1 : 1));
+  const own = s => s.source !== 'strong';
+  const missFrom = p.xpMissFrom ? weekStart(p.xpMissFrom) : null;
+  // events: week ends (each Monday after a week that has ended) and block starts, before that day's sessions
+  const evs = [];
+  for (let k = 0; addDays(start, 84 * k) <= asOf; k++) evs.push({ d: addDays(start, 84 * k), t: 0, k });
+  for (let wk = weekStart(start); addDays(wk, 7) <= asOf; wk = addDays(wk, 7)) evs.push({ d: addDays(wk, 7), t: 1, wk });
+  for (const s of list) evs.push({ d: s.date.slice(0, 10), t: 2, s });
+  evs.sort((a, b) => (a.d < b.d ? -1 : a.d > b.d ? 1 : a.t - b.t || (a.t === 2 && a.s.date < b.s.date ? -1 : 0)));
+  const bank = Object.fromEntries([...G_KEYS, 'df'].map(k => [k, 0]));
+  let B = null; let missDef = 0; const wkCount = {}; const wkSets = {};
+  const prior = []; // strength readings before the current block, for baselines: { d, key, v }
+  const newBlock = (k, d) => ({ k, d, cum: Object.fromEntries(G_KEYS.map(r => [r, 0])), S: Object.fromEntries(G_KEYS.map(r => [r, 0])),
+    lag: Object.fromEntries(G_KEYS.map(r => [r, 0])), ex: {}, weeks: 0, full: 0 });
+  const meters = () => {
+    const m = {};
+    for (const r of G_KEYS) m[r] = B ? Math.max(0, Math.min(100, 100 * (GROW.wStrength * B.S[r] + (1 - GROW.wStrength) * Math.min(1, B.cum[r] / (GROW.target[r] * GROW.weeks))) - B.lag[r])) : 0;
+    const avg = G_KEYS.reduce((a, r) => a + m[r], 0) / G_KEYS.length;
+    const cons = B && B.weeks ? B.full / B.weeks : 1;
+    m.df = avg * (.5 + .5 * cons);
+    return m;
+  };
+  const bodyOf = m => {
+    const b = {};
+    for (const r of [...G_KEYS, 'df']) b[r] = Math.max(GROW.start, Math.min(1, GROW.start + bank[r] + (B ? GROW.cap[r] * blockMult(B.k) * m[r] / 100 : 0) - missDef));
+    return b;
+  };
+  const strengthOf = r => {
+    let a = 0, w = 0;
+    for (const x of Object.values(B.ex)) { const sh = x.share[r]; if (!sh || !x.base) continue; const G = x.mode === 'reps' ? GROW.gainReps : GROW.gainHold; const c = Math.max(0, Math.min(1.2, (x.best / x.base - 1) / G)); const wt = sh * Math.max(1, x.sets); a += c * wt; w += wt; }
+    return w ? Math.min(1, a / w) : 0;
+  };
+  for (const ev of evs) {
+    if (ev.t === 0) { // a new block: bank the last one
+      if (B) { const m = meters(); for (const r of [...G_KEYS, 'df']) bank[r] += GROW.cap[r] * blockMult(B.k) * m[r] / 100; }
+      B = newBlock(ev.k, ev.d);
+      continue;
+    }
+    if (ev.t === 1) { // a week has ended
+      const wk = ev.wk; const n = wkCount[wk] || 0; const ws = wkSets[wk] || {};
+      if (B && wk >= weekStart(B.d)) {
+        const wkIdx = Math.floor(daysBetween(B.d, wk) / 7) + 1; // 12 = deload
+        B.weeks++; if (n >= MISS_MIN) B.full++;
+        if (n >= GROW.lagMinSessions && wkIdx !== 12) for (const r of G_KEYS) {
+          const v = ws[r] || 0; const T = GROW.target[r];
+          if (v < T / 3) B.lag[r] = Math.min(GROW.lagMax, B.lag[r] + GROW.lagHit);
+          else if (v >= T * 2 / 3) B.lag[r] = Math.max(0, B.lag[r] - GROW.lagBack);
+        }
+      }
+      if (missFrom && wk >= missFrom) {
+        const short = Math.max(0, MISS_MIN - n);
+        if (short) { const before = missDef; missDef = Math.min(GROW.missMax, missDef + short * GROW.miss); res.misses.push({ wk, n, short, lost: missDef - before, at: ev.d }); }
+      }
+      continue;
+    }
+    const s = ev.s;
+    // strength readings
+    for (const e of s.entries || []) {
+      if (e.skipped) continue; const ex = p.exercises[e.exId]; const r = entryStrength(p, e); if (!r) continue;
+      const key = exKey(e) + '#' + r.mode;
+      if (!B || s.date.slice(0, 10) < B.d) { prior.push({ d: s.date.slice(0, 10), key, v: r.v }); continue; }
+      let x = B.ex[key];
+      if (!x) {
+        const from = addDays(B.d, -GROW.baseDays); let base = null;
+        for (const q of prior) if (q.key === key && q.d >= from && q.d < B.d && (base == null || q.v > base)) base = q.v;
+        x = B.ex[key] = { base: base ?? r.v, best: r.v, mode: r.mode, share: exRegionShare(ex, e.name), sets: 0 };
+      }
+      if (r.v > x.best) x.best = r.v;
+    }
+    if (!B || !own(s)) { if (B && !own(s)) continue; continue; }
+    // sets
+    const wk = weekStart(s.date); wkCount[wk] = (wkCount[wk] || 0) + 1; const ws = (wkSets[wk] = wkSets[wk] || {});
+    for (const e of s.entries || []) {
+      if (e.skipped) continue; const ex = p.exercises[e.exId]; const mode = entMode(e, ex);
+      let n = 0; for (const st of loggedSets(e)) if (st.done && setQ(st, mode) > 0) n += setT(st) === 'D' ? .5 : 1;
+      if (!n) continue;
+      const share = exRegionShare(ex, e.name);
+      for (const [r, sh] of Object.entries(share)) { B.cum[r] += n * sh; ws[r] = (ws[r] || 0) + n * sh; }
+      const r = entryStrength(p, e); if (r) { const x = B.ex[exKey(e) + '#' + r.mode]; if (x) x.sets += n; }
+    }
+    for (const r of G_KEYS) B.S[r] = Math.max(B.S[r], strengthOf(r));
+    missDef = Math.max(0, missDef - GROW.missBack);
+    const m = meters();
+    res.history.push({ id: s.id, date: s.date, dayName: s.dayName, meter: m, body: bodyOf(m), block: B.k });
+  }
+  if (B) {
+    res.meter = meters(); res.block = B.k; res.blockStart = B.d; res.lag = { ...B.lag };
+    res.week = Math.floor(daysBetween(B.d, asOf) / 7) + 1;
+    const avg = G_KEYS.reduce((a, r) => a + res.meter[r], 0) / G_KEYS.length;
+    res.lagging = G_KEYS.filter(r => avg - res.meter[r] >= GROW.lagChip).sort((a, b) => res.meter[a] - res.meter[b]);
+    res.weekSets = wkSets[weekStart(asOf)] || {};
+  }
+  res.missDef = missDef; res.body = bodyOf(res.meter);
+  return res;
+}
+let growthCache = {};
+function getGrowth(asOf) {
+  if (!S.program) return null;
+  const d = asOf || todayStr();
+  if (growthCache.sessions === S.sessions && growthCache.program === S.program && growthCache[d]) return growthCache[d];
+  if (growthCache.sessions !== S.sessions || growthCache.program !== S.program) growthCache = { sessions: S.sessions, program: S.program };
+  return (growthCache[d] = computeGrowth(S.program, S.sessions, { asOf: d }));
+}
+/* The gains between two growth states, biggest first: [{ r, d }] in meter points, rounded, at least 1. */
+function growthGains(a, b, min = 1) {
+  if (!a || !b || a.block !== b.block) return [];
+  return GROW.order.map(r => ({ r, d: Math.round(b.meter[r] - a.meter[r]) })).filter(x => x.d >= min).sort((x, y) => y.d - x.d);
+}
+const gainText = (x, sign = '+') => `${sign}${Math.abs(x.d)}% ${GROW.name[x.r]}`;
+/* ---------- avatar on screen ---------- */
+let avSeq = 0;
+const AV_POSE_TEXT = { rookie: 'hand on the back of the head', stand: 'relaxed stance', curl: 'mid-curl with a dumbbell', single: 'single-arm biceps', flex: 'double biceps',
+  lat: 'lat spread', crab: 'most-muscular', victory: 'fist raised' };
+const AV_LOOK_TEXT = { iron: 'no aura yet', bronze: 'bronze trim', silver: 'silver rim light', gold: 'gold glow and halo', platinum: 'teal aura and rays',
+  diamond: 'ice-blue aura and crystal shards', titan: 'violet energy and lightning', legend: 'crimson flame aura and a crown of light' };
+/* An avatar as a node. o: { tier (key), pose, ghost, crop, label, bg, cls } */
+function avatarEl(body, o = {}) {
+  const box = h('div', { class: 'av ' + (o.cls || '') });
+  box.innerHTML = Avatar.svg(body, o.tier || 'bronze', { uid: 'av' + (++avSeq), pose: o.pose || 'rank', ghost: o.ghost, crop: o.crop, label: o.label, bg: o.bg, aura: o.aura });
+  return box;
+}
+function curTierKey(g) { return g && g.rank ? g.rank.tier.key : 'iron'; }
+/* Region meters shown as "+6% arms" (this block's growth so far). */
+function blockLine(gr, n = 3) {
+  const xs = GROW.order.filter(r => r !== 'df').map(r => ({ r, d: Math.round(gr.meter[r]) })).filter(x => x.d >= 1).sort((a, b) => b.d - a.d).slice(0, n);
+  return xs.length ? `This block: ${xs.map(x => gainText(x)).join(', ')}` : 'This block: your first session starts the growth';
+}
+/* Lost size from missed sessions, in the same % as the meters. */
+function shrinkPct(def, block) { const m = blockMult(block || 0); const k = [...G_KEYS, 'df'].reduce((a, r) => a + 1 / (GROW.cap[r] * m), 0) / (G_KEYS.length + 1); return Math.round(def * k * 100); }
+function lastGains(gr) {
+  const hs = gr.history; if (hs.length < 2) return hs.length ? GROW.order.map(r => ({ r, d: Math.round(hs[0].meter[r]) })).filter(x => x.d >= 1).sort((a, b) => b.d - a.d) : [];
+  const a = hs[hs.length - 2], b = hs[hs.length - 1];
+  return a.block === b.block ? GROW.order.map(r => ({ r, d: Math.round(b.meter[r] - a.meter[r]) })).filter(x => x.d >= 1).sort((x, y) => y.d - x.d) : [];
+}
+/* Today: the avatar and rank card, between the week strip and Next up. */
+function avatarCard(g, gr) {
+  const r = g.rank; const tk = r.tier.key;
+  const up = lastGains(gr)[0];
+  const tile = h('div', { class: 'avc-tile' }, avatarEl(gr.body, { tier: tk, crop: '24 24 152 220', label: `Your avatar, ${r.tier.name} look. Opens the body map.` }),
+    up ? h('span', { class: 'avc-up', text: `▲ ${GROW.name[up.r]}` }) : null);
+  const chips = h('div', { class: 'avc-chips' });
+  const shr = shrinkPct(gr.missDef, gr.block);
+  if (shr >= 1) chips.append(h('span', { class: 'avc-chip shrink', text: `−${shr}% from missed sessions` }));
+  if (gr.lagging.length) chips.append(h('span', { class: 'avc-chip lag', text: `${cap1(GROW.name[gr.lagging[0]])} lagging` }));
+  chips.append(h('span', { class: 'avc-map' }, 'Body map', h('span', { 'aria-hidden': 'true', text: '›' })));
+  return h('button', { class: 'avc', type: 'button', id: 'avatar-card', style: `--tier:${r.tier.c2};--tier1:${r.tier.c1}`, 'aria-label': `Your avatar, ${rankName(r)}, ${fmtInt(g.xp)} XP. ${blockLine(gr)}. Opens the body map.`,
+    onclick: () => { Fx.snd.tap(); openAvatarView(); } },
+    tile,
+    h('div', { class: 'avc-side' },
+      h('div', { class: 'avc-rank' }, emblem(r.tier, r.div, 46), h('div', { class: 'avc-rn' }, h('span', { class: 'rank-name', text: rankName(r) }), h('span', { class: 'rank-xp', text: `${fmtInt(g.xp)} XP` }))),
+      xpBar(r.into / r.need),
+      h('div', { class: 'avc-block', text: gr.started ? blockLine(gr) : 'Your avatar starts growing with your first session.' }),
+      chips));
+}
+const cap1 = s => s.charAt(0).toUpperCase() + s.slice(1);
+function openAvatarView() { S.avatarView = true; enterMain(); renderMain(); window.scrollTo(0, 0); }
+function closeAvatarView() { S.avatarView = false; enterMain(); renderMain(); window.scrollTo(0, 0); }
+
+/* The full view: big avatar, muscle map coloured by growth, each region, mirror and history. */
+function viewAvatar() {
+  const g = getGame(); const gr = getGrowth(); const r = g.rank; const tk = r.tier.key; const pose = Avatar.TIER[tk].pose;
+  const root = h('div', { class: 'stack av-view' });
+  root.append(h('div', { class: 'spread', style: 'align-items:center' }, h('button', { class: 'link', type: 'button', id: 'av-back', text: '‹ Today', onclick: closeAvatarView }), h('span', { class: 'small muted', text: gr.started ? `Block ${gr.block + 1} · week ${Math.min(gr.week, 12)} of 12` : 'Block not started' })));
+  root.append(h('section', { class: 'av-hero', style: `--tier:${r.tier.c2};--tier1:${r.tier.c1}` },
+    avatarEl(gr.body, { tier: tk, cls: 'av-big', label: `Your avatar, ${r.tier.name} look` }),
+    h('div', { class: 'av-hero-txt' }, h('div', { class: 'rank-line' }, emblem(r.tier, r.div, 40), h('span', { class: 'rank-name', text: rankName(r) })),
+      h('p', { class: 'small muted', text: `${r.tier.name} look: ${AV_POSE_TEXT[pose]}, ${AV_LOOK_TEXT[tk]}. Rank sets the look; your training sets the body.` }))));
+  // muscle map coloured by each region's meter
+  const regionOf = {}; for (const rg of G_KEYS) for (const id of Object.keys(GROW.regions[rg])) regionOf[id] = rg;
+  const lvl = id => { const rg = regionOf[id]; if (!rg) return null; const m = gr.meter[rg]; return m >= 80 ? 'g4' : m >= 60 ? 'g3' : m >= 40 ? 'g2' : m >= 20 ? 'g1' : 'g0'; };
+  const map = h('section', { class: 'card', id: 'av-map' }, h('h3', { text: 'Muscle map' }),
+    h('div', { class: 'bmap-figs av-figs' }, h('figure', {}, bodyFigure(BODY_FRONT, lvl, 'Front, coloured by growth this block'), h('figcaption', { text: 'Front' })),
+      h('figure', {}, bodyFigure(BODY_BACK, lvl, 'Back, coloured by growth this block'), h('figcaption', { text: 'Back' }))),
+    h('div', { class: 'av-legend', 'aria-hidden': 'true' }, h('span', { text: 'Less' }), ...['g0', 'g1', 'g2', 'g3', 'g4'].map(c => h('i', { class: 'bm-' + c })), h('span', { text: 'More growth this block' })));
+  root.append(map);
+  // regions
+  const list = h('ul', { class: 'av-regions' });
+  for (const rg of GROW.order) {
+    const m = Math.round(gr.meter[rg]); const lag = rg !== 'df' && gr.lagging.includes(rg);
+    const sets = rg === 'df' ? null : Math.round((gr.weekSets[rg] || 0) * 10) / 10;
+    const sub = rg === 'df' ? 'Overall growth × weeks with 4+ sessions' : `${fmtNum(sets)} of ${GROW.target[rg]} sets this week${gr.lag[rg] ? ` · −${Math.round(gr.lag[rg])} for skipped weeks` : ''}`;
+    const bar = h('div', { class: 'av-bar' + (lag ? ' lag' : '') }, h('i')); bar.firstChild.style.width = `${m}%`;
+    list.append(h('li', { class: lag ? 'lag' : null }, h('div', { class: 'spread' }, h('b', { text: cap1(GROW.name[rg]) }), h('span', { class: 'tnum', text: `${m}%` })), bar,
+      h('div', { class: 'small muted', text: sub }), lag ? h('span', { class: 'avc-chip lag', text: 'Lagging: give it sets this week' }) : null));
+  }
+  root.append(h('section', { class: 'card' }, h('h3', { text: 'This block' }), h('p', { class: 'small muted', text: '100% = fully grown for this 12-week block. A session adds a few points to what it trains.' }), list,
+    gr.missDef > 0 ? h('p', { class: 'small', style: 'color:var(--stop)', text: `Missed sessions have taken −${shrinkPct(gr.missDef, gr.block)}% off every region. Each session wins back two missed ones.` }) : null));
+  // mirror
+  const then = getGrowth(addDays(todayStr(), -28));
+  root.append(h('section', { class: 'card', id: 'av-mirror' }, h('h3', { text: 'Mirror: 4 weeks ago vs now' }), mirrorPair(then, gr, tk), mirrorLine(then, gr)));
+  // history
+  const hs = gr.history;
+  const hist = h('section', { class: 'card', id: 'av-history' }, h('h3', { text: 'Growth history' }));
+  if (hs.length) {
+    hist.append(sizeChart(hs));
+    const ul = h('ul', { class: 'av-hist' });
+    for (let i = hs.length - 1; i >= Math.max(0, hs.length - 10); i--) {
+      const a = hs[i - 1], b = hs[i];
+      const gains = (!a ? GROW.order.map(rg => ({ r: rg, d: Math.round(b.meter[rg]) })) : a.block === b.block ? GROW.order.map(rg => ({ r: rg, d: Math.round(b.meter[rg] - a.meter[rg]) })) : []).filter(x => x.d >= 1).sort((x, y) => y.d - x.d).slice(0, 3);
+      ul.append(h('li', {}, h('span', {}, h('b', { text: b.dayName || 'Session' }), h('span', { class: 'small muted', text: ` · ${fmtDate(b.date)}` })), h('span', { class: 'small', text: gains.length ? gains.map(x => gainText(x)).join(', ') : 'Held size' })));
+    }
+    hist.append(ul);
+  } else hist.append(h('p', { class: 'small muted', text: 'Finish a session to start your growth history.' }));
+  root.append(hist);
+  root.append(info(`Each region has a meter for the 12-week block: 35% strength (your lifts’ gain over where you started the block, full marks at +${Math.round(GROW.gainReps * 100)}%, or +${Math.round(GROW.gainHold * 100)}% on holds and carries) and 65% sets (working sets on the muscles it covers, against a weekly target). A week with 2+ sessions where a region gets under a third of its target makes it lag. Each session short of ${MISS_MIN} in a week shrinks the whole body until you train again; each session back wins two missed ones back. Size carries over from block to block, and later blocks add less. Your rank changes the pose, aura and outfit, never the body.`, 'How growth works'));
+  return root;
+}
+function mirrorPair(then, now, tk) {
+  return h('div', { class: 'av-pair' },
+    h('figure', {}, avatarEl(then.body, { tier: tk, crop: '10 10 180 284', label: 'You 4 weeks ago' }), h('figcaption', { text: `4 weeks ago · ${fmtDate(addDays(todayStr(), -28))}` })),
+    h('figure', {}, avatarEl(now.body, { tier: tk, crop: '10 10 180 284', label: 'You now' }), h('figcaption', { text: 'Now' })));
+}
+/* Gains between two bodies, in this block's % (body difference ÷ this block's cap). */
+function bodyGains(a, b, block) {
+  const m = blockMult(block || 0);
+  return GROW.order.map(r => ({ r, d: Math.round((b.body[r] - a.body[r]) / (GROW.cap[r] * m) * 100) })).filter(x => Math.abs(x.d) >= 1).sort((x, y) => y.d - x.d);
+}
+function mirrorLine(then, now) {
+  const xs = bodyGains(then, now, now.block);
+  if (!xs.length) return h('p', { class: 'small muted', text: 'Same size as 4 weeks ago.' });
+  const up = xs.filter(x => x.d > 0).slice(0, 3), down = xs.filter(x => x.d < 0).slice(-2);
+  return h('p', { class: 'small' }, up.length ? h('span', { style: 'color:var(--go)', text: up.map(x => gainText(x)).join(', ') }) : null, up.length && down.length ? ' · ' : '',
+    down.length ? h('span', { style: 'color:var(--stop)', text: down.map(x => gainText(x, '−')).join(', ') }) : null);
+}
+/* Overall size (the average of the drawn regions) after each session. */
+function sizeChart(hs) {
+  const NS = 'http://www.w3.org/2000/svg'; const W = 320, H = 90, P = 6;
+  const vals = hs.map(x => [...G_KEYS, 'df'].reduce((a, r) => a + x.body[r], 0) / (G_KEYS.length + 1));
+  const lo = GROW.start, hi = Math.max(lo + .05, ...vals);
+  const pts = vals.map((v, i) => [P + (vals.length < 2 ? (W - 2 * P) / 2 : i * (W - 2 * P) / (vals.length - 1)), H - P - (v - lo) / (hi - lo) * (H - 2 * P)]);
+  const svg = document.createElementNS(NS, 'svg'); svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('class', 'av-chart'); svg.setAttribute('role', 'img');
+  svg.setAttribute('aria-label', `Overall size after each of your ${vals.length} sessions this program, from ${Math.round((vals[0] - lo) * 100)} to ${Math.round((vals[vals.length - 1] - lo) * 100)} points`);
+  const path = document.createElementNS(NS, 'path'); path.setAttribute('d', 'M' + pts.map(p => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join('L')); path.setAttribute('class', 'ln'); svg.append(path);
+  const area = document.createElementNS(NS, 'path'); area.setAttribute('d', `M${pts[0][0].toFixed(1)},${H - P}L` + pts.map(p => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join('L') + `L${pts[pts.length - 1][0].toFixed(1)},${H - P}Z`); area.setAttribute('class', 'ar'); svg.prepend(area);
+  const dot = document.createElementNS(NS, 'circle'); dot.setAttribute('cx', pts[pts.length - 1][0].toFixed(1)); dot.setAttribute('cy', pts[pts.length - 1][1].toFixed(1)); dot.setAttribute('r', '3.5'); dot.setAttribute('class', 'dt'); svg.append(dot);
+  return h('div', { class: 'av-chart-box' }, svg, h('div', { class: 'small muted', text: 'Overall size after each session' }));
+}
+
+/* ---------- avatar beats (one at a time in the celebration layer; a tap skips) ---------- */
+const AV_KEY = 'src-avatar-v1';
+const avSeen = () => lsGet(AV_KEY) || {};
+const avMark = o => lsSet(AV_KEY, { ...avSeen(), ...o });
+function beatButtons(c, t, endFn, buttons) {
+  return h('div', { class: 'av-btns late' }, ...buttons.map(([label, fn, cls]) => h('button', { class: 'btn ' + (cls || ''), type: 'button', text: label, onclick: ev => { ev.stopPropagation(); endFn(); if (fn) fn(); } })));
+}
+/* End of a session: "You grew", the avatar flexing as the new size swells out of the old. */
+function growthBeat(sum, before, after, tk) {
+  const gains = growthGains(before, after).slice(0, 3);
+  if (!gains.length) return;
+  Fx.beat({ cls: 'av-beat grow', label: `${sum.dayName} done. You grew: ${gains.map(x => gainText(x)).join(', ')}`, run(c, t, T, endFn) {
+    const stage = h('div', { class: 'av-stage' }, avatarEl(before.body, { tier: tk, pose: 'flex', ghost: after.body, crop: '0 0 200 300', label: 'Your avatar flexing' }));
+    const chips = h('div', { class: 'av-gains' }, ...gains.map(x => h('span', { class: 'late', text: gainText(x) })));
+    const xp = sum.game && sum.game.gained ? h('span', { class: 'av-xp late', text: `+${fmtInt(sum.game.gained)} XP` }) : null;
+    c.replaceChildren(h('div', { class: 'av-swell' }),
+      h('div', { class: 'av-in' }, h('p', { class: 'ce-eye', text: `${sum.dayName} done` }), h('h2', { class: 'av-title', text: 'You grew' }), stage, chips, xp,
+        beatButtons(c, t, endFn, [['Nice', null, 'primary'], ['See body map', () => { S.tab = 'today'; openAvatarView(); }]])));
+    Fx.snd.whoosh(); Fx.hap(1);
+    T(900, () => {
+      stage.replaceChildren(avatarEl(after.body, { tier: tk, pose: 'flex', crop: '0 0 200 300', label: 'Your avatar, bigger' }));
+      if (!CALM()) stage.firstChild.animate([{ transform: 'scale(.94)' }, { transform: 'scale(1.07)', offset: .55 }, { transform: 'scale(1)' }], { duration: 520, easing: 'cubic-bezier(.3,1.6,.5,1)' });
+      Fx.snd.hit2(); Fx.hap(2); Fx.shock(stage, '#ff7a45', 14, 700);
+    });
+    [...chips.children].forEach((ch, i) => T(1250 + i * 160, () => { ch.classList.add('in'); Fx.snd.tick(); }));
+    if (xp) T(1250 + gains.length * 160 + 120, () => xp.classList.add('in'));
+    T(1700, () => c.querySelectorAll('.av-btns').forEach(b => b.classList.add('in')));
+  } });
+}
+/* A tier change: the old look, a flash, the new look with its own pose and aura. */
+function rankLookBeat(from, to, body) {
+  Fx.beat({ cls: 'av-beat rkup', style: `--tier:${to.c2};--tier1:${to.c1}`, label: `Rank up: ${from.name} to ${to.name}. New look.`, run(c, t, T, endFn) {
+    const stage = h('div', { class: 'av-stage' }, avatarEl(body, { tier: from.key, label: `${from.name} look` }));
+    const pose = Avatar.TIER[to.key].pose;
+    const line = h('p', { class: 'av-sub late', text: `New look: ${AV_POSE_TEXT[pose]}, ${AV_LOOK_TEXT[to.key]}.` });
+    c.replaceChildren(h('div', { class: 'beam' }),
+      h('div', { class: 'av-in' }, h('p', { class: 'ce-eye', text: 'Rank up' }), h('h2', { class: 'av-title', text: `${from.name} → ${to.name}` }),
+        h('div', { class: 'av-ba' }, h('span', { class: 'av-tag', text: 'Before' }), stage), line, beatButtons(c, t, endFn, [['Nice', null, 'primary']])));
+    Fx.snd.whoosh(); Fx.hap(1);
+    T(1100, () => {
+      stage.replaceChildren(avatarEl(body, { tier: to.key, label: `${to.name} look` }));
+      c.querySelector('.av-tag').textContent = 'After';
+      if (!CALM()) stage.firstChild.animate([{ transform: 'scale(.86) rotateY(80deg)', opacity: .2 }, { transform: 'scale(1.06) rotateY(0)', opacity: 1, offset: .6 }, { transform: 'scale(1)' }], { duration: 650, easing: 'cubic-bezier(.2,.8,.2,1)' });
+      Fx.snd.fanfare(); Fx.hap(3); Fx.confetti(stage, 46, [to.c1, to.c2, '#ffd84a', '#ffffff']); Fx.shock(stage, to.c1, 16, 800);
+    });
+    T(1600, () => { line.classList.add('in'); c.querySelectorAll('.av-btns').forEach(b => b.classList.add('in')); });
+  } });
+}
+/* A missed week, shown once when the app opens: the avatar deflates to its new size. */
+function shrinkBeat(miss, before, after, tk) {
+  const pct = shrinkPct(miss.lost, after.block);
+  Fx.beat({ cls: 'av-beat shrink', label: `Missed sessions: you shrank ${pct}%`, run(c, t, T, endFn) {
+    const stage = h('div', { class: 'av-stage' }, avatarEl(before.body, { tier: tk, label: 'Your avatar last week' }));
+    c.replaceChildren(h('div', { class: 'av-in' }, h('p', { class: 'ce-eye', text: `Week of ${fmtDate(miss.wk)}: ${miss.n} of ${MISS_MIN} sessions` }), h('h2', { class: 'av-title', text: `You shrank ${pct}%` }), stage,
+      h('p', { class: 'av-sub late', text: `${miss.short} session${miss.short === 1 ? '' : 's'} short. Every region lost size. Each session you do wins back two missed ones.` }),
+      beatButtons(c, t, endFn, [['Train to win it back', null, 'primary']])));
+    Fx.snd.whoosh();
+    T(800, () => {
+      stage.replaceChildren(avatarEl(after.body, { tier: tk, label: 'Your avatar now, smaller' }));
+      if (!CALM()) stage.firstChild.animate([{ transform: 'scale(1.06,1.02)' }, { transform: 'scale(.95,.98)', offset: .6 }, { transform: 'scale(1)' }], { duration: 700, easing: 'ease-out' });
+    });
+    T(1300, () => { c.querySelectorAll('.late').forEach(x => x.classList.add('in')); });
+  } });
+}
+/* Once a week: you now next to you 4 weeks ago. */
+function mirrorBeat(then, now, tk) {
+  Fx.beat({ cls: 'av-beat mirror', label: 'Weekly mirror check: you 4 weeks ago and now', run(c, t, T, endFn) {
+    c.replaceChildren(h('div', { class: 'av-in' }, h('p', { class: 'ce-eye', text: 'Weekly mirror check' }), h('h2', { class: 'av-title', text: '4 weeks ago vs now' }),
+      mirrorPair(then, now, tk), h('div', { class: 'late' }, mirrorLine(then, now)),
+      beatButtons(c, t, endFn, [['Nice', null, 'primary'], ['See body map', () => { S.tab = 'today'; openAvatarView(); }]])));
+    Fx.snd.whoosh();
+    const figs = c.querySelectorAll('.av-pair figure');
+    if (!CALM()) figs.forEach((fg, i) => fg.animate([{ opacity: 0, transform: `translateX(${i ? 30 : -30}px)` }, { opacity: 1, transform: 'none' }], { duration: 500, delay: 150 + i * 350, fill: 'backwards', easing: 'cubic-bezier(.2,.8,.2,1)' }));
+    T(1100, () => { c.querySelectorAll('.late').forEach(x => x.classList.add('in')); Fx.snd.tick(); });
+  } });
+}
+/* On opening the app: a missed-week shrink not yet shown, then the weekly mirror. */
+function avatarChecks() {
+  if (!S.program || !S.program.startDate || S.active) return;
+  const today = todayStr(); const seen = avSeen(); const g = getGame(); const tk = curTierKey(g);
+  const now = getGrowth(); if (!now.started) return;
+  const miss = now.misses.filter(m => m.lost > 0 && m.at <= today).pop();
+  if (miss && (!seen.shrink || seen.shrink < miss.wk)) {
+    avMark({ shrink: miss.wk });
+    const before = getGrowth(addDays(miss.at, -1));
+    shrinkBeat(miss, before, getGrowth(miss.at), tk);
+  }
+  const wk = weekStart(today);
+  if ((!seen.mirror || seen.mirror < wk) && daysBetween(S.program.startDate, today) >= 28 && ownSessions().length) {
+    avMark({ mirror: wk });
+    mirrorBeat(getGrowth(addDays(today, -28)), now, tk);
+  }
 }
 
 /* ---------- storage: on the phone first, synced to the Google Sheet ---------- */
@@ -3205,7 +4142,7 @@ function renderTop() {
 }
 function setTab(t) {
   const changed = S.tab !== t;
-  S.tab = t; S.trendKey = null; renderTop(); markTab();
+  S.tab = t; S.trendKey = null; S.avatarView = false; renderTop(); markTab();
   if (changed) enterMain();
   renderMain(); window.scrollTo(0, 0);
 }
@@ -3225,7 +4162,7 @@ function renderMain() {
   let v;
   if (S.tab === 'settings') v = viewSettings();
   else if (!S.program) v = viewWelcome();
-  else if (S.tab === 'today') v = S.active ? viewLogger() : viewToday();
+  else if (S.tab === 'today') v = S.active ? viewLogger() : S.avatarView ? viewAvatar() : viewToday();
   else if (S.tab === 'program') v = viewProgram();
   else if (S.tab === 'history') v = viewHistory();
   else if (S.tab === 'rank') v = viewRank();
@@ -3242,6 +4179,7 @@ function viewToday() {
   const g = getGame();
   if (!S.lastSummary) root.append(weekStrip(g));
   if (S.lastSummary) root.append(summaryCard(S.lastSummary));
+  try { const gr = getGrowth(); if (gr) root.append(avatarCard(g, gr)); } catch (e) { console.error(e); }
   const pm = pendingMorning();
   if (pm) {
     const card = h('section', { class: 'mcheck', id: 'mcheck' },
@@ -3818,14 +4756,17 @@ function showTierUp(ups) {
     lines: [detail, ...ups.slice(1).map(x => `${x.kind === 'lift' ? 'Strength tier' : 'Rank'} on ${x.name} too: ${x.tier.name}.`)],
     pct: u.standing ? pctText(u.standing.pct) : null });
 }
+function prAvatar() {
+  try { const gr = getGrowth(); const g = getGame(); if (!gr) return null; return Avatar.svg(gr.body, curTierKey(g), { uid: 'prav' + (++avSeq), pose: 'flex', crop: '20 0 160 240', label: 'Your avatar flexing' }); } catch (e) { return null; }
+}
 function prCelebrate(e, ex, s, hit, oldV) {
-  const mode = entMode(e, ex); const v = hit.v;
+  const mode = entMode(e, ex); const v = hit.v; const avatar = prAvatar();
   const lift = setLine(ex, mode, s.w, setQ(s, mode));
-  if (hit.kind === 'hold' || hit.kind === 'dist') { Fx.pr({ name: e.name, lift, oldV, newV: v, unit: hit.kind === 'hold' ? 's' : 'm', what: hit.kind === 'hold' ? 'longest hold' : 'longest distance' }); return; }
-  if (hit.kind === 'holdw' || hit.kind === 'distw') { Fx.pr({ name: e.name, lift, oldV: toD(ex, oldV), newV: toD(ex, v), unit: (ex.unit === 'kg added' ? '+' : '') + wUnit(ex), what: hit.kind === 'holdw' ? 'heaviest hold' : 'heaviest carry' }); return; }
+  if (hit.kind === 'hold' || hit.kind === 'dist') { Fx.pr({ name: e.name, lift, oldV, newV: v, unit: hit.kind === 'hold' ? 's' : 'm', what: hit.kind === 'hold' ? 'longest hold' : 'longest distance', avatar }); return; }
+  if (hit.kind === 'holdw' || hit.kind === 'distw') { Fx.pr({ name: e.name, lift, oldV: toD(ex, oldV), newV: toD(ex, v), unit: (ex.unit === 'kg added' ? '+' : '') + wUnit(ex), what: hit.kind === 'holdw' ? 'heaviest hold' : 'heaviest carry', avatar }); return; }
   let pct = null;
   try { if (LIFTER_MAP[e.exId]) { const st = lifterStanding(new Set([e.exId]), trendsCached().find(x => x.exIds.has(e.exId)) || null, v); if (st) pct = pctText(st.pct); } } catch (er) {}
-  Fx.pr({ name: e.name, lift: s.w == null ? `${s.r} reps` : `${wShow(ex, s.w)} × ${s.r}`, oldV: toD(ex, oldV), newV: toD(ex, v), unit: wUnit(ex), pct });
+  Fx.pr({ name: e.name, lift: s.w == null ? `${s.r} reps` : `${wShow(ex, s.w)} × ${s.r}`, oldV: toD(ex, oldV), newV: toD(ex, v), unit: wUnit(ex), pct, avatar });
 }
 /* Muscles worked, under an exercise name: primary bright, secondary dimmer, stabilisers counted. A tap opens the body map. */
 function muscleChips(ex, name) {
@@ -4522,7 +5463,8 @@ async function finishSession() {
     toast('Couldn’t save the session. Check your connection and tap Finish again.');
     return;
   }
-  let game = null;
+  let game = null; let growth = null;
+  try { growth = { before: computeGrowth(prog, S.sessions.filter(x => x.id !== sess.id)), after: computeGrowth(prog, S.sessions) }; } catch (e) { console.error(e); growth = null; }
   try {
     const before = computeGame(prog, S.sessions.filter(x => x.id !== sess.id));
     const after = computeGame(prog, S.sessions);
@@ -4541,6 +5483,14 @@ async function finishSession() {
   S.active = null; S.restStart = null; S.resumed = false; clearDraft(); Push.cancel();
   try { wakeLock && wakeLock.release(); } catch (e) {}
   renderTop(); renderMain(); window.scrollTo(0, 0);
+  try {
+    const tk = game ? game.after.rank.tier.key : curTierKey(getGame());
+    if (growth) growthBeat(S.lastSummary, growth.before, growth.after, tk);
+    if (game && growth) {
+      const tierIdx = r => (r.legend ? TIERS.length : TIERS.indexOf(r.tier));
+      if (tierIdx(game.after.rank) > tierIdx(game.before.rank)) rankLookBeat(game.before.rank.tier, game.after.rank.tier, growth.after.body);
+    }
+  } catch (e) { console.error(e); }
   if (S.program.settings?.autoReview !== false && coachReady()) {
     if (navigator.onLine) { if (Store.sync.reviewDue) { Store.sync.reviewDue = null; Store.saveSync(); } askCoach('review', null, null, { auto: true, sessionId: sess.id }); }
     else deferReview(sess.id);
@@ -6081,12 +7031,14 @@ function start() {
   if (!S.program && !Store.sync.url) S.tab = 'settings';
   markTab(); renderTop(); enterMain(); renderMain(); updateSyncDot();
   applyIncoming();
+  try { avatarChecks(); } catch (e) { console.error(e); }
+  if (lsGet('coach-test')) window.__coach = { S, Avatar, GROW, computeGrowth, getGrowth, getGame, growthBeat, rankLookBeat, shrinkBeat, mirrorBeat, avatarChecks, Fx, TIERS, LEGEND };
   if (Store.sync.url) Sync.run();
   window.addEventListener('online', () => Sync.run());
   window.addEventListener('offline', updateSyncDot);
   let lastVis = 0;
   document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible' && Date.now() - lastVis > 30000) { lastVis = Date.now(); Sync.run(); }
+    if (document.visibilityState === 'visible' && Date.now() - lastVis > 30000) { lastVis = Date.now(); Sync.run(); try { avatarChecks(); } catch (e) {} }
   });
   setInterval(() => { if (document.visibilityState === 'visible') Sync.run(); }, 5 * 60 * 1000);
   try { navigator.storage && navigator.storage.persist && navigator.storage.persist(); } catch (e) {}
