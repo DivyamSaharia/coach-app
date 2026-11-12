@@ -1,6 +1,6 @@
 // Offline support: the app shell is cached so the app opens at the gym without signal.
 // Pages are fetched fresh when online (so updates arrive) and fall back to the cache offline.
-const CACHE = 'coach-v13';
+const CACHE = 'coach-v14';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-180.png', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
@@ -38,12 +38,18 @@ self.addEventListener('notificationclick', e => {
     return self.clients.openWindow ? self.clients.openWindow('./') : null;
   }));
 });
-// Rest-over alerts sent by the Cloudflare Worker (push/). Every push must show a notification.
+// Rest alerts sent by the Cloudflare Worker (push/). Every push must show a notification.
+// Two kinds share one tag: "resting" arrives as he ticks a set (quiet), "over" replaces it when the rest ends.
+// The old one is closed first as well, in case the phone doesn't replace by tag on its own.
 self.addEventListener('push', e => {
   let d = {};
   try { d = e.data ? e.data.json() : {}; } catch (er) { d = {}; }
-  e.waitUntil(self.registration.showNotification(d.title || 'Rest is over', {
-    body: d.body || 'Time for your next set.', tag: d.tag || 'coach-rest', renotify: true,
-    icon: 'icon-192.png', badge: 'icon-192.png', vibrate: [200, 100, 200],
-  }));
+  const tag = d.tag || 'coach-rest'; const resting = d.kind === 'resting';
+  e.waitUntil((async () => {
+    try { const old = await self.registration.getNotifications({ tag }); old.forEach(n => n.close()); } catch (er) {}
+    await self.registration.showNotification(d.title || 'Rest over', {
+      body: d.body || 'Time for your next set.', tag, renotify: !resting, silent: resting,
+      icon: 'icon-192.png', badge: 'icon-192.png', ...(resting ? {} : { vibrate: [200, 100, 200] }),
+    });
+  })());
 });

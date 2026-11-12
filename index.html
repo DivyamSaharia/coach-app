@@ -840,6 +840,78 @@ details.changes .day-list{padding:0 16px 16px}
 .cons-wrap{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px;align-items:start}
 .cons-days{display:grid;gap:4px}
 .cons-days span{height:14px;font:600 .66rem/14px var(--body);color:var(--muted);text-align:center;width:12px}
+
+/* ===== Round 1 features, 13 Nov 2026 ===== */
+/* muscle chips under an exercise name; a tap opens the body map */
+.mchips{appearance:none;border:0;background:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:5px;cursor:pointer;text-align:left;color:inherit;font:inherit}
+.mchip{font:600 .74rem/1 var(--body);padding:5px 8px;border-radius:999px;white-space:nowrap}
+.mchip.p{background:color-mix(in srgb,var(--accent) 24%,transparent);color:var(--accent)}
+.mchip.s{background:var(--sunk);color:var(--ink)}
+.mchip.st{background:transparent;color:var(--muted);box-shadow:inset 0 0 0 1px var(--line)}
+.pitem .mchips{margin-top:6px}
+/* body map */
+.bmap{display:flex;flex-direction:column;gap:12px;padding:4px 0 8px}
+.bmap-figs{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:340px;margin:0 auto;width:100%}
+.bmap figure{margin:0;text-align:center}
+.bmap figcaption{font:600 .75rem var(--body);color:var(--muted);margin-top:2px}
+.bmap-fig{width:100%;height:auto;display:block;max-height:46vh}
+.bm-base path{fill:var(--sunk)}
+.bm-m{fill:color-mix(in srgb,var(--ink) 7%,var(--sunk));stroke:var(--surface);stroke-width:.5;transition:fill .3s}
+.bm-p{fill:var(--accent)}
+.bm-s{fill:color-mix(in srgb,var(--accent) 45%,var(--sunk))}
+.bm-st{fill:color-mix(in srgb,var(--accent2) 20%,var(--sunk));stroke:var(--accent2);stroke-width:.6;stroke-dasharray:1.4 1}
+@media (prefers-reduced-motion: no-preference){ .bm-p{animation:bmglow 1.8s ease-in-out infinite alternate} }
+@keyframes bmglow{from{filter:none}to{filter:drop-shadow(0 0 2.5px var(--accent))}}
+.bmap-key{display:flex;flex-direction:column;gap:6px;font-size:.92rem}
+.bk{display:grid;grid-template-columns:14px 6.4rem 1fr;gap:8px;align-items:baseline}
+.bk i{width:12px;height:12px;border-radius:3px;display:inline-block;transform:translateY(1px)}
+.bk-p{background:var(--accent)} .bk-s{background:color-mix(in srgb,var(--accent) 45%,var(--sunk))} .bk-st{background:color-mix(in srgb,var(--accent2) 20%,var(--sunk));box-shadow:inset 0 0 0 1px var(--accent2)}
+.bk span{color:var(--muted)}
+#sheet .bmap{padding:4px 16px 8px}
+/* set rows by tracking mode: timed sets get a Start column, distance sets an optional time column */
+.sets.mode-time .sets-hd,.sets.mode-time .set-cells,.sets.mode-distance .sets-hd,.sets.mode-distance .set-cells{grid-template-columns:2.6rem minmax(0,1fr) minmax(0,1fr) minmax(0,.9fr) 56px}
+.hold-cell{display:flex;height:56px}
+.hold-btn{appearance:none;flex:1;border:0;border-radius:14px;background:color-mix(in srgb,var(--accent) 22%,var(--raised));color:var(--accent);font:700 .82rem/1 var(--body);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;touch-action:manipulation}
+.hold-btn svg{width:18px;height:18px}
+.hold-btn[hidden]{display:none}
+.setrow[data-t="W"] .hold-cell{height:42px}
+.sec-in::placeholder{font-size:.9rem}
+/* hold timer */
+.hold-ov{position:fixed;inset:0;z-index:60;background:color-mix(in srgb,var(--bg) 94%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:max(20px,env(safe-area-inset-top)) 20px max(20px,env(safe-area-inset-bottom))}
+html.hold-on,html.hold-on body{overflow:hidden}
+.hold-in{width:100%;max-width:420px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+.hold-load{margin:0;color:var(--muted);font:500 1rem var(--body)}
+.hold-dial{position:relative;width:min(78vw,300px);aspect-ratio:1;margin:8px 0}
+.hold-ring{width:100%;height:100%;transform:rotate(-90deg)}
+.hold-ring circle{fill:none;stroke-width:12}
+.hr-bg{stroke:var(--sunk)}
+.hr-fg{stroke:var(--accent);stroke-linecap:round;transition:stroke-dashoffset .12s linear,stroke .3s}
+.hold-ov.hit .hr-fg{stroke:var(--go)}
+.hold-ov.lead .hr-fg{opacity:0}
+.hold-mid{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+.hold-big{font:700 4.4rem/1 var(--display);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.hold-ov.lead .hold-big{font-size:6.5rem;color:var(--accent)}
+.hold-ov.hit .hold-big{color:var(--go)}
+.hold-sub{font:600 1rem var(--body);color:var(--muted)}
+.hold-ov.hit .hold-sub{color:var(--go)}
+.hold-acts{display:flex;flex-direction:column;align-items:center;gap:12px;width:100%}
+.hold-stop{width:100%;min-height:64px;font-size:1.2rem}
+.hold-ov.lead #hold-cancel{visibility:hidden}
+.pres .w.long{font-size:2.2rem}
+/* muscles and tracking editor */
+.tag-ed{margin-top:6px}
+.tag-ed-box{grid-column:1/-1;display:flex;flex-direction:column;gap:10px;margin-top:10px;padding:12px;background:var(--sunk);border-radius:14px}
+.mode-seg{align-self:flex-start;margin-left:0}
+.tag-ed-box .bm-base path{fill:var(--raised)}
+.tag-ed-box .bm-m:not(.bm-p):not(.bm-s):not(.bm-st){fill:color-mix(in srgb,var(--ink) 8%,var(--raised));stroke:var(--sunk)}
+.mode-seg .seg-b{min-height:40px;padding:0 14px}
+.mus-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:6px}
+.mus-b{appearance:none;border:0;border-radius:10px;background:var(--raised);color:var(--ink);font:600 .82rem/1.15 var(--body);padding:8px;min-height:44px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:3px;text-align:left;cursor:pointer}
+.mus-b small{font:600 .68rem/1 var(--body);opacity:.85}
+.mus-b.t-p{background:var(--accent);color:var(--on-accent)}
+.mus-b.t-s{background:color-mix(in srgb,var(--accent) 40%,var(--raised))}
+.mus-b.t-st{box-shadow:inset 0 0 0 1.5px var(--accent2);color:var(--accent2)}
+.tag-ed-box .bmap-figs{max-width:240px}
 </style>
 </head>
 <body>
@@ -921,6 +993,7 @@ function stepText(ex, kg) { return `${fmtD(ex, kg)} ${wUnit(ex)}`; }
 function fmtW(ex, w) {
   if (!ex) return w == null ? '' : `${fmtNum(w)} kg`;
   if (ex.unit === 'bw') return 'Bodyweight';
+  if (ex.unit === 'kg added' && exMode(ex) !== 'reps' && !(w > 0)) return 'Bodyweight';
   if (w == null) return 'Pick a weight';
   const v = fmtD(ex, w), u = wUnit(ex);
   if (ex.unit === 'kg added') return `+${v} ${u}`;
@@ -930,8 +1003,8 @@ function fmtW(ex, w) {
 }
 function repsLabel(ex) {
   const range = ex.lo === ex.hi ? `${ex.lo}` : `${ex.lo}–${ex.hi}`;
-  const unit = ex.repUnit === 'm' ? ' m' : ex.repUnit === 's' ? ' s' : '';
-  const side = ex.perSide ? (ex.lower && ex.repUnit !== 'm' ? ' per leg' : ' per side') : '';
+  const md = exMode(ex); const unit = Q_UNIT[md];
+  const side = ex.perSide ? (ex.lower && md !== 'distance' ? ' per leg' : ' per side') : '';
   return range + unit + side;
 }
 function platesFor(w, lb) {
@@ -1021,6 +1094,10 @@ const Fx = (() => {
       brass(523, .36, .8, .045); brass(659, .36, .8, .04); tone(1568, .42, .9, 'sine', .03); tone(2093, .5, .9, 'sine', .02); },
     bigpr: () => { sweep(150, 42, .4, .24); [523, 659, 784, 1047, 1319].forEach((f, i) => tone(f, .12 + i * .08, .2, 'triangle', .08)); [1047, 1319, 1568].forEach(f => tone(f, .6, .9, 'triangle', .055)); },
     hit2: () => { sweep(120, 50, .25, .16); [784, 1047, 1568].forEach(f => tone(f, 0, .7, 'triangle', .05)); },
+    // hold timer: the 3-2-1 ticks, the start, and the target chime
+    count: () => tone(660, 0, .12, 'triangle', .14),
+    go: () => { tone(988, 0, .18, 'triangle', .18); tone(1319, .07, .24, 'sine', .08); },
+    hold: () => { for (const at of [0, .28]) { tone(880, at, .18, 'triangle', .22); tone(1319, at + .09, .28, 'triangle', .2); } },
   };
   /* Android vibrates through the standard call. iPhone ignores it, so there a hidden switch control gives one kind of tick. */
   function hap(n = 1) {
@@ -1119,14 +1196,14 @@ const Fx = (() => {
   function pr(d, after) {
     queue.push({ after, run(c, t, T) {
       c.className = 'cele pr'; c.setAttribute('role', 'dialog'); c.setAttribute('aria-label', `New PR on ${d.name}`);
-      const fmtV = v => `${fmtNum(Math.round(v * 10) / 10)} ${d.unit}`;
-      const start = Math.max(.5, Math.min(.92, d.oldV / d.newV));
+      const fmtV = v => (d.unit[0] === '+' ? `+${fmtNum(Math.round(v * 10) / 10)} ${d.unit.slice(1)}` : `${fmtNum(Math.round(v * 10) / 10)} ${d.unit}`);
+      const start = d.newV > 0 ? Math.max(.5, Math.min(.92, d.oldV / d.newV)) : .5;
       const fill = h('i'); fill.style.width = `${start * 100}%`;
       const mark = h('em'); mark.style.left = `${start * 100}%`;
       const newEl = h('b', { text: fmtV(d.oldV) });
-      const cmp = h('div', { class: 'pr-cmp late' }, h('div', { class: 'pr-track' }, fill, mark), h('div', { class: 'pr-nums' }, h('span', { text: `Old best ${fmtV(d.oldV)} est. max` }), newEl));
+      const cmp = h('div', { class: 'pr-cmp late' }, h('div', { class: 'pr-track' }, fill, mark), h('div', { class: 'pr-nums' }, h('span', { text: `Old best ${fmtV(d.oldV)} ${d.what || 'est. max'}` }), newEl));
       const gain = d.newV - d.oldV;
-      const chips = h('div', { class: 'pr-chips' }, h('span', { class: 'late', text: `+${fmtNum(Math.round(gain * 10) / 10)} ${d.unit}` }), d.pct ? h('span', { class: 'late', text: `Stronger than ${d.pct}` }) : null);
+      const chips = h('div', { class: 'pr-chips' }, h('span', { class: 'late', text: `+${fmtNum(Math.round(gain * 10) / 10)} ${d.unit.replace(/^\+/, '')}` }), d.pct ? h('span', { class: 'late', text: `Stronger than ${d.pct}` }) : null);
       const title = h('h2', { class: 'pr-title' }, h('span', { text: 'NEW' }), h('span', { text: 'PR' }));
       const inner = h('div', { class: 'pr-in' }, h('p', { class: 'ce-eye', text: d.name }), title, h('div', { class: 'pr-lift', text: d.lift }), cmp, chips);
       const hint = h('p', { class: 'hint late', text: 'Tap to continue' }), flash = h('div', { class: 'flash' });
@@ -1243,7 +1320,7 @@ function feelerSet(ex, W) {
   if (ex.unit === 'bw' || (ex.unit === 'kg plate' && !(W > 0))) return [{ w: null, r: Math.max(3, Math.round(lo / 2)), why: 'easy, bodyweight' }];
   if (ex.unit === 'kg added') return [{ w: 0, r: 5, why: 'bodyweight only' }];
   if (!(W > 0)) return [{ w: null, r: 5, why: 'light: about two-thirds of your working weight' }];
-  const r = ex.repUnit === 'm' || ex.repUnit === 's' ? Math.max(5, Math.round(lo / 2)) : 5;
+  const r = exMode(ex) !== 'reps' ? Math.max(5, Math.round(lo / 2)) : 5;
   let v = warmRound(ex, W * 0.65); if (!(v > 0) || v >= W) v = null;
   return [{ w: v, r, why: v == null ? 'light' : 'about 65%' }];
 }
@@ -1272,7 +1349,8 @@ function warmPlan(p, entries, opts = {}) {
     else if (W == null && ex.unit !== 'bw' && ex.unit !== 'kg plate') plan = [{ w: null, r: Math.max(8, ex.lo || 10), why: 'light, to dial in the setup' }];
     if (!plan.length && (ex.back || exPress(ex))) plan = feelerSet(ex, W);
     if (comp) for (const g of gs) seen.add(g);
-    return plan.map(x => ({ t: 'W', w: x.w, r: x.r, done: false, why: x.why || '' }));
+    const f = qField(exMode(ex));
+    return plan.map(x => ({ t: 'W', w: x.w, [f]: f === 'r' ? x.r : Math.max(5, Math.round((ex.lo || 10) / 2)), done: false, why: x.why || '' }));
   });
 }
 /* Gives entries that don't have warm-up sets yet (new, added, swapped) their plan, in session order: W sets at the top of e.sets.
@@ -1453,6 +1531,27 @@ function fixStrongDumbbells() {
   }
   return out;
 }
+/* Version 6: every exercise gets its muscles (primary, secondary, stabilisers) and a tracking mode. The old repUnit
+   (seconds or metres kept in the reps box) becomes mode time or distance, and mode0 records it so the sets logged
+   before keep reading right. The dead hang took over the suitcase carry's slot with the metres label still on it:
+   it becomes a timed hold, bodyweight plus added kg, not per side. */
+const HOLD_NAME = /dead ?hang|plank|\bhold\b|wall sit|hollow|l-sit/i;
+function migrateProgramV6(p) {
+  if (!p || (p.version || 1) >= 6) return false;
+  for (const ex of Object.values(p.exercises || {})) {
+    if (!ex || typeof ex !== 'object') continue;
+    if (!ex.muscles) ex.muscles = cleanMuscles(musclesFromName(ex.name, exGroups(ex)[0]));
+    const legacy = ex.repUnit === 's' ? 'time' : ex.repUnit === 'm' ? 'distance' : null;
+    if (!ex.mode) ex.mode = legacy ? (HOLD_NAME.test(ex.name) ? 'time' : legacy) : 'reps';
+    if (legacy) ex.mode0 = ex.mode;
+    delete ex.repUnit;
+    if (ex.mode !== 'reps' && ex.unit === 'bw' && !ex.cond) ex.unit = 'kg added';
+  }
+  const dh = p.exercises && p.exercises.w_carry;
+  if (dh && /dead ?hang/i.test(dh.name)) { dh.mode = dh.mode0 = 'time'; dh.unit = 'kg added'; delete dh.lb; dh.perSide = false; if (!(dh.weight > 0)) dh.weight = null; if (/^Timed carry/.test(dh.note || '')) dh.note = ''; }
+  p.version = 6;
+  return true;
+}
 /* Version 3: his heaviest dumbbell is 110 lb, so the goblet squat stops climbing there. */
 function migrateProgramV3(p) {
   if (!p || (p.version || 1) >= 3) return false;
@@ -1467,11 +1566,13 @@ function migrateProgramV3(p) {
 
 /* Double progression with the back rules on top. Mutates ex (and p.holds); returns what happened. */
 function progress(p, ex, entry, date) {
-  const done = workSets(entry).filter(s => s.done && (s.r || 0) > 0);
+  // the same double progression in every mode: reps, seconds held or metres climb to the top of the range, then the load goes up
+  const mode = entMode(entry, ex); const u = Q_UNIT[mode];
+  const done = workSets(entry).filter(s => s.done && setQ(s, mode) > 0);
   const ws = done.map(s => (s.w == null ? 0 : Number(s.w)));
   const W = ws.length ? Math.max(...ws) : 0;
   const atW = done.filter(s => (s.w == null ? 0 : Number(s.w)) === W);
-  const reps = atW.map(s => Number(s.r));
+  const reps = atW.map(s => setQ(s, mode));
   const lo = ex.lo, hi = ex.hi, inc = ex.inc || 2.5;
   const rir = entry.rir == null ? null : Number(entry.rir);
   const backC = ex.back ? classifyPain(entry.pain) : 'green';
@@ -1507,23 +1608,23 @@ function progress(p, ex, entry, date) {
     msg = shWorse ? `${painLabel}: same load next time. Work in the range that stays at 2/10 or less.` : `${painLabel}: same load next time. Shorten the range or use a swap if it repeats.`;
   } else if (allTop && (rir == null || rir >= ex.rirLo)) {
     ex.missStreak = 0;
-    if (bw) { verdict = 'up'; ex.aim = hi; msg = 'Top of the range on every set: make it harder (single-leg, slower, or add load).'; }
+    if (bw) { verdict = 'up'; ex.aim = hi; msg = mode === 'reps' ? 'Top of the range on every set: make it harder (single-leg, slower, or add load).' : `${hi}${u} on every set: make it harder next time.`; }
     else if (ex.lockUntilWeek && wk < ex.lockUntilWeek) { ex.weight = W; ex.aim = hi; verdict = 'hold'; msg = `Stay at this load until week ${ex.lockUntilWeek}.`; }
     else {
       let step = stepKg(ex);
       if (rir != null && rir >= ex.rirHi + 2) step = step * 2;
       if (ex.cap) step = Math.min(step, ex.cap);
       ex.weight = roundW(ex, W + step); ex.aim = lo; verdict = 'up';
-      msg = `Hit ${hi} on every set: +${stepText(ex, step)} next time.`;
+      msg = mode === 'time' ? `Held ${hi} s on every set: +${stepText(ex, step)} next time, back to ${lo} s.` : mode === 'distance' ? `${hi} m on every set: +${stepText(ex, step)} next time, back to ${lo} m.` : `Hit ${hi} on every set: +${stepText(ex, step)} next time.`;
     }
   } else if (below) {
     ex.missStreak = (ex.missStreak || 0) + 1;
     if (ex.missStreak >= 2 && W > 0 && !bw) {
       ex.weight = roundW(ex, W * 0.93); ex.aim = hi; ex.missStreak = 0; verdict = 'down';
-      msg = 'Below the rep range two sessions running: weight down about 7%.';
+      msg = mode === 'reps' ? 'Below the rep range two sessions running: weight down about 7%.' : `Under ${lo}${u} two sessions running: weight down about 7%.`;
     } else {
       if (!bw) ex.weight = W; ex.aim = lo; verdict = 'hold';
-      msg = `Below ${lo} reps: same weight next time.`;
+      msg = mode === 'reps' ? `Below ${lo} reps: same weight next time.` : `Under ${lo}${u}: same weight next time.`;
     }
   } else {
     ex.missStreak = 0;
@@ -1533,8 +1634,8 @@ function progress(p, ex, entry, date) {
       msg = `Felt easy (RIR ${rirText(rir)}): +${stepText(ex, step)} next time.`;
     } else {
       if (!bw) ex.weight = W;
-      ex.aim = Math.min(hi, minReps + 1); verdict = 'hold';
-      msg = `Same weight. Aim for ${ex.aim} on every set.`;
+      ex.aim = Math.min(hi, minReps + (mode === 'reps' ? 1 : 5)); verdict = 'hold';
+      msg = `Same weight. Aim for ${ex.aim}${u} on every set.`;
       if (rir != null && rir < ex.rirLo - 1) msg += ' Stop a little further from failure.';
     }
   }
@@ -1697,6 +1798,36 @@ function setT(s) { return s && s.t ? s.t : 'N'; }
 function workSets(e) { return (e.sets || []).filter(s => T_WORK[setT(s)]); }          // N + F
 function loggedSets(e) { return (e.sets || []).filter(s => setT(s) !== 'W'); }         // N + F + D
 function warmSets(e) { return (e.sets || []).filter(s => setT(s) === 'W'); }
+/* Tracking modes. reps: weight × reps (the default). time: seconds held, with optional added weight (s.secs).
+   distance: metres, with optional weight and time (s.metres, s.secs). Weights stay in kg whatever the mode.
+   An entry carries the mode it was logged in (e.mode). Older entries have none: they read as reps, except on an
+   exercise that was already timed or measured before modes existed (ex.mode0), whose numbers sat in r. */
+const MODES = ['reps', 'time', 'distance'];
+function exMode(ex) { return ex && MODES.includes(ex.mode) ? ex.mode : 'reps'; }
+function entMode(e, ex) { return e && MODES.includes(e.mode) ? e.mode : (ex && MODES.includes(ex.mode0) ? ex.mode0 : 'reps'); }
+function setQ(s, mode) {
+  if (!s) return 0;
+  const v = mode === 'time' ? (s.secs ?? s.r) : mode === 'distance' ? (s.metres ?? s.r) : s.r;
+  const n = Number(v); return Number.isFinite(n) ? n : 0;
+}
+function qField(mode) { return mode === 'time' ? 'secs' : mode === 'distance' ? 'metres' : 'r'; }
+function entryEx(e, p = S.program) { return p && p.exercises ? p.exercises[e.exId] || null : null; }
+/* the counted quantity of one set: reps, seconds or metres */
+function sq(e, s, p = S.program) { return setQ(s, entMode(e, entryEx(e, p))); }
+function doneWork(e, p = S.program) { return workSets(e).filter(x => x.done && sq(e, x, p) > 0); }
+/* An old entry on a timed or measured exercise that was a different movement then (a suitcase carry before the dead hang):
+   it stays in History but doesn't set the bar for holds or distances. */
+function legacyOther(e, ex) { return !!(ex && !e.mode && entMode(e, ex) !== 'reps' && e.name && e.name !== ex.name); }
+const Q_UNIT = { reps: '', time: ' s', distance: ' m' };
+const Q_WORD = { reps: 'reps', time: 'seconds', distance: 'metres' };
+function qText(mode, n) { return mode === 'reps' ? `${fmtNum(n)}` : `${fmtNum(n)}${Q_UNIT[mode]}`; }
+/* "80 kg × 8", "+5 kg for 40 s", "40 s", "24 kg × 30 m" */
+function setLine(ex, mode, w, q) {
+  const W = w == null || (!(w > 0) && ex && ex.unit === 'kg added') ? null : `${ex && ex.unit === 'kg added' ? '+' : ''}${fmtD(ex, w)} ${wUnit(ex)}`;
+  if (mode === 'time') return W ? `${W} for ${fmtNum(q)} s` : `${fmtNum(q)} s`;
+  if (mode === 'distance') return W ? `${W} × ${fmtNum(q)} m` : `${fmtNum(q)} m`;
+  return W ? `${W} × ${fmtNum(q)}` : `${fmtNum(q)} reps`;
+}
 /* Next-set prompt thresholds, synced with the program. */
 function devSettings(p) {
   if (!p) return { reps: 3, pct: 10 };
@@ -1729,6 +1860,7 @@ function setE1(p, ex, w, r) {
 function entryBest(p, e) {
   if (e.unitMix) return null; // logged with the wrong unit's number: not a PR and not the bar for one
   const ex = p.exercises[e.exId];
+  if (entMode(e, ex) !== 'reps') return null;
   let best = null;
   for (const st of workSets(e)) {
     if (st.done === false) continue;
@@ -1736,6 +1868,38 @@ function entryBest(p, e) {
     if (v != null && (!best || v > best.v)) best = { v, w: st.w, r: st.r };
   }
   return best;
+}
+/* What a PR means in each mode, as keys into the game's best table:
+   reps      exKey          best estimated 1-rep max
+   time      exKey#t        longest hold;  exKey#tw  heaviest added weight on a hold of at least the target time
+   distance  exKey#d        longest distance;  exKey#dw  heaviest load over at least the target distance */
+const PR_EPS = { e1: 0.5, hold: 0.5, holdw: 0.25, dist: 0.5, distw: 0.25 };
+function prTarget(e, ex) { const lo = e.pres && e.pres.lo != null ? e.pres.lo : ex ? ex.lo : null; return lo > 0 ? lo : 0; }
+function setBests(p, e, ex, st) {
+  const mode = entMode(e, ex); const k = exKey(e);
+  if (mode === 'reps') { const v = setE1(p, ex, st.w, Number(st.r)); return v == null ? [] : [{ k, kind: 'e1', v, w: st.w, q: Number(st.r) }]; }
+  const q = setQ(st, mode); if (!(q > 0)) return [];
+  const w = Number(st.w) > 0 ? Number(st.w) : 0; const T = prTarget(e, ex);
+  const out = [{ k: k + (mode === 'time' ? '#t' : '#d'), kind: mode === 'time' ? 'hold' : 'dist', v: q, w: st.w, q }];
+  if (q >= T) out.push({ k: k + (mode === 'time' ? '#tw' : '#dw'), kind: mode === 'time' ? 'holdw' : 'distw', v: w, w: st.w, q });
+  return out;
+}
+function entryBests(p, e) {
+  if (e.unitMix || e.skipped) return [];
+  const ex = p.exercises[e.exId]; if (legacyOther(e, ex)) return [];
+  const by = {};
+  for (const st of workSets(e)) { if (st.done === false) continue; for (const b of setBests(p, e, ex, st)) if (!by[b.k] || b.v > by[b.k].v) by[b.k] = b; }
+  return Object.values(by);
+}
+/* The PR one set sets against the bests before this session (null = none). A weighted PR outranks a longer one. */
+function setPR(p, e, ex, st, best) {
+  if (!best || !T_WORK[setT(st)] || !st.done) return null;
+  let hit = null;
+  for (const b of setBests(p, e, ex, st)) {
+    const prior = best[b.k]; if (prior == null || !(b.v > prior + PR_EPS[b.kind])) continue;
+    if (!hit || b.kind === 'holdw' || b.kind === 'distw') hit = { ...b, prior };
+  }
+  return hit;
 }
 /* Sessions since the app update carry prepSteps: how many back warm-up steps that session needed (0 = none). */
 function prepInfo(p, s) {
@@ -1756,16 +1920,32 @@ function honestLog(p, s) {
   return tracked > 0 && rated === tracked && s.backPain != null;
 }
 /* XP for one session. `best` = best estimated 1-rep max per exercise before this session (not changed here). */
+/* One line for a PR in the session summary. */
+function prText(x) {
+  const pe = S.program.exercises[x.exId] || {}; const u = wUnit(pe); const mode = x.mode || 'reps';
+  const line = setLine(pe, mode, x.w, x.r);
+  const wv = v => `${pe.unit === 'kg added' ? '+' : ''}${fmtD(pe, v)} ${u}`;
+  if (x.kind === 'hold') return `${line}: your longest hold, up from ${Math.round(x.prior)} s`;
+  if (x.kind === 'dist') return `${line}: your longest distance, up from ${Math.round(x.prior)} m`;
+  if (x.kind === 'holdw') return `${line}: your heaviest hold at the target time, up from ${x.prior > 0 ? wv(x.prior) : 'bodyweight'}`;
+  if (x.kind === 'distw') return `${line}: your heaviest load over the target distance, up from ${x.prior > 0 ? wv(x.prior) : 'no load'}`;
+  return `${line}: about ${Math.round(toD(pe, x.v))} ${u} estimated 1-rep max, up from ${Math.round(toD(pe, x.prior))} ${u}`;
+}
 function sessionXP(p, s, best, opts = {}) {
   const parts = []; const prs = [];
   const add = (label, xp) => { if (xp > 0) parts.push({ label, xp }); };
   let sets = 0;
   for (const e of s.entries || []) {
     if (e.skipped) continue;
-    const done = loggedSets(e).filter(x => x.done && Number(x.r) > 0).length;
+    const done = loggedSets(e).filter(x => x.done && sq(e, x, p) > 0).length;
     sets += Math.min(done, e.presSets || (e.pres && e.pres.sets) || done);
-    const b = entryBest(p, e); const prior = best[exKey(e)];
-    if (b && prior != null && b.v > prior + 0.5) prs.push({ name: e.name, exId: e.exId, v: b.v, w: b.w, r: b.r, prior });
+    // one PR per exercise at most, whatever the mode, so a hold earns what a lift earns
+    let pick = null;
+    for (const b of entryBests(p, e)) {
+      const prior = best[b.k]; if (prior == null || !(b.v > prior + PR_EPS[b.kind])) continue;
+      if (!pick || b.kind === 'holdw' || b.kind === 'distw') pick = { name: e.name, exId: e.exId, v: b.v, w: b.w, r: b.q, kind: b.kind, mode: entMode(e, p.exercises[e.exId]), prior };
+    }
+    if (pick) prs.push(pick);
   }
   if (!opts.live) add('Session finished', XP.finish);
   add(`${sets} working set${sets === 1 ? '' : 's'}`, sets * XP.set);
@@ -1830,11 +2010,11 @@ function computeGame(p, sessions, opts = {}) {
       const wk = weekStart(s.date); const W = (weeks[wk] = weeks[wk] || { all: 0, own: [] }); W.all++;
       const r = sessionXP(p, s, best); per[s.id] = r; xp += r.xp; W.own.push(s);
       st.own++; if (r.prepFull) st.prepFull++; if (r.honest) st.honest++; st.prs += r.prs.length; st.sets += r.sets;
-      for (const e of s.entries || []) if (!e.skipped) for (const x of loggedSets(e)) if (x.done && x.r > 0 && x.w > 0) { const ex = p.exercises[e.exId]; st.tonnage += Number(x.w) * Number(x.r) * (ex && ex.unit === 'kg each' ? 2 : 1); }
+      for (const e of s.entries || []) if (!e.skipped) for (const x of loggedSets(e)) if (x.done && x.r > 0 && x.w > 0 && entMode(e, p.exercises[e.exId]) === 'reps') { const ex = p.exercises[e.exId]; st.tonnage += Number(x.w) * Number(x.r) * (ex && ex.unit === 'kg each' ? 2 : 1); }
       if (s.week === 12) st.deload = 1;
       if ((s.week || 0) >= 12) st.blockDone = true;
     }
-    for (const e of s.entries || []) { if (e.skipped) continue; const b = entryBest(p, e); if (b) { const k = exKey(e); if (best[k] == null || b.v > best[k]) best[k] = b.v; } }
+    for (const e of s.entries || []) { if (e.skipped) continue; for (const b of entryBests(p, e)) if (best[b.k] == null || b.v > best[b.k]) best[b.k] = b.v; }
   }
   const thisWeek = weekStart(opts.today || todayStr());
   const questXP = {};
@@ -2123,13 +2303,14 @@ function loadFromStore() {
   S.loaded.program = true;
   const m2 = prog ? migrateProgram(prog) : false; const m3 = prog ? migrateProgramV3(prog) : false; const m4 = prog ? migrateProgramV4(prog) : false;
   const m5 = prog ? migrateProgramV5(prog) : false;
+  const m8 = prog ? migrateProgramV6(prog) : false;
   // set types arrive as an app update, not a program version: log it once
   const m6 = prog ? !(prog.flags && prog.flags.setTypes) : false;
   if (m6) prog.flags = { ...(prog.flags || {}), setTypes: true };
   // the missed-session rule starts the week it shipped; the date lives in the program doc so every device agrees
   const m7 = prog ? !prog.xpMissFrom : false;
   if (m7) prog.xpMissFrom = MISS_FROM;
-  if (m2 || m3 || m4 || m5 || m6 || m7) queueMicrotask(async () => {
+  if (m2 || m3 || m4 || m5 || m6 || m7 || m8) queueMicrotask(async () => {
     try {
       await saveProgram();
       if (m2) await addLog('auto', 'App update: a 6-minute back warm-up only on days that load your back, form cues on every exercise, hip thrust before leg extensions on Lower A.');
@@ -2146,6 +2327,7 @@ function loadFromStore() {
         await addLog('you', 'Goblet box squat is in pounds: restarts at 45 lb. Strong’s goblet squats were pounds (50 lb × 15 in August), and Friday’s 40 kg sets stay logged but don’t count for its rank or standing.');
       }
       if (m6) await addLog('auto', 'App update: set types W/N/F/D on every set, warm-ups in the same list, and next-set prompts when a set lands far from the plan.');
+      if (m8) await addLog('auto', 'App update: muscles worked on every exercise (tap them for a body map), and exercises can be tracked by reps, time or distance. Dead hang is now a timed hold: bodyweight plus any added kg, with a hold timer on each set.');
     } catch (e) {}
     S.sessions = Store.sessions(); refresh();
   });
@@ -2591,19 +2773,186 @@ function libVariantName(m, code) {
 }
 /* The program exercise a library pick turns into: its own weight, rep range and progression. */
 function libExercise(m, code) {
-  const unit = code === 'W' || code === 'R' || m.cond ? 'bw' : code === 'A' ? 'kg added' : (code === 'D' || code === 'K') && !m.single ? 'kg each' : 'kg';
+  const unit = m.cond ? 'bw' : (code === 'W' || code === 'R') && (m.time || m.metres) ? 'kg added' : code === 'W' || code === 'R' ? 'bw' : code === 'A' ? 'kg added' : (code === 'D' || code === 'K') && !m.single ? 'kg each' : 'kg';
   const time = m.time, metres = m.metres;
   const [lo, hi] = metres ? [20, 40] : time ? [20, 45] : m.compound ? [6, 10] : [10, 15];
   return {
     id: `c_${m.id}_${code.toLowerCase()}`, name: libVariantName(m, code), custom: true, lib: m.id, equip: code, group: m.group,
     sets: 3, lo, hi, rirLo: 1, rirHi: 2, aim: hi, weight: null, inc: code === 'D' || code === 'K' ? 2 : 2.5, unit,
-    repUnit: metres ? 'm' : time ? 's' : undefined, perSide: m.perSide || undefined, lower: m.lower || undefined,
+    mode: metres ? 'distance' : time ? 'time' : 'reps', perSide: m.perSide || undefined, lower: m.lower || undefined,
     back: m.back || m.avoidBack || undefined, shoulder: m.shoulder || m.avoidShoulder || undefined,
     bar: code === 'B' ? true : undefined, ramp: m.compound && 'BSTD'.includes(code) ? true : undefined, cond: m.cond || undefined,
     compound: m.compound || undefined, press: libPress(m) || undefined, cues: m.cues && m.cues.length ? [...m.cues] : undefined,
+    muscles: cleanMuscles(musclesFromName(m.name, m.group)),
   };
 }
 function libPress(m) { return m.compound && (m.group === 'Chest' || m.group === 'Shoulders') && /press|push-up|dip|thruster/i.test(m.name); }
+
+/* ---------- muscles worked ----------
+   Every exercise carries muscles: { p: primary, s: secondary, st: stabilisers }, as ids from MUSCLES.
+   Program exercises get theirs written in once (migration 6) and can be edited in the builder or the Program tab.
+   Anything without its own list (a Strong import, a library pick, a coach swap) is read from its name by MUSCLE_RULES,
+   falling back on its muscle group. */
+const MUSCLES = [
+  ['chest', 'Chest'], ['fdelt', 'Front delts'], ['sdelt', 'Side delts'], ['rdelt', 'Rear delts'], ['lats', 'Lats'],
+  ['upback', 'Upper back / traps'], ['biceps', 'Biceps'], ['triceps', 'Triceps'], ['forearms', 'Forearms / grip'],
+  ['abs', 'Abs'], ['obliques', 'Obliques'], ['lowback', 'Lower back'], ['glutes', 'Glutes'], ['quads', 'Quads'],
+  ['hams', 'Hamstrings'], ['adductors', 'Adductors'], ['calves', 'Calves'],
+];
+const MUSCLE_NAME = Object.fromEntries(MUSCLES);
+const MUSCLE_SHORT = { upback: 'Upper back', forearms: 'Forearms', fdelt: 'Front delts', sdelt: 'Side delts', rdelt: 'Rear delts' };
+/* First match wins, so specific patterns sit above general ones. [pattern, primary, secondary, stabilisers] */
+const MUSCLE_RULES = [
+  [/dead ?hang|bar hang|scap(ular)? pull/i, 'forearms', 'lats upback', 'abs'],
+  [/overhead carry|waiter/i, 'upback fdelt sdelt', 'triceps', 'abs obliques'],
+  [/calf|calves|tibialis/i, 'calves', '', ''],
+  [/rowing machine|\berg\b|ski[- ]?erg/i, 'quads upback lats', 'glutes hams biceps', 'abs'],
+  [/sled push|prowler/i, 'quads glutes', 'calves hams', 'abs triceps'],
+  [/sled pull|sled drag/i, 'hams glutes', 'upback quads', 'forearms'],
+  [/bike|cycle|cycling/i, 'quads', 'glutes hams calves', ''],
+  [/battle rope/i, 'fdelt sdelt', 'forearms abs', 'upback'],
+  [/jump rope|skipping/i, 'calves', 'quads', 'forearms'],
+  [/burpee/i, 'quads chest', 'fdelt triceps abs', 'glutes'],
+  [/treadmill|incline walk|stair ?(climb|master|mill)|^walk(ing)?$/i, 'glutes calves', 'hams quads', ''],
+  [/power clean|clean|snatch/i, 'glutes hams upback', 'quads calves forearms', 'abs lowback'],
+  [/frog pump/i, 'glutes', 'adductors', ''],
+  [/curl-up|crunch/i, 'abs', 'obliques', ''],
+  [/suitcase/i, 'obliques forearms', 'upback', 'abs glutes'],
+  [/farmer|carry|yoke/i, 'forearms upback', 'glutes quads', 'abs obliques'],
+  [/glute kickback|donkey kick|cable kickback/i, 'glutes', 'hams', ''],
+  [/face ?pull/i, 'rdelt upback', 'sdelt', ''],
+  [/external rotation|internal rotation|\bcuff\b|cuban press/i, 'rdelt', 'upback', ''],
+  [/reverse (pec|fly)|rear[- ]delt|reverse fly|band pull-?apart/i, 'rdelt', 'upback', ''],
+  [/lateral raise|lat raise|side raise|y[- ]raise|upright row/i, 'sdelt', 'upback', ''],
+  [/front raise/i, 'fdelt', 'sdelt', ''],
+  [/straight[- ]arm|pullover/i, 'lats', 'triceps rdelt chest', 'abs'],
+  [/pull[- ]?ups?|chin[- ]?ups?|muscle[- ]up/i, 'lats', 'biceps upback', 'forearms abs'],
+  [/pull ?down/i, 'lats', 'biceps upback rdelt', 'forearms'],
+  [/(bent[- ]over|pendlay|barbell|yates|t-bar|seal|meadows).*row|row.*\((barbell|t-bar)\)/i, 'upback lats', 'rdelt biceps lowback', 'forearms hams abs'],
+  [/row/i, 'upback lats', 'rdelt biceps', 'forearms'],
+  [/shrug/i, 'upback', '', 'forearms'],
+  [/leg curl|hamstring curl|nordic|slider|ball (leg )?curl|glute[- ]ham/i, 'hams', 'calves', 'glutes'],
+  [/wrist|reverse curl|gripper|grip trainer|plate pinch|hand grip/i, 'forearms', '', ''],
+  [/hammer|cross[- ]body curl|zottman/i, 'biceps forearms', '', ''],
+  [/curl/i, 'biceps', 'forearms', ''],
+  [/close[- ]grip (bench|press)|bench press - close|jm press|diamond push/i, 'triceps chest', 'fdelt', ''],
+  [/push ?down|triceps?|skull|kickback|french press|bench dip/i, 'triceps', '', ''],
+  [/dip/i, 'chest triceps', 'fdelt', 'abs'],
+  [/fly|flye|crossover|pec deck/i, 'chest', 'fdelt', ''],
+  [/landmine press/i, 'fdelt', 'triceps chest upback', 'abs obliques glutes'],
+  [/shoulder press|overhead press|military|arnold|push press|z[- ]press|ohp|\bshoulder\b.*press/i, 'fdelt', 'sdelt triceps', 'upback abs'],
+  [/leg press|hack squat|pendulum|belt squat/i, 'quads glutes', 'adductors', ''],
+  [/split squat|lunge|step[- ]?up|pistol|skater/i, 'quads glutes', 'adductors hams', 'abs obliques forearms'],
+  [/squat|thruster|wall sit/i, 'quads glutes', 'adductors', 'abs lowback upback'],
+  [/incline.*(press|bench)|(press|bench).*incline/i, 'chest fdelt', 'triceps', ''],
+  [/pallof|anti[- ]rotation/i, 'abs obliques', '', 'glutes'],
+  [/bench|chest press|push[- ]?up|floor press|press/i, 'chest', 'fdelt triceps', ''],
+  [/leg extension|sissy/i, 'quads', '', ''],
+  [/hip thrust|glute bridge|glute drive|bridge|kickback/i, 'glutes', 'hams quads', 'abs'],
+  [/abduct|clamshell|band walk|eagle spread|fire hydrant/i, 'glutes', '', ''],
+  [/adduct|copenhagen/i, 'adductors', '', ''],
+  [/back extension \(machine\)|lower back machine/i, 'lowback', 'glutes hams', ''],
+  [/rdl|romanian|stiff[- ]leg|good morning|back extension|hyperextension|hip hinge|reverse hyper/i, 'hams glutes', 'lowback adductors', 'forearms upback abs'],
+  [/deadlift|rack pull/i, 'glutes hams lowback', 'quads upback forearms', 'lats abs'],
+  [/pull[- ]?through|swing/i, 'glutes hams', 'lowback', 'forearms abs'],
+  [/side plank|russian twist|woodchop|oblique|bicycle|windmill/i, 'obliques', 'abs', ''],
+  [/ab wheel|rollout/i, 'abs', 'lats obliques', 'lowback'],
+  [/knee raise|leg raise|toes to bar|captain/i, 'abs', 'obliques', 'forearms'],
+  [/plank|hollow|dead ?bug|crunch|sit[- ]?up|v[- ]up|\babs?\b|core/i, 'abs', 'obliques', ''],
+  [/superman|bird[- ]?dog/i, 'lowback glutes', '', ''],
+];
+const GROUP_MUSCLES = { Chest: 'chest', Back: 'lats upback', Shoulders: 'fdelt sdelt', Biceps: 'biceps', Triceps: 'triceps', Forearms: 'forearms', Quads: 'quads',
+  Hamstrings: 'hams', Glutes: 'glutes', Calves: 'calves', Core: 'abs', 'Full body': 'quads glutes upback', Conditioning: '' };
+const mList = s => (s || '').split(/\s+/).filter(x => MUSCLE_NAME[x]);
+function musclesFromName(name, group) {
+  const n = String(name || '');
+  for (const [rx, p, s, st] of MUSCLE_RULES) if (rx.test(n)) return { p: mList(p), s: mList(s), st: mList(st) };
+  const g = GROUP_MUSCLES[group]; return { p: mList(g), s: [], st: [] };
+}
+/* One muscle sits in one tier only (primary beats secondary beats stabiliser). */
+function cleanMuscles(m) {
+  const seen = new Set(); const out = { p: [], s: [], st: [] };
+  for (const k of ['p', 's', 'st']) for (const id of (m && Array.isArray(m[k]) ? m[k] : [])) if (MUSCLE_NAME[id] && !seen.has(id)) { seen.add(id); out[k].push(id); }
+  return out;
+}
+function musclesOf(ex, name) {
+  if (ex && ex.muscles && (ex.muscles.p || []).length) return cleanMuscles(ex.muscles);
+  return cleanMuscles(musclesFromName(ex ? ex.name : name, ex ? exGroups(ex)[0] : null));
+}
+
+/* Front and back body map. Each figure is drawn on a 100 × 232 grid, left half only, then mirrored.
+   Shapes are keyed by muscle id; a muscle's tier sets its class (p bright, s dimmer, st outline). */
+const BODY_BASE = [
+  'M50,4 C57,4 61,9 61,17 C61,25 57,30 50,30 C43,30 39,25 39,17 C39,9 43,4 50,4 Z',
+  'M45,29 L55,29 L56,36 L44,36 Z',
+  // torso and shoulders
+  'M44,34 C38,35 30,35 25,38 C20,41 19,47 19,52 L21,60 L28,58 L31,72 C33,86 35,98 34,110 L33,122 L67,122 L66,110 C65,98 67,86 69,72 L72,58 L79,60 L81,52 C81,47 80,41 75,38 C70,35 62,35 56,34 Z',
+  // arms
+  'M19,52 C17,62 16,72 17,84 L15,96 C13,106 12,116 11,126 L18,128 C20,118 23,106 25,96 L27,84 C28,74 28,64 28,58 Z',
+  'M81,52 C83,62 84,72 83,84 L85,96 C87,106 88,116 89,126 L82,128 C80,118 77,106 75,96 L73,84 C72,74 72,64 72,58 Z',
+  // hands
+  'M11,126 C9,132 10,139 14,141 C18,141 19,134 18,128 Z', 'M89,126 C91,132 90,139 86,141 C82,141 81,134 82,128 Z',
+  // legs
+  'M33,120 C31,138 32,154 35,170 L36,178 C35,192 36,206 38,218 L46,218 C46,204 47,190 47,178 L48,170 C49,152 50,136 50,124 Z',
+  'M67,120 C69,138 68,154 65,170 L64,178 C65,192 64,206 62,218 L54,218 C54,204 53,190 53,178 L52,170 C51,152 50,136 50,124 Z',
+  'M37,217 L47,217 L48,224 C44,227 37,227 34,224 Z', 'M63,217 L53,217 L52,224 C56,227 63,227 66,224 Z',
+];
+const BODY_FRONT = {
+  upback: ['M45,33 L38,37 L46,38 Z'],
+  fdelt: ['M36,38 C30,38 27,41 26,46 C27,50 31,51 34,48 C35,45 36,42 38,39 Z'],
+  sdelt: ['M27,39 C22,41 20,45 20,51 L23,53 C24,48 25,44 29,40 Z'],
+  chest: ['M49,40 L38,39 C34,42 33,48 34,55 C38,59 44,60 49,57 Z'],
+  biceps: ['M22,54 C19,62 19,70 20,78 C23,80 26,77 27,72 C28,65 28,59 27,55 Z'],
+  forearms: ['M18,86 C15,96 13,108 12,120 L17,122 C20,110 23,99 25,88 Z'],
+  abs: ['M49,60 L43,61 C42,74 42,88 43,104 L49,107 Z'],
+  obliques: ['M41,61 L35,58 C35,74 36,90 38,104 L42,104 C41,90 41,74 41,61 Z'],
+  quads: ['M35,126 C33,140 34,154 37,166 L46,167 C47,154 47,140 45,128 Z'],
+  adductors: ['M46,127 C48,136 48,146 47,154 L49.5,157 L49.5,125 Z'],
+  calves: ['M37.5,180 C36.5,191 37.5,202 39.5,212 L41.5,212 C41,201 41,190 40.5,180 Z'],
+};
+const BODY_BACK = {
+  upback: ['M50,30 L42,35 L33,39 C36,46 40,52 44,57 L50,64 Z'],
+  rdelt: ['M33,39 C27,39 24,43 24,48 C27,51 32,50 35,46 Z'],
+  sdelt: ['M26,39 C22,41 20,45 20,51 L23,53 C23,48 24,44 28,40 Z'],
+  lats: ['M43,58 L34,47 C32,58 33,72 38,86 L47,79 Z'],
+  triceps: ['M22,54 C19,62 19,70 20,78 L26,79 C28,70 28,62 27,55 Z'],
+  forearms: ['M18,86 C15,96 13,108 12,120 L17,122 C20,110 23,99 25,88 Z'],
+  lowback: ['M47,80 L39,88 C39,96 40,103 41,108 L49.5,108 L49.5,78 Z'],
+  glutes: ['M49.5,110 L38,111 C33,118 33,128 37,135 C42,139 47,138 49.5,135 Z'],
+  hams: ['M36,139 C34,151 35,161 38,168 L46,168 C47,159 47,149 46,139 Z'],
+  adductors: ['M47,139 C48,146 48,152 47.5,157 L49.5,159 L49.5,137 Z'],
+  calves: ['M37,177 C34.5,186 35,196 39,205 L44,205 C46.5,196 46.5,186 44.5,177 Z'],
+};
+function bodyFigure(map, tierOf, label) {
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (n, a) => { const x = document.createElementNS(NS, n); for (const [k, v] of Object.entries(a || {})) x.setAttribute(k, v); return x; };
+  const svg = el('svg', { viewBox: '0 0 100 232', class: 'bmap-fig', role: 'img', 'aria-label': label });
+  const base = el('g', { class: 'bm-base' }); for (const d of BODY_BASE) base.append(el('path', { d })); svg.append(base);
+  const g = el('g', {});
+  for (const [id, paths] of Object.entries(map)) {
+    const t = tierOf(id);
+    for (const d of paths) for (const flip of [false, true]) {
+      const p = el('path', { d, class: 'bm-m' + (t ? ' bm-' + t : ''), 'data-m': id });
+      if (flip) p.setAttribute('transform', 'translate(100,0) scale(-1,1)');
+      g.append(p);
+    }
+  }
+  svg.append(g);
+  return svg;
+}
+function bodyMap(m) {
+  const tier = {}; for (const k of ['st', 's', 'p']) for (const id of m[k] || []) tier[id] = k;
+  const tierOf = id => tier[id] || null;
+  const names = k => (m[k] || []).map(id => MUSCLE_NAME[id]);
+  return h('div', { class: 'bmap' },
+    h('div', { class: 'bmap-figs' },
+      h('figure', {}, bodyFigure(BODY_FRONT, tierOf, 'Front: ' + [...names('p'), ...names('s')].join(', ')), h('figcaption', { text: 'Front' })),
+      h('figure', {}, bodyFigure(BODY_BACK, tierOf, 'Back'), h('figcaption', { text: 'Back' }))),
+    h('div', { class: 'bmap-key' },
+      m.p.length ? h('div', { class: 'bk' }, h('i', { class: 'bk-p' }), h('b', { text: 'Primary' }), h('span', { text: names('p').join(', ') })) : null,
+      m.s.length ? h('div', { class: 'bk' }, h('i', { class: 'bk-s' }), h('b', { text: 'Secondary' }), h('span', { text: names('s').join(', ') })) : null,
+      m.st.length ? h('div', { class: 'bk' }, h('i', { class: 'bk-st' }), h('b', { text: 'Stabilisers' }), h('span', { text: names('st').join(', ') })) : null));
+}
 
 /* ---------- custom workouts ---------- */
 function customDays() { return (S.program && S.program.customDays) || {}; }
@@ -2634,9 +2983,9 @@ function addOwnExercise({ name, group, code, measure, back, shoulder }) {
 function makeEntry(ex, date) {
   const p = S.program; const pr = prescription(p, ex, date);
   return {
-    exId: ex.id, name: ex.name, presSets: pr.sets,
+    exId: ex.id, name: ex.name, mode: exMode(ex), presSets: pr.sets,
     pres: { sets: pr.sets, lo: ex.lo, hi: ex.hi, rirLo: pr.rirLo, rirHi: pr.rirHi, weight: ex.weight, tag: pr.tag },
-    sets: Array.from({ length: pr.sets }, () => ({ t: 'N', w: ex.unit === 'bw' ? null : (ex.weight ?? null), r: pr.aim ?? null, done: false })),
+    sets: Array.from({ length: pr.sets }, () => ({ t: 'N', w: ex.unit === 'bw' ? null : (ex.weight ?? null), [qField(exMode(ex))]: pr.aim ?? null, done: false })),
     rir: null, pain: null, shoulderPain: null, note: '', skipped: false,
   };
 }
@@ -2766,7 +3115,7 @@ function viewBuilder() {
       h('button', { class: 'link', type: 'button', text: 'Move up', disabled: i === 0, onclick: () => { [b.items[i - 1], b.items[i]] = [b.items[i], b.items[i - 1]]; renderMain(); } }),
       h('button', { class: 'link', type: 'button', text: 'Move down', disabled: i === b.items.length - 1, onclick: () => { [b.items[i + 1], b.items[i]] = [b.items[i], b.items[i + 1]]; renderMain(); } }),
       h('button', { class: 'link danger-link', type: 'button', text: 'Remove', onclick: () => { b.items.splice(i, 1); renderMain(); } }));
-    const it = programItem(ex); if (!ex.custom) { const ed = it.querySelector('button.link'); if (ed) ed.remove(); }
+    const it = programItem(ex); if (!ex.custom) { const ed = it.querySelector('button.edit-btn'); if (ed) ed.remove(); }
     list.append(h('div', { class: 'bitem' }, it, ctr));
   });
   card.append(list, h('button', { class: 'btn block', type: 'button', id: 'b-add', text: '+ Add exercises', onclick: () => openPicker(id => { if (!b.items.includes(id)) b.items.push(id); }, { multi: true, title: 'Add exercises', onClose: renderMain }) }));
@@ -3009,7 +3358,7 @@ function resultsBlock(sum) {
   box.append(dl);
   if (G.prs.length) {
     const pl = h('div', { class: 'prlist' });
-    for (const x of G.prs) pl.append(h('div', { class: 'pritem' }, h('span', { class: 'pr-flag', text: 'PR' }), h('div', {}, h('b', { text: x.name }), h('div', { class: 'small', text: (() => { const pe = S.program.exercises[x.exId] || {}; const u = wUnit(pe); return `${pe.unit === 'kg added' ? '+' : ''}${fmtD(pe, x.w)} ${u} × ${x.r}: about ${Math.round(toD(pe, x.v))} ${u} estimated 1-rep max, up from ${Math.round(toD(pe, x.prior))} ${u}`; })() }))));
+    for (const x of G.prs) pl.append(h('div', { class: 'pritem' }, h('span', { class: 'pr-flag', text: 'PR' }), h('div', {}, h('b', { text: x.name }), h('div', { class: 'small', text: prText(x) }))));
     [...pl.children].forEach((el, i) => el.style.setProperty('--i', String(i)));
     box.append(pl);
   }
@@ -3277,6 +3626,7 @@ function viewLogger() {
     h('button', { class: 'btn', type: 'button', text: 'Keep logging', onclick: () => { S.discardConfirm = false; renderMain(); } })));
   root.append(fin);
   queueMicrotask(updateLive);
+  if (a.hold && !holdEl) queueMicrotask(showHold);
   return root;
 }
 /* Finish card: cues to send himself before the next workout, as a Claude notification at about 6 pm that day. */
@@ -3304,9 +3654,9 @@ function updateLive() {
   let tot = 0, done = 0, prs = 0;
   for (const e of a.entries) {
     if (e.skipped) continue;
-    const ps = e.presSets || workSets(e).length; const d = Math.min(ps, workSets(e).filter(x => x.done && Number(x.r) > 0).length);
+    const ps = e.presSets || workSets(e).length; const d = Math.min(ps, doneWork(e).length);
     for (let k = 0; k < ps; k++) segs.push({ on: k < d, gap: k === 0 && segs.length > 0 });
-    tot += ps; done += d; if (e.prShown) prs++;
+    tot += ps; done += d; if (e.prShown || (e.prShownBy && Object.keys(e.prShownBy).length)) prs++;
   }
   const box = el.querySelector('.segs');
   if (box.children.length !== segs.length) box.replaceChildren(...segs.map(sg => h('i', { class: sg.gap ? 'gap' : null })));
@@ -3430,17 +3780,15 @@ function notesBlock(e, idx) {
 /* ---------- live tier-ups ----------
    The moment a ticked set lifts an exercise to a new rank, or to a new strength tier against bodyweight, it's celebrated. */
 function livePoint(p, ex, e) {
-  const done = workSets(e).filter(x => x.done && Number(x.r) > 0);
-  if (!done.length) return null;
-  let best = null, maxR = 0;
-  for (const x of done) { const r = Number(x.r); maxR = Math.max(maxR, r); const v = setE1(p, ex, x.w, r); if (v != null && (!best || v > best.v)) best = { v, w: x.w, r }; }
-  return { sid: S.active.id, date: S.active.date, src: 'app', e1: best ? best.v : null, bw: best ? best.w : null, br: best ? best.r : null, maxR, sets: done.length };
+  const only = { ...e, sets: workSets(e).filter(x => x.done) };
+  return trendPoint(p, { id: S.active.id, date: S.active.date, source: 'app' }, only);
 }
 function tierUpCheck(e) {
   const p = S.program; const ex = p.exercises[e.exId]; if (!ex || !S.active) return;
   const pt = livePoint(p, ex, e); if (!pt) return;
   const name = trendName(e); const key = name.toLowerCase();
-  const base = allTrends().find(t => t.key === key) || { key, name, unit: ex.unit, lb: isLb(ex), exIds: new Set([ex.id]), pts: [] };
+  const base = allTrends().find(t => t.key === key) || { key, name, unit: ex.unit, lb: isLb(ex), mode: exMode(ex), exIds: new Set([ex.id]), pts: [] };
+  if (pt.mode !== base.mode) return;
   const pts = base.pts.filter(q => q.sid !== S.active.id);
   const before = { ...base, pts, hasLoad: pts.some(q => q.e1 != null) };
   const after = { ...base, pts: [...pts, pt], hasLoad: pts.some(q => q.e1 != null) || pt.e1 != null };
@@ -3465,15 +3813,32 @@ function showTierUp(ups) {
   const u = ups[0];
   const detail = u.kind === 'lift'
     ? `About ${Math.round(toD(u.ex, u.v))} ${wUnit(u.ex)} estimated 1-rep max, ${(u.v / S.program.bodyweight).toFixed(2)}× your bodyweight.`
-    : `${u.R.m === 'reps' ? `Best ${Math.round(u.R.best)} reps` : `Best estimated 1-rep max ${fmtMetric('e1', u.R.best, u.t)}`}${u.R.n > 1 ? `, ${u.R.imp >= 0 ? 'up' : 'down'} ${Math.abs(Math.round(u.R.imp * 1000) / 10)}% since your first session here` : ''}.`;
+    : `${u.R.m === 'reps' ? `Best ${Math.round(u.R.best)} reps` : u.R.m === 'score' ? `Best score ${Math.round(u.R.best)}` : `Best estimated 1-rep max ${fmtMetric('e1', u.R.best, u.t)}`}${u.R.n > 1 ? `, ${u.R.imp >= 0 ? 'up' : 'down'} ${Math.abs(Math.round(u.R.imp * 1000) / 10)}% since your first session here` : ''}.`;
   Fx.rankUp({ eyebrow: u.kind === 'lift' ? 'Strength tier up' : 'Exercise rank up', name: u.name, tier: u.tier, from: u.from,
     lines: [detail, ...ups.slice(1).map(x => `${x.kind === 'lift' ? 'Strength tier' : 'Rank'} on ${x.name} too: ${x.tier.name}.`)],
     pct: u.standing ? pctText(u.standing.pct) : null });
 }
-function prCelebrate(e, ex, s, v, oldV) {
+function prCelebrate(e, ex, s, hit, oldV) {
+  const mode = entMode(e, ex); const v = hit.v;
+  const lift = setLine(ex, mode, s.w, setQ(s, mode));
+  if (hit.kind === 'hold' || hit.kind === 'dist') { Fx.pr({ name: e.name, lift, oldV, newV: v, unit: hit.kind === 'hold' ? 's' : 'm', what: hit.kind === 'hold' ? 'longest hold' : 'longest distance' }); return; }
+  if (hit.kind === 'holdw' || hit.kind === 'distw') { Fx.pr({ name: e.name, lift, oldV: toD(ex, oldV), newV: toD(ex, v), unit: (ex.unit === 'kg added' ? '+' : '') + wUnit(ex), what: hit.kind === 'holdw' ? 'heaviest hold' : 'heaviest carry' }); return; }
   let pct = null;
   try { if (LIFTER_MAP[e.exId]) { const st = lifterStanding(new Set([e.exId]), trendsCached().find(x => x.exIds.has(e.exId)) || null, v); if (st) pct = pctText(st.pct); } } catch (er) {}
   Fx.pr({ name: e.name, lift: s.w == null ? `${s.r} reps` : `${wShow(ex, s.w)} × ${s.r}`, oldV: toD(ex, oldV), newV: toD(ex, v), unit: wUnit(ex), pct });
+}
+/* Muscles worked, under an exercise name: primary bright, secondary dimmer, stabilisers counted. A tap opens the body map. */
+function muscleChips(ex, name) {
+  const m = musclesOf(ex, name); if (!m.p.length && !m.s.length) return null;
+  const nm = id => MUSCLE_SHORT[id] || MUSCLE_NAME[id];
+  const all = [...m.p.map(id => MUSCLE_NAME[id]), ...m.s.map(id => MUSCLE_NAME[id])].join(', ');
+  return h('button', { class: 'mchips', type: 'button', 'aria-label': `Muscles: ${all}. Open the body map`, onclick: ev => { ev.stopPropagation(); openMuscleMap(ex, name); } },
+    m.p.map(id => h('span', { class: 'mchip p', text: nm(id) })), m.s.map(id => h('span', { class: 'mchip s', text: nm(id) })),
+    m.st.length ? h('span', { class: 'mchip st', text: `+${m.st.length} stabiliser${m.st.length === 1 ? '' : 's'}` }) : null);
+}
+function openMuscleMap(ex, name) {
+  Fx.snd.tap(); Fx.hap(1);
+  Fx.sheet({ title: ex ? ex.name : name, body: bodyMap(musclesOf(ex, name)), items: [{ label: 'Close' }] });
 }
 
 function standingChip(e, ex) {
@@ -3488,7 +3853,7 @@ function ratingsDone(e) {
   const ex = S.program.exercises[e.exId] || {};
   return e.rir != null && (!ex.back || e.pain != null) && (!ex.shoulder || e.shoulderPain != null);
 }
-function entryDone(e) { const presN = e.presSets || (e.pres && e.pres.sets) || workSets(e).length; return workSets(e).filter(x => x.done && Number(x.r) > 0).length >= presN; }
+function entryDone(e) { const presN = e.presSets || (e.pres && e.pres.sets) || workSets(e).length; return doneWork(e).length >= presN; }
 /* A finished exercise folds away once its ratings are in, or once a later exercise has a ticked set. Tapping it opens it again. */
 function curIdx() {
   const a = S.active;
@@ -3520,11 +3885,12 @@ function refold(changedIdx) {
   });
 }
 function setSummary(ex, e) {
-  const sets = workSets(e).filter(x => x.done && Number(x.r) > 0);
-  const drops = e.sets.filter(x => setT(x) === 'D' && x.done && Number(x.r) > 0).length;
+  const mode = entMode(e, ex);
+  const sets = doneWork(e);
+  const drops = e.sets.filter(x => setT(x) === 'D' && x.done && sq(e, x) > 0).length;
   if (!sets.length) return drops ? `${drops} drop${drops === 1 ? '' : 's'}` : 'No sets ticked';
   const ws = [...new Set(sets.map(x => fmtD(ex, x.w)))];
-  const reps = sets.map(x => x.r).join(', ');
+  const reps = sets.map(x => setQ(x, mode)).join(', ') + Q_UNIT[mode];
   const w = ex.unit === 'bw' || sets.every(x => x.w == null) ? 'BW' : ws.length === 1 ? `${ex.unit === 'kg added' ? '+' : ''}${ws[0]} ${wUnit(ex)}` : `${ws.join('/')} ${wUnit(ex)}`;
   return `${w} × ${reps}${drops ? ` · ${drops} drop${drops === 1 ? '' : 's'}` : ''}${e.rir != null ? ` · RIR ${rirText(e.rir)}` : ''}${e.pain != null ? ` · back ${e.pain}` : ''}${e.shoulderPain != null ? ` · shoulder ${e.shoulderPain}` : ''}`;
 }
@@ -3545,8 +3911,8 @@ function unitSwitch(ex, idx) {
   return h('div', { class: 'seg unit-sw', role: 'group', 'aria-label': 'Weight unit' }, ['kg', 'lb'].map(u => h('button', { class: 'seg-b', type: 'button', 'aria-pressed': String(cur === u), text: u,
     onclick: () => { if (u === wUnit(ex)) return; Fx.snd.tap(); Fx.hap(1); switchUnit(ex, idx, u); } })));
 }
-function addSet(e, idx) { const last = loggedSets(e)[loggedSets(e).length - 1] || {}; e.sets.push({ t: 'N', w: last.w ?? null, r: last.r ?? null, done: false }); Fx.snd.tap(); saveDraftSoon(); rerenderCard(idx); }
-function addWarmSet(e, idx) { let at = 0; e.sets.forEach((x, j) => { if (setT(x) === 'W') at = j + 1; }); e.sets.splice(at, 0, { t: 'W', w: null, r: 5, done: false }); Fx.snd.tap(); saveDraftSoon(); rerenderCard(idx); }
+function addSet(e, idx) { const last = loggedSets(e)[loggedSets(e).length - 1] || {}; const f = qField(entMode(e, entryEx(e))); const ns = { t: 'N', w: last.w ?? null, [f]: last[f] ?? null, done: false }; if (f === 'metres' && last.secs != null) ns.secs = last.secs; e.sets.push(ns); Fx.snd.tap(); saveDraftSoon(); rerenderCard(idx); }
+function addWarmSet(e, idx) { let at = 0; e.sets.forEach((x, j) => { if (setT(x) === 'W') at = j + 1; }); const md = entMode(e, entryEx(e)); const ex0 = entryEx(e); e.sets.splice(at, 0, { t: 'W', w: null, [qField(md)]: md === 'reps' ? 5 : Math.max(5, Math.round(((ex0 && ex0.lo) || 10) / 2)), done: false }); Fx.snd.tap(); saveDraftSoon(); rerenderCard(idx); }
 /* Removes one set, any row. Next-set prompt records point at set positions, so the ones after it move up one; a record for the deleted set goes with it. */
 function deleteSet(e, idx, si) {
   closeSwipe();
@@ -3660,17 +4026,23 @@ function wShow(ex, kg) { return `${ex.unit === 'kg added' ? '+' : ''}${fmtD(ex, 
 /* Rules-based, instant: what the next set should be when a logged N or F set lands far from the plan. null = no prompt. */
 function devEval(p, ex, e, si) {
   const s = e.sets[si]; if (!s || !ex) return null;
-  if (!T_WORK[setT(s)] || !s.done || !(Number(s.r) > 0) || ex.cond) return null;
+  const mode = entMode(e, ex);
+  if (!T_WORK[setT(s)] || !s.done || !(setQ(s, mode) > 0) || ex.cond) return null;
   if (!e.sets.some((x, j) => j > si && !x.done && setT(x) !== 'W')) return null;
   const pres = e.pres || {}; const lo = pres.lo ?? ex.lo, hi = pres.hi ?? ex.hi;
   if (lo == null || hi == null) return null;
   const dev = devSettings(p);
-  const w = s.w == null ? null : Number(s.w), r = Number(s.r);
+  const w = s.w == null ? null : Number(s.w), r = setQ(s, mode);
   if ((e.devs || []).some(d => d.si === si && d.w === w && d.r === r)) return null; // already shown for these numbers
   const used = (e.devs || []).filter(d => d.used && d.sugW != null);
   const base = used.length ? used[used.length - 1].sugW : pres.weight;
   const noLoad = ex.unit === 'bw' || !(w > 0); // bodyweight, or nothing on the bar to change
-  const short = r <= lo - dev.reps, over = r >= hi + dev.reps; // "outside the range by" dev.reps or more
+  // reps: outside the range by dev.reps or more. Seconds and metres: by twice the weight threshold, as a share (20% by default).
+  const qf = 2 * dev.pct / 100;
+  const short = mode === 'reps' ? r <= lo - dev.reps : r <= lo * (1 - qf) + 1e-9;
+  const over = mode === 'reps' ? r >= hi + dev.reps : r >= hi * (1 + qf) - 1e-9;
+  const U = Q_UNIT[mode]; const X = n => (mode === 'time' ? ` for ${n} s` : mode === 'distance' ? ` × ${n} m` : ` × ${n}`);
+  const R = qText(mode, r);
   const wKnown = !noLoad && base > 0;
   const off = wKnown ? (w - base) / base : 0;
   const heavy = wKnown && off >= dev.pct / 100 - 1e-9, light = wKnown && -off >= dev.pct / 100 - 1e-9;
@@ -3678,21 +4050,22 @@ function devEval(p, ex, e, si) {
   const step = stepKg(ex); const W = noLoad ? null : wShow(ex, w);
   const rng = lo === hi ? `${lo}` : `${lo}–${hi}`;
   const out = { si, w, r, sugR: lo };
-  if (short && noLoad) return { ...out, kind: 'short', sugW: null, pre: `Only ${r}.`, b: `Next set: aim for ${lo}, stop 2 before failure.` };
-  if (short && pres.weight > 0 && w <= pres.weight * 0.8 + 1e-9) return { ...out, kind: 'short-floor', sugW: w, pre: `Still short at ${W}.`, b: `Keep ${W}, stop 2 reps before failure, and note how it felt.` };
+  const RNG = mode === 'reps' ? rng : `${rng}${U}`;
+  if (short && noLoad) return { ...out, kind: 'short', sugW: null, pre: `Only ${R}.`, b: mode === 'reps' ? `Next set: aim for ${lo}, stop 2 before failure.` : `Next set: aim for ${lo}${U}, and stop before your form goes.` };
+  if (short && pres.weight > 0 && w <= pres.weight * 0.8 + 1e-9) return { ...out, kind: 'short-floor', sugW: w, pre: `Still short at ${W}.`, b: mode === 'reps' ? `Keep ${W}, stop 2 reps before failure, and note how it felt.` : `Keep ${W} and note how it felt.` };
   if (short) {
     let sugW = roundW(ex, Math.min(w * 0.9, w - step)); if (!(sugW > 0)) sugW = roundW(ex, w * 0.9);
-    return { ...out, kind: 'short', sugW, pre: `Only ${r} at ${W}.`, b: `Next set: ${wShow(ex, sugW)} × ${lo}.` };
+    return { ...out, kind: 'short', sugW, pre: `Only ${R} at ${W}.`, b: `Next set: ${wShow(ex, sugW)}${X(lo)}.` };
   }
-  if (over && noLoad) return { ...out, kind: 'over', sugW: null, pre: `${r} is well past the range.`, b: 'Make it harder next set: slower, paused, or single-leg.' };
+  if (over && noLoad) return { ...out, kind: 'over', sugW: null, pre: `${R} is well past the range.`, b: mode === 'time' ? 'Add a little weight next set, or keep it and stop at the target.' : mode === 'distance' ? 'Add load next set, or keep it and stop at the target distance.' : 'Make it harder next set: slower, paused, or single-leg.' };
   if (over) {
     let sugW = roundW(ex, Math.max(w * 1.05, w + step));
     if (ex.maxW && sugW > ex.maxW) sugW = ex.maxW;
-    if (sugW <= w + 1e-6) return { ...out, kind: 'over', sugW: w, pre: `${r} at ${W} is well past the range.`, b: 'Heaviest you have: slow the lowering to 3 s instead.' };
-    return { ...out, kind: 'over', sugW, pre: `${r} at ${W} is well past the range.`, b: `Next set: ${wShow(ex, sugW)} × ${rng}.` };
+    if (sugW <= w + 1e-6) return { ...out, kind: 'over', sugW: w, pre: `${R} at ${W} is well past the range.`, b: mode === 'reps' ? 'Heaviest you have: slow the lowering to 3 s instead.' : 'Heaviest you have: keep it and stop at the top of the range.' };
+    return { ...out, kind: 'over', sugW, pre: `${R} at ${W} is well past the range.`, b: `Next set: ${wShow(ex, sugW)}${X(RNG.replace(U, ''))}.` };
   }
   if (heavy) return { ...out, kind: 'heavy', sugW: w, pre: 'Heavier than planned and still in range.', b: `Stay at ${W} for the rest.` };
-  return { ...out, kind: 'light', sugW: base, pre: 'Lighter than planned.', b: `Next set: back to ${wShow(ex, base)} × ${rng}, or keep ${W} if something hurt.` };
+  return { ...out, kind: 'light', sugW: base, pre: 'Lighter than planned.', b: `Next set: back to ${wShow(ex, base)}${X(RNG.replace(U, ''))}, or keep ${W} if something hurt.` };
 }
 function devRecord(d, used) { return { si: d.si, w: d.w, r: d.r, kind: d.kind, sugW: d.sugW, sugR: d.sugR, used, ts: nowIso() }; }
 function devCardEl(e, idx, d) {
@@ -3703,7 +4076,7 @@ function devCardEl(e, idx, d) {
       e.sets.forEach((x, j) => {
         if (j <= d.si || x.done || setT(x) === 'W') return;
         if (d.sugW != null) x.w = d.sugW;
-        if (first) { x.r = d.sugR; first = false; }
+        if (first) { x[qField(entMode(e, entryEx(e)))] = d.sugR; first = false; }
       });
       e.devs = [...(e.devs || []), devRecord(d, true)]; devOpen.delete(e);
       saveDraftSoon(); rerenderCard(idx);
@@ -3731,14 +4104,16 @@ function devClose(e, si) {
   const idx = entryIdx(e); const card = document.getElementById('ex-' + idx);
   if (card) card.querySelectorAll('.dev-card').forEach(x => x.remove());
 }
+const PLAY_SM = () => { const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); s.setAttribute('viewBox', '0 0 24 24'); s.setAttribute('aria-hidden', 'true'); const p = document.createElementNS('http://www.w3.org/2000/svg', 'path'); p.setAttribute('d', 'M8 5.5v13l10.5-6.5z'); p.setAttribute('fill', 'currentColor'); s.append(p); return s; };
 function setGrid(e, idx, ex) {
   const list = e.sets;
   const bw = ex.unit === 'bw';
-  const g = getGame(); const prior = g ? g.best[exKey(e)] : null;
-  const isPR = st => !!T_WORK[setT(st)] && st.done && prior != null && (setE1(S.program, ex, st.w, Number(st.r)) || 0) > prior + 0.5;
-  const grid = h('div', { class: 'sets' }, h('div', { class: 'sets-hd' },
-    h('span', { class: 'hd', text: 'Type' }), h('span', { class: 'hd', text: ex.unit === 'kg added' ? `+${wUnit(ex)}` : bw ? 'Load' : wUnit(ex) }),
-    h('span', { class: 'hd', text: ex.repUnit === 'm' ? 'Metres' : ex.repUnit === 's' ? 'Seconds' : 'Reps' }), h('span', { class: 'hd', text: 'Done' })));
+  const mode = entMode(e, ex); const f = qField(mode);
+  const g = getGame(); const best = g ? g.best : null;
+  const isPR = st => !!setPR(S.program, e, ex, st, best);
+  const wHead = ex.unit === 'kg added' ? `+${wUnit(ex)}` : bw ? 'Load' : wUnit(ex);
+  const heads = mode === 'time' ? ['Type', wHead, 'Seconds', 'Hold', 'Done'] : mode === 'distance' ? ['Type', wHead, 'Metres', 'Secs', 'Done'] : ['Type', wHead, 'Reps', 'Done'];
+  const grid = h('div', { class: 'sets mode-' + mode }, h('div', { class: 'sets-hd' }, heads.map(t => h('span', { class: 'hd', text: t }))));
   const open = devOpen.get(e);
   let ord = 0;
   list.forEach((s, si) => {
@@ -3754,34 +4129,47 @@ function setGrid(e, idx, ex) {
       saveDraftSoon(); rerenderCard(idx);
     });
     const tagBtn = h('span', { class: 'set-tag', 'data-t': t }, h('b', { text: t, 'aria-hidden': 'true' }), isW ? null : h('small', { text: String(n), 'aria-hidden': 'true' }), pick);
-    const wIn = bw ? h('span', { class: 'bw-cell', text: ex.cond ? '–' : 'BW' }) : h('input', { class: 'num-in', type: 'number', inputmode: 'decimal', step: '0.5', min: '0', id: `w-${idx}-${si}`, 'aria-label': `${label} weight`, value: s.w == null ? '' : fmtD(ex, s.w), placeholder: isW && s.w == null ? (s.why && /bodyweight/.test(s.why) ? 'BW' : 'light') : '–' });
-    const rIn = h('input', { class: 'num-in', type: 'number', inputmode: 'numeric', step: '1', min: '0', id: `r-${idx}-${si}`, 'aria-label': `${label} ${ex.repUnit === 'm' ? 'metres' : ex.repUnit === 's' ? 'seconds' : 'reps'}`, value: s.r == null ? '' : String(s.r), placeholder: '–' });
+    const wIn = bw ? h('span', { class: 'bw-cell', text: ex.cond ? '–' : 'BW' }) : h('input', { class: 'num-in', type: 'number', inputmode: 'decimal', step: '0.5', min: '0', id: `w-${idx}-${si}`, 'aria-label': `${label} ${ex.unit === 'kg added' ? 'added weight' : 'weight'}`, value: s.w == null ? '' : fmtD(ex, s.w), placeholder: ex.unit === 'kg added' && mode !== 'reps' ? '0' : isW && s.w == null ? (s.why && /bodyweight/.test(s.why) ? 'BW' : 'light') : '–' });
+    const qv = s[f] ?? (mode !== 'reps' ? s.r : null);
+    const rIn = h('input', { class: 'num-in', type: 'number', inputmode: 'numeric', step: '1', min: '0', id: `r-${idx}-${si}`, 'aria-label': `${label} ${Q_WORD[mode]}`, value: qv == null ? '' : String(qv), placeholder: '–' });
+    const tIn = mode === 'distance' ? h('input', { class: 'num-in sec-in', type: 'number', inputmode: 'numeric', step: '1', min: '0', id: `t-${idx}-${si}`, 'aria-label': `${label} time in seconds (optional)`, value: s.secs == null ? '' : String(s.secs), placeholder: '–' }) : null;
     const readW = () => { if (!bw && wIn.value !== (s.w == null ? '' : fmtD(ex, s.w))) s.w = fromD(ex, num(wIn.value)); };
+    const readQ = () => { s[f] = num(rIn.value); if (f !== 'r') delete s.r; if (tIn) s.secs = num(tIn.value); };
     if (!bw) wIn.addEventListener('input', () => {
       readW();
       // the typed weight carries to later not-done working sets; W rows never cascade, and W and D rows are skipped
       if (!isW) for (let j = si + 1; j < list.length; j++) { if (!list[j].done && T_WORK[setT(list[j])]) { list[j].w = s.w; const o = document.getElementById(`w-${idx}-${j}`); if (o) o.value = s.w == null ? '' : fmtD(ex, s.w); } }
       saveDraftSoon();
     });
-    rIn.addEventListener('input', () => { s.r = num(rIn.value); saveDraftSoon(); });
+    rIn.addEventListener('input', () => { readQ(); saveDraftSoon(); });
+    if (tIn) tIn.addEventListener('input', () => { readQ(); saveDraftSoon(); });
     // a tap selects what's there, so typing replaces it
-    for (const inp of [wIn, rIn]) if (inp.tagName === 'INPUT') inp.addEventListener('focus', () => setTimeout(() => { try { if (document.activeElement === inp) inp.select(); } catch (er) {} }, 0));
+    for (const inp of [wIn, rIn, tIn]) if (inp && inp.tagName === 'INPUT') inp.addEventListener('focus', () => setTimeout(() => { try { if (document.activeElement === inp) inp.select(); } catch (er) {} }, 0));
     const doneBtn = h('button', { class: 'done-btn', type: 'button', 'data-si': String(si), 'aria-pressed': String(!!s.done), 'aria-label': `Mark ${isW ? 'warm-up set' : `set ${n}`} done` }, CHECK_SVG());
     doneBtn.addEventListener('click', () => {
       const t = setT(s); const xp0 = liveXp();
-      s.done = !s.done; readW(); s.r = num(rIn.value);
+      s.done = !s.done; readW(); readQ();
       doneBtn.setAttribute('aria-pressed', String(s.done)); rowEl.classList.toggle('done', s.done);
+      if (holdBtn) holdBtn.hidden = !!s.done;
       if (T_WORK[t]) {
-        const pr = isPR(s); rowEl.classList.toggle('pr', pr);
-        if (pr) { const v = setE1(S.program, ex, s.w, Number(s.r)); if (v > (e.prShown || 0)) { const was = Math.max(prior, e.prShown || 0); e.prShown = v; prCelebrate(e, ex, s, v, was); const pf = document.querySelector(`#ex-${idx} .pr-flag`); if (pf) { pf.hidden = false; pf.classList.remove('fresh'); void pf.offsetWidth; pf.classList.add('fresh'); } } }
-        const prog = document.querySelector(`#ex-${idx} .ex-prog`); const presN = e.presSets || (e.pres && e.pres.sets) || workSets(e).length; const dn = workSets(e).filter(x => x.done && Number(x.r) > 0).length;
+        const hit = setPR(S.program, e, ex, s, best); rowEl.classList.toggle('pr', !!hit);
+        if (hit) {
+          const shown = hit.kind === 'e1' ? (e.prShown || 0) : ((e.prShownBy || {})[hit.kind] ?? -Infinity);
+          if (hit.v > shown) {
+            const was = Math.max(hit.prior, hit.kind === 'e1' ? (e.prShown || 0) : shown);
+            if (hit.kind === 'e1') e.prShown = hit.v; else e.prShownBy = { ...(e.prShownBy || {}), [hit.kind]: hit.v };
+            prCelebrate(e, ex, s, hit, was);
+            const pf = document.querySelector(`#ex-${idx} .pr-flag`); if (pf) { pf.hidden = false; pf.classList.remove('fresh'); void pf.offsetWidth; pf.classList.add('fresh'); }
+          }
+        }
+        const prog = document.querySelector(`#ex-${idx} .ex-prog`); const presN = e.presSets || (e.pres && e.pres.sets) || workSets(e).length; const dn = doneWork(e).length;
         if (prog) prog.textContent = `${dn}/${presN}`;
         const card = document.getElementById('ex-' + idx); if (card) card.classList.toggle('is-done', dn >= presN);
         if (s.done) { try { tierUpCheck(e); } catch (er) {} }
         const chip = document.querySelector(`#ex-${idx} .pct-chip`); if (chip) { const nc = standingChip(e, ex); if (nc) chip.replaceWith(nc); }
       }
       const nextIsNotW = list.slice(si + 1).every(x => setT(x) !== 'W' || x.done);
-      if (s.done) startRest(ex.id, t === 'W' ? { warm: true, last: nextIsNotW } : null);
+      if (s.done) startRest(ex.id, t === 'W' ? { warm: true, last: nextIsNotW } : null, { e, si });
       if (T_WORK[t]) { if (s.done) devCheck(e, idx, si); else devClose(e, si); }
       saveDraftSoon(); updateFinishCount();
       if (s.done) {
@@ -3798,13 +4186,16 @@ function setGrid(e, idx, ex) {
       }
       if (t !== 'W') refold(idx);
     });
+    // timed sets: Start opens the hold timer for this set
+    const holdBtn = mode === 'time' ? h('button', { class: 'hold-btn', type: 'button', 'aria-label': `Start the hold timer for ${isW ? 'this warm-up set' : `set ${n}`}`, hidden: s.done || null, onclick: () => { readW(); readQ(); openHold(e, idx, si); } }, PLAY_SM(), h('span', { text: 'Start' })) : null;
+    const holdCell = mode === 'time' ? h('div', { class: 'hold-cell' }, holdBtn) : null;
     // swipe left to reveal Delete: the cells slide over a red button
-    const cells = h('div', { class: 'set-cells' }, tagBtn, wIn, rIn, doneBtn);
+    const cells = h('div', { class: 'set-cells' }, tagBtn, wIn, rIn, holdCell, tIn, doneBtn);
     const del = h('button', { class: 'set-del', type: 'button', tabindex: '-1', 'aria-label': `Delete ${isW ? 'this warm-up set' : `set ${n}`}`, text: 'Delete', onclick: () => deleteSet(e, idx, si) });
     rowEl.append(h('div', { class: 'set-swipe' }, del, cells));
     swipeRow(rowEl, cells);
     if (open && open.si === si) {
-      if (s.done && T_WORK[t] && open.w === (s.w == null ? null : Number(s.w)) && open.r === Number(s.r)) rowEl.append(devCardEl(e, idx, open));
+      if (s.done && T_WORK[t] && open.w === (s.w == null ? null : Number(s.w)) && open.r === setQ(s, mode)) rowEl.append(devCardEl(e, idx, open));
       else devOpen.delete(e);
     }
     grid.append(rowEl);
@@ -3815,9 +4206,9 @@ function exCard(e, idx) {
   const p = S.program; const ex = p.exercises[e.exId] || { name: e.name, unit: 'kg', lo: 1, hi: 1 };
   const pr = e.pres || {};
   const presN = e.presSets || pr.sets || workSets(e).length;
-  const doneN = () => workSets(e).filter(x => x.done && Number(x.r) > 0).length;
-  const g = getGame(); const prior = g ? g.best[exKey(e)] : null;
-  const anyPR = workSets(e).some(st => st.done && prior != null && (setE1(p, ex, st.w, Number(st.r)) || 0) > prior + 0.5);
+  const doneN = () => doneWork(e).length;
+  const g = getGame();
+  const anyPR = workSets(e).some(st => !!setPR(p, e, ex, st, g ? g.best : null));
   const folded = isFolded(e, idx);
   const card = h('section', { class: 'ex' + (e.skipped ? ' is-skipped' : '') + (!e.skipped && doneN() >= presN ? ' is-done' : '') + (folded ? ' folded' : ''), id: 'ex-' + idx });
   if (folded) {
@@ -3832,12 +4223,12 @@ function exCard(e, idx) {
   const progEl = h('span', { class: 'ex-prog', text: `${doneN()}/${presN}` });
   const prFlag = h('span', { class: 'pr-flag', text: 'PR', hidden: !anyPR });
   card.append(h('div', { class: 'ex-head' },
-    h('div', { class: 'stack', style: 'gap:6px' }, h('span', { class: 'ex-num' }, `${idx + 1} of ${S.active.entries.length}`, e.skipped ? null : progEl, prFlag, standingChip(e, ex)), h('h3', { text: e.name })),
+    h('div', { class: 'stack', style: 'gap:6px;min-width:0' }, h('span', { class: 'ex-num' }, `${idx + 1} of ${S.active.entries.length}`, e.skipped ? null : progEl, prFlag, standingChip(e, ex)), h('h3', { text: e.name }), muscleChips(p.exercises[e.exId] || null, e.name)),
     h('button', { class: 'more-btn', type: 'button', 'aria-label': `More actions for ${e.name}`, onclick: () => exMenu(e, idx, ex) }, DOTS_SVG())));
   if (e.swappedFrom) card.append(h('p', { class: 'small muted', text: `Swapped in today for ${e.swappedFrom}.` }));
   const usw = e.skipped ? null : unitSwitch(ex, idx);
   card.append(h('div', { class: 'pres' },
-    usw ? h('div', { class: 'pres-top' }, h('span', { class: 'w', text: fmtW(ex, pr.weight) }), usw) : h('span', { class: 'w', text: fmtW(ex, pr.weight) }),
+    usw ? h('div', { class: 'pres-top' }, h('span', { class: 'w' + (fmtW(ex, pr.weight).length > 9 ? ' long' : ''), text: fmtW(ex, pr.weight) }), usw) : h('span', { class: 'w' + (fmtW(ex, pr.weight).length > 9 ? ' long' : ''), text: fmtW(ex, pr.weight) }),
     h('span', { class: 'sr', text: `${pr.sets} × ${repsLabel({ ...ex, lo: pr.lo, hi: pr.hi })} · ${rirLabel(pr.rirLo, pr.rirHi)}` })));
   if (pr.tag) card.append(h('div', {}, h('span', { class: 'tag', text: pr.tag })));
   if (ex.maxW && pr.weight != null && pr.weight >= ex.maxW - 0.01) card.append(h('div', {}, h('span', { class: 'tag', text: 'The heaviest you have: slow the lowering instead of adding weight' })));
@@ -3862,7 +4253,8 @@ function exCard(e, idx) {
   // ratings arrive when they are needed: after the last set, or earlier from the menu
   const rateOpen = entryDone(e) || e.rir != null || e.pain != null || e.shoulderPain != null || e.rateOpen === true;
   const rateIn = h('div', {});
-  rateIn.append(chipGroup('Last set: reps left in the tank (0 = failure)', RIR_OPTS, e.rir, v => { e.rir = v; saveDraftSoon(); if (v != null && ratingsDone(e)) { Fx.snd.done(); Fx.hap(2); } else Fx.snd.tap(); refold(idx); }));
+  const md = entMode(e, ex);
+  rateIn.append(chipGroup(md === 'time' ? 'Last hold: how much was left in the tank (0 = couldn’t hold any longer)' : md === 'distance' ? 'Last set: how much was left in the tank (0 = couldn’t go further)' : 'Last set: reps left in the tank (0 = failure)', RIR_OPTS, e.rir, v => { e.rir = v; saveDraftSoon(); if (v != null && ratingsDone(e)) { Fx.snd.done(); Fx.hap(2); } else Fx.snd.tap(); refold(idx); }));
   if (ex.back) rateIn.append(painSlider('Back pain during this exercise (0–10)', e.pain, v => { e.pain = v; saveDraftSoon(); if (v != null && ratingsDone(e)) { Fx.snd.done(); Fx.hap(2); } refold(idx); }));
   if (ex.shoulder) rateIn.append(painSlider('Left shoulder pain during this exercise (0–10)', e.shoulderPain ?? null, v => { e.shoulderPain = v; saveDraftSoon(); if (v != null && ratingsDone(e)) { Fx.snd.done(); Fx.hap(2); } refold(idx); }));
   card.append(h('div', { class: 'rate' + (rateOpen ? ' open' : '') }, rateIn));
@@ -3882,9 +4274,111 @@ function updateFinishCount() {
   updateLive();
 }
 
+/* ---------- hold timer ----------
+   Start on a timed set: 3-2-1, then it counts up. At the set's target it chimes and buzzes once and keeps counting.
+   Stop writes the whole seconds into the set and ticks it, which starts the rest timer as usual.
+   Everything runs off timestamps kept in the session draft (S.active.hold), so a locked screen or a reload loses nothing,
+   and Wake Lock keeps the screen on while it runs. */
+const HOLD_LEAD = 3000;
+let holdTick = null, holdEl = null;
+function holdCtx() {
+  const a = S.active; const H = a && a.hold; if (!H) return null;
+  const e = a.entries[H.idx]; const s = e && e.sets[H.si];
+  if (!e || !s || s.done) return null;
+  return { a, H, e, s, ex: entryEx(e) || { name: e.name, unit: 'kg' } };
+}
+function openHold(e, idx, si) {
+  const a = S.active; if (!a) return;
+  const s = e.sets[si]; if (!s || s.done) return;
+  const target = Number(s.secs) > 0 ? Number(s.secs) : Number((e.pres && e.pres.hi) || entryEx(e)?.aim || 30);
+  const now = Date.now();
+  a.hold = { idx, si, leadAt: now, startAt: now + (CALM() ? 1000 : HOLD_LEAD), target, pinged: false, last: null };
+  Fx.hap(1); requestWake(); saveDraftSoon(); showHold();
+}
+function closeHold() {
+  clearInterval(holdTick); holdTick = null;
+  if (holdEl) { holdEl.remove(); holdEl = null; }
+  document.documentElement.classList.remove('hold-on');
+}
+function cancelHold() { if (S.active) delete S.active.hold; saveDraftSoon(); closeHold(); Fx.snd.tap(); }
+function stopHold() {
+  const c = holdCtx(); if (!c) { cancelHold(); return; }
+  const { a, H, e, s } = c;
+  const el = Date.now() - H.startAt;
+  if (el < 0) { cancelHold(); return; }
+  const secs = Math.max(1, Math.floor(el / 1000));
+  delete a.hold; closeHold();
+  s.secs = secs; delete s.r;
+  // tick the set the same way the Done button does, so XP, PRs, the rest timer and next-set prompts all follow
+  if (S.tab !== 'today') setTab('today');
+  e.open = true; rerenderCard(H.idx);
+  const r = document.getElementById(`r-${H.idx}-${H.si}`); if (r) r.value = String(secs);
+  const btn = document.querySelector(`#ex-${H.idx} .done-btn[data-si="${H.si}"]`);
+  if (btn) btn.click(); else { s.done = true; saveDraftSoon(); startRest(c.ex.id, null, { e, si: H.si }); rerenderCard(H.idx); }
+}
+function fmtClockS(sec) { sec = Math.max(0, Math.floor(sec)); return `${Math.floor(sec / 60)}:${pad(sec % 60)}`; }
+function showHold() {
+  const c = holdCtx(); if (!c) { if (S.active) delete S.active.hold; closeHold(); return; }
+  const { H, e, ex } = c;
+  closeHold();
+  const C = 2 * Math.PI * 88;
+  const NS = 'http://www.w3.org/2000/svg';
+  const ring = document.createElementNS(NS, 'svg'); ring.setAttribute('viewBox', '0 0 200 200'); ring.setAttribute('class', 'hold-ring'); ring.setAttribute('aria-hidden', 'true');
+  const mk = cls => { const x = document.createElementNS(NS, 'circle'); x.setAttribute('cx', 100); x.setAttribute('cy', 100); x.setAttribute('r', 88); x.setAttribute('class', cls); return x; };
+  const bg = mk('hr-bg'), fg = mk('hr-fg'); fg.style.strokeDasharray = String(C); fg.style.strokeDashoffset = String(C);
+  ring.append(bg, fg);
+  const big = h('b', { class: 'hold-big', text: '3' }); const sub = h('span', { class: 'hold-sub', text: 'Get set' });
+  const n = e.sets.slice(0, H.si + 1).filter(x => setT(x) !== 'W').length; const isW = setT(c.s) === 'W';
+  const load = ex.unit === 'bw' ? 'Bodyweight' : Number(c.s.w) > 0 ? `${ex.unit === 'kg added' ? 'Bodyweight +' : ''}${fmtD(ex, c.s.w)} ${wUnit(ex)}` : ex.unit === 'kg added' ? 'Bodyweight' : 'No weight entered';
+  const stop = h('button', { class: 'btn primary hold-stop', type: 'button', id: 'hold-stop', text: 'Stop and log', onclick: stopHold });
+  holdEl = h('div', { class: 'hold-ov', id: 'hold', role: 'dialog', 'aria-modal': 'true', 'aria-label': `Hold timer, ${e.name}` },
+    h('div', { class: 'hold-in' },
+      h('p', { class: 'ce-eye', text: `${e.name} · ${isW ? 'warm-up' : `set ${n}`}` }),
+      h('p', { class: 'hold-load', text: `${load} · target ${fmtClockS(H.target)}` }),
+      h('div', { class: 'hold-dial' }, ring, h('div', { class: 'hold-mid' }, big, sub)),
+      h('div', { class: 'hold-acts' }, stop, h('button', { class: 'link', type: 'button', id: 'hold-cancel', text: 'Cancel', onclick: cancelHold }))));
+  document.body.append(holdEl); document.documentElement.classList.add('hold-on');
+  const draw = () => {
+    const cc = holdCtx(); if (!cc) { closeHold(); return; }
+    const now = Date.now(); const HH = cc.H;
+    if (now < HH.startAt) {
+      const k = Math.ceil((HH.startAt - now) / 1000);
+      if (big.textContent !== String(k)) { big.textContent = String(k); if (HH.last !== 'L' + k) { HH.last = 'L' + k; Fx.snd.count(); Fx.hap(1); if (!CALM()) big.animate([{ transform: 'scale(1.5)', opacity: .3 }, { transform: 'scale(1)', opacity: 1 }], { duration: 300, easing: 'cubic-bezier(.2,.8,.2,1)' }); } }
+      sub.textContent = 'Get set'; stop.textContent = 'Cancel'; stop.classList.remove('primary'); holdEl.classList.add('lead');
+      fg.style.strokeDashoffset = String(C);
+      return;
+    }
+    if (holdEl.classList.contains('lead')) { holdEl.classList.remove('lead'); stop.textContent = 'Stop and log'; stop.classList.add('primary'); if (HH.last !== 'go' && now - HH.startAt < 1500) { Fx.snd.go(); Fx.hap(2); } HH.last = 'go'; }
+    const el = (now - HH.startAt) / 1000;
+    big.textContent = fmtClockS(el);
+    const over = el >= HH.target;
+    sub.textContent = over ? `Target hit · +${fmtClockS(el - HH.target)}` : `of ${fmtClockS(HH.target)}`;
+    fg.style.strokeDashoffset = String(C * (1 - Math.min(1, el / HH.target)));
+    holdEl.classList.toggle('hit', over);
+    if (over && !HH.pinged) {
+      HH.pinged = true; saveDraftSoon();
+      if (el - HH.target < 10) { Fx.snd.hold(); Fx.hap(3); if (!CALM()) Fx.shock(ring, cssVar('--go'), 3, 700); }
+    }
+  };
+  draw(); holdTick = setInterval(draw, 100);
+}
+function cssVar(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && S.active && S.active.hold) { requestWake(); if (!holdEl) showHold(); } });
+
 /* rest timer */
 let restTick = null, restEndTimer = null;
-function startRest(exId, warm) { S.restRang = false; S.restStart = Date.now(); S.restEx = exId; S.restTarget = warm ? (warm.last ? 90 : 60) : (exId === 'u_bench' || exId === 'u_pullup' || exId === 'b_hinge_p3') ? 180 : 120; askNotify(); updateRest(); Push.arm(); }
+function startRest(exId, warm, ctx) { S.restRang = false; S.restStart = Date.now(); S.restEx = exId; S.restTarget = warm ? (warm.last ? 90 : 60) : (exId === 'u_bench' || exId === 'u_pullup' || exId === 'b_hinge_p3') ? 180 : 120; S.restNext = restNextText(ctx); askNotify(); updateRest(); Push.arm(); }
+/* What he's coming back for: the next set of this exercise ("Bench press set 3"), or the next exercise when this one is done. */
+function restNextText(ctx) {
+  const a = S.active; if (!a || !ctx || !ctx.e) return '';
+  const e = ctx.e; const i = a.entries.indexOf(e);
+  const ord = si => e.sets.slice(0, si + 1).filter(x => setT(x) !== 'W').length;
+  const nx = e.sets.findIndex((x, j) => j > ctx.si && !x.done);
+  if (nx >= 0) return setT(e.sets[nx]) === 'W' ? `${e.name} warm-up` : `${e.name} set ${ord(nx)}`;
+  const ne = a.entries.slice(i + 1).find(x => !x.skipped && x.sets.some(st => !st.done));
+  return ne ? `next: ${ne.name}` : 'last set done';
+}
+const fmtClock = ms => { const d = new Date(ms); const hh = d.getHours(); return `${((hh + 11) % 12) + 1}:${pad(d.getMinutes())}:${pad(d.getSeconds())} ${hh < 12 ? 'am' : 'pm'}`; };
 /* Rest-over notification. Permission is asked once, the first time a rest timer starts (that tap is the gesture the phone wants).
    It's shown through the service worker, the only way an iPhone Home Screen app can show one. A web app can't schedule a
    notification for later on its own, so this fires only while the app is running: on screen, or (on Android) briefly in the background. */
@@ -3935,7 +4429,9 @@ const Push = {
     const ex = S.program && S.restEx ? S.program.exercises[S.restEx] : null;
     try {
       const sub = await this.sub(); if (!sub) return false;
-      const r = await this.post('/schedule', { sub, at, title: 'Rest is over', body: text || (ex ? `${ex.name}: time for your next set.` : 'Time for your next set.') });
+      const nextTxt = S.restNext || (ex ? ex.name : '');
+      const now = Settings.restResting === false ? null : { title: `Resting – back at ${fmtClock(at)}`, body: nextTxt ? nextTxt.charAt(0).toUpperCase() + nextTxt.slice(1) : 'Rest timer running' };
+      const r = await this.post('/schedule', { sub, at, title: 'Rest over', body: text || (nextTxt ? `Time for ${nextTxt.replace(/^next: /, '')}.` : 'Time for your next set.'), ...(now ? { now } : {}) });
       if (n === this.seq) this.armed = r.ok;
       return r.ok;
     } catch (e) { return false; }
@@ -3943,8 +4439,10 @@ const Push = {
   async cancel() {
     ++this.seq; this.armed = false;
     if (!PUSH_URL || !('serviceWorker' in navigator) || typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
-    try { const reg = await navigator.serviceWorker.ready; const s = await reg.pushManager.getSubscription(); if (s) await this.post('/cancel', { endpoint: s.endpoint }); } catch (e) {}
+    try { const reg = await navigator.serviceWorker.ready; this.clearShown(reg); const s = await reg.pushManager.getSubscription(); if (s) await this.post('/cancel', { endpoint: s.endpoint }); } catch (e) {}
   },
+  /* A skipped or finished rest leaves no stale "Resting" line on the lock screen. */
+  clearShown(reg) { try { if (reg && reg.getNotifications) reg.getNotifications({ tag: 'coach-rest' }).then(ns => ns.forEach(n => n.close())).catch(() => {}); } catch (e) {} },
 };
 /* The moment rest runs out: chime and notification once. Coming back to the app long after (the phone was locked) stays quiet. */
 function restOver(late) {
@@ -3990,13 +4488,21 @@ async function finishSession() {
     delete e.open; delete e.rateOpen; delete e.notesOpen; delete e.sending; delete e.tierShown; delete e.liftTierShown; delete e.warmPlanned; delete e.norm;
     if (Array.isArray(e.notes)) { e.notes = e.notes.filter(n => n.text).map(n => ({ text: n.text, state: n.state, batch: n.batch || null })); if (!e.notes.length) delete e.notes; }
     // every set keeps its type and its place (e.devs points at set positions); the runtime why text goes
-    e.sets = e.sets.map(s => ({ t: setT(s), w: num(s.w), r: num(s.r) ?? 0, done: !!s.done }));
+    // reps sets keep w and r; timed sets w and secs; distance sets w, metres and secs when he timed them
+    const md = e.mode = entMode(e, ex);
+    e.sets = e.sets.map(s => {
+      const o = { t: setT(s), w: num(s.w) };
+      if (md === 'reps') o.r = num(s.r) ?? 0;
+      else { o[qField(md)] = num(s[qField(md)] ?? s.r) ?? 0; if (md === 'distance' && num(s.secs) != null) o.secs = num(s.secs); }
+      o.done = !!s.done; return o;
+    });
+    delete e.holdRun;
     if (Array.isArray(e.devs) && !e.devs.length) delete e.devs;
     // a last set tagged F with no RIR picked is read as RIR 0
-    const lastLogged = loggedSets(e).filter(s => s.done && s.r > 0).pop();
+    const lastLogged = loggedSets(e).filter(s => s.done && setQ(s, md) > 0).pop();
     if (e.rir == null && lastLogged && lastLogged.t === 'F') e.rir = 0;
     if (!ex) continue;
-    if (e.skipped || !workSets(e).some(s => s.done && s.r > 0)) { e.skipped = true; e.verdict = 'skipped'; continue; }
+    if (e.skipped || !workSets(e).some(s => s.done && setQ(s, md) > 0)) { e.skipped = true; e.verdict = 'skipped'; continue; }
     e.before = { weight: ex.weight, aim: ex.aim };
     const res = progress(prog, ex, e, date);
     e.usedW = res.W; e.verdict = res.verdict; e.msg = res.msg; e.after = { weight: ex.weight, aim: ex.aim };
@@ -4141,23 +4647,72 @@ function changesCard() {
   det.append(list);
   return det;
 }
+/* Muscles and tracking mode for one exercise, edited in place (Program tab and the custom-workout builder).
+   A muscle chip cycles: off → primary → secondary → stabiliser → off. */
+const TIER_NEXT = { '': 'p', p: 's', s: 'st', st: '' };
+const TIER_LABEL = { p: 'Primary', s: 'Secondary', st: 'Stabiliser' };
+function tagEditor(ex) {
+  const st = S.tagEdit && S.tagEdit.id === ex.id ? S.tagEdit : (S.tagEdit = { id: ex.id, mode: exMode(ex), m: clone(musclesOf(ex)) });
+  const box = h('div', { class: 'tag-ed-box', id: `tags-${ex.id}` });
+  const draw = () => {
+    box.replaceChildren();
+    box.append(h('div', { class: 'q-label', text: 'Track it by' }),
+      h('div', { class: 'seg mode-seg', role: 'group', 'aria-label': 'Tracking mode' }, [['reps', 'Reps'], ['time', 'Time'], ['distance', 'Distance']].map(([v, t]) =>
+        h('button', { class: 'seg-b', type: 'button', 'aria-pressed': String(st.mode === v), text: t, onclick: () => { st.mode = v; Fx.snd.tap(); draw(); } }))),
+      h('p', { class: 'small muted', text: st.mode === 'time' ? 'Seconds per set, with optional added weight (bodyweight + x kg). Each set gets a hold timer.' : st.mode === 'distance' ? 'Metres per set, with optional weight and time.' : 'Weight × reps.' }));
+    const tierOf = id => (st.m.p.includes(id) ? 'p' : st.m.s.includes(id) ? 's' : st.m.st.includes(id) ? 'st' : '');
+    const grid = h('div', { class: 'mus-grid', role: 'group', 'aria-label': 'Muscles worked' });
+    for (const [id, name] of MUSCLES) {
+      const t = tierOf(id);
+      grid.append(h('button', { class: 'mus-b' + (t ? ' t-' + t : ''), type: 'button', 'aria-label': `${name}: ${t ? TIER_LABEL[t] : 'not worked'}. Tap to change`, onclick: () => {
+        const nt = TIER_NEXT[t]; for (const k of ['p', 's', 'st']) st.m[k] = st.m[k].filter(x => x !== id); if (nt) st.m[nt].push(id); Fx.snd.tap(); draw();
+      } }, h('span', { text: name }), t ? h('small', { text: TIER_LABEL[t] }) : null));
+    }
+    box.append(h('div', { class: 'q-label', text: 'Muscles worked (tap to cycle primary, secondary, stabiliser, off)' }), grid, bodyMap(cleanMuscles(st.m)));
+    box.append(h('div', { class: 'row' },
+      h('button', { class: 'btn primary', type: 'button', id: `tags-save-${ex.id}`, text: 'Save', onclick: () => saveTags(ex) }),
+      h('button', { class: 'btn', type: 'button', text: 'Reset to suggested', onclick: () => { st.m = clone(cleanMuscles(musclesFromName(ex.name, exGroups(ex)[0]))); draw(); } }),
+      h('button', { class: 'link', type: 'button', text: 'Cancel', onclick: () => { S.tagEdit = null; renderMain(); } })));
+  };
+  draw();
+  return box;
+}
+async function saveTags(ex) {
+  const st = S.tagEdit; if (!st || st.id !== ex.id) return;
+  const m = cleanMuscles(st.m);
+  if (!m.p.length) { toast('Pick at least one primary muscle.'); return; }
+  ex.muscles = m;
+  const was = exMode(ex); let modeMsg = '';
+  if (st.mode !== was) {
+    ex.mode = st.mode; ex.missStreak = 0;
+    if (st.mode !== 'reps') { if (ex.unit === 'bw' && !ex.cond) ex.unit = 'kg added'; if (was === 'reps') { ex.lo = st.mode === 'time' ? 20 : 20; ex.hi = st.mode === 'time' ? 40 : 40; } }
+    else if (was !== 'reps') { ex.lo = 8; ex.hi = 12; }
+    ex.aim = ex.lo;
+    modeMsg = `, tracked by ${st.mode === 'reps' ? 'reps' : st.mode === 'time' ? 'time' : 'distance'} (${repsLabel(ex)})`;
+  }
+  S.tagEdit = null; renderMain();
+  try { await saveProgram(); addLog('you', `${ex.name}: muscles set to ${m.p.map(id => MUSCLE_NAME[id]).join(', ')}${m.s.length ? ` (secondary ${m.s.map(id => MUSCLE_NAME[id]).join(', ')})` : ''}${modeMsg}.`); toast('Saved.'); } catch (e) { toast('Couldn’t save. Try again.'); }
+}
 function programItem(ex, slot) {
   const p = S.program; const pr = prescription(p, ex);
   const editing = S.editing === ex.id;
   const cs = cuesOf(ex);
   const item = h('div', { class: 'pitem' },
     h('div', { style: 'min-width:0' }, h('b', { text: ex.name }), slot ? h('span', { class: 'small muted', text: ` · ${p.slots[slot].label}, Phase ${slotPhaseOf(p, slot)} version` }) : null,
-      h('div', { class: 'meta', text: `${pr.sets} × ${repsLabel(ex)} · ${rirLabel(ex.rirLo, ex.rirHi)} · ${fmtW(ex, ex.weight)}${ex.aim != null && ex.unit !== 'bw' ? ` · aim ${ex.aim}` : ''}` }),
+      h('div', { class: 'meta', text: `${pr.sets} × ${repsLabel(ex)} · ${rirLabel(ex.rirLo, ex.rirHi)} · ${fmtW(ex, ex.weight)}${ex.aim != null && ex.unit !== 'bw' ? ` · aim ${ex.aim}${Q_UNIT[exMode(ex)]}` : ''}` }),
+      muscleChips(ex),
+      S.tagEdit && S.tagEdit.id === ex.id ? null : h('button', { class: 'link tag-ed', type: 'button', text: 'Muscles and tracking', onclick: () => { S.tagEdit = null; S.tagEdit = { id: ex.id, mode: exMode(ex), m: clone(musclesOf(ex)) }; renderMain(); } }),
       cs.length ? h('details', { class: 'cues small' }, h('summary', { text: 'Form cues' }), h('ul', { class: 'cue-list' }, cs.map(c => h('li', { text: c })))) : null,
       ex.myCues ? h('div', { class: 'small my-line' }, h('b', { text: 'My cues: ' }), ex.myCues) : null,
       videoLink(ex)),
-    h('button', { class: 'link', type: 'button', text: editing ? 'Close' : 'Edit', onclick: () => { S.editing = editing ? null : ex.id; renderMain(); } }));
+    h('button', { class: 'link edit-btn', type: 'button', text: editing ? 'Close' : 'Edit', onclick: () => { S.editing = editing ? null : ex.id; renderMain(); } }));
+  if (S.tagEdit && S.tagEdit.id === ex.id) item.append(tagEditor(ex));
   if (editing) {
     const f = (key, label, val, step) => h('label', { for: `ed-${ex.id}-${key}` }, label, h('input', { type: 'number', id: `ed-${ex.id}-${key}`, step: step || '1', value: val == null ? '' : fmtNum(val), inputmode: 'decimal' }));
     const lb = isLb(ex); const u = wUnit(ex);
     const unitSel = ex.unit === 'bw' ? null : h('label', { for: `ed-${ex.id}-unit` }, 'Weights in', h('select', { id: `ed-${ex.id}-unit` }, [['kg', 'Kilograms'], ['lb', 'Pounds']].map(([v, t]) => h('option', { value: v, selected: v === u ? 'selected' : null, text: t }))));
     const ed = h('div', { class: 'editor' },
-      ex.unit === 'bw' ? null : f('weight', `Weight (${u})`, toD(ex, ex.weight), '0.5'), f('sets', 'Sets', ex.sets), f('lo', 'Reps low', ex.lo), f('hi', 'Reps high', ex.hi), f('rirLo', 'RIR low', ex.rirLo), f('rirHi', 'RIR high', ex.rirHi),
+      ex.unit === 'bw' ? null : f('weight', `Weight (${u})`, toD(ex, ex.weight), '0.5'), f('sets', 'Sets', ex.sets), f('lo', `${exMode(ex) === 'time' ? 'Seconds' : exMode(ex) === 'distance' ? 'Metres' : 'Reps'} low`, ex.lo), f('hi', `${exMode(ex) === 'time' ? 'Seconds' : exMode(ex) === 'distance' ? 'Metres' : 'Reps'} high`, ex.hi), f('rirLo', 'RIR low', ex.rirLo), f('rirHi', 'RIR high', ex.rirHi),
       f('inc', `Step (${u})`, lb ? (ex.incLb || 5) : ex.inc, '0.5'), unitSel);
     const my = h('textarea', { id: `ed-${ex.id}-my`, placeholder: 'My cues: your own reminders, shown every session', value: ex.myCues || '' });
     ed.append(h('label', { for: `ed-${ex.id}-my`, style: 'grid-column:1/-1' }, 'My cues', my));
@@ -4167,7 +4722,7 @@ function programItem(ex, slot) {
       if (ex.unit !== 'bw') { const w = g('weight'); ex.weight = w == null ? null : fromD(ex, w); }
       const sets = g('sets'), lo = g('lo'), hi = g('hi'), rl = g('rirLo'), rh = g('rirHi'), inc = g('inc');
       if (sets >= 1 && sets <= 8) ex.sets = Math.round(sets);
-      if (lo >= 1 && hi >= lo && hi <= 60) { ex.lo = Math.round(lo); ex.hi = Math.round(hi); }
+      if (lo >= 1 && hi >= lo && hi <= (exMode(ex) === 'reps' ? 60 : 3600)) { ex.lo = Math.round(lo); ex.hi = Math.round(hi); }
       if (rl != null && rh != null && rl >= 0 && rh >= rl && rh <= 5) { ex.rirLo = rl; ex.rirHi = rh; }
       if (inc != null && inc >= 0 && inc <= 50) { if (lb) ex.incLb = inc; else if (inc <= 20) ex.inc = inc; }
       ex.aim = Math.min(ex.hi, Math.max(ex.lo, ex.aim ?? ex.hi));
@@ -4275,15 +4830,16 @@ function viewRank() {
 function csvCell(v) { const t = v == null ? '' : String(v); return /[",\r\n]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t; }
 async function exportCsv() {
   const p = S.program;
-  const rows = [['date', 'start_time', 'time_of_day', 'duration_min', 'session', 'exercise', 'set', 'weight_kg', 'unit', 'reps', 'done', 'last_set_rir', 'back_pain', 'shoulder_pain', 'source', 'note']];
+  const rows = [['date', 'start_time', 'time_of_day', 'duration_min', 'session', 'exercise', 'set', 'weight_kg', 'unit', 'reps', 'seconds', 'metres', 'done', 'last_set_rir', 'back_pain', 'shoulder_pain', 'source', 'note']];
   for (const s of [...S.sessions].sort((a, b) => (a.date < b.date ? -1 : 1))) {
     for (const e of s.entries || []) {
       const ex = p.exercises[e.exId]; const unit = ex ? ex.unit + (isLb(ex) ? ' (shown in lb)' : '') : '';
       const base = [s.date.slice(0, 10), (s.startedAt || s.date).slice(11, 16), todOf(s) || '', s.durationMin ?? '', s.dayName || '', e.name];
-      if (e.skipped) { rows.push([...base, '', '', unit, '', 'skipped', '', e.pain ?? '', e.shoulderPain ?? '', s.source || 'app', e.note || '']); continue; }
+      if (e.skipped) { rows.push([...base, '', '', unit, '', '', '', 'skipped', '', e.pain ?? '', e.shoulderPain ?? '', s.source || 'app', e.note || '']); continue; }
       // one row per set in order: the set column is the number among non-W sets (blank for W), done shows the type letter
       const sets = e.sets || []; let ord = 0;
-      sets.forEach((x, i) => { const t = setT(x); if (t !== 'W') ord++; rows.push([...base, t === 'W' ? '' : ord, x.w ?? '', unit, x.r ?? '', x.done === false ? `${t} (not done)` : t, i === sets.length - 1 ? (e.rir ?? '') : '', e.pain ?? '', e.shoulderPain ?? '', s.source || 'app', i === 0 ? (e.note || '') : '']); });
+      const md = entMode(e, ex);
+      sets.forEach((x, i) => { const t = setT(x); if (t !== 'W') ord++; rows.push([...base, t === 'W' ? '' : ord, x.w ?? '', unit, md === 'reps' ? (x.r ?? '') : '', md === 'time' ? setQ(x, md) : (x.secs ?? ''), md === 'distance' ? setQ(x, md) : '', x.done === false ? `${t} (not done)` : t, i === sets.length - 1 ? (e.rir ?? '') : '', e.pain ?? '', e.shoulderPain ?? '', s.source || 'app', i === 0 ? (e.note || '') : '']); });
     }
   }
   const csv = '\ufeff' + rows.map(r => r.map(csvCell).join(',')).join('\r\n');
@@ -4337,38 +4893,69 @@ function sparkline(pts) {
 /* ---------- trends: every logged exercise, searchable, with a detail view ---------- */
 function trendName(e) { const ex = S.program.exercises[e.exId]; return ex ? ex.name : e.name; }
 /* One point per session per exercise name (Lower A and Lower B versions of a lift merge). */
+/* One session's numbers for one exercise. Reps: estimated max, heaviest set, volume, best reps.
+   Time and distance: longest hold or distance, heaviest load at the target or beyond, and a score that grows with either
+   (seconds or metres × (bodyweight + load) ÷ bodyweight), which drives the exercise rank. */
+function trendPoint(p, s, e) {
+  const ex = p.exercises[e.exId] || null; const mode = entMode(e, ex);
+  if (legacyOther(e, ex)) return null;
+  const done = workSets(e).filter(x => x.done !== false && setQ(x, mode) > 0);
+  if (!done.length) return null;
+  const base = { sid: s.id, date: s.date, tod: todOf(s), time: fmtTime(s), src: s.source === 'strong' ? 'strong' : 'app', mode, sets: done.length, pain: e.pain, sh: e.shoulderPain, note: e.note || '', off: e.unitMix || '' };
+  if (mode !== 'reps') {
+    const T = prTarget(e, ex); const bwKg = p.bodyweight || 80; const mult = ex && ex.unit === 'kg each' ? 2 : 1;
+    let maxQ = 0, loadW = null, score = 0, bset = null, qsum = 0;
+    for (const x of done) {
+      const q = setQ(x, mode), w = Number(x.w) > 0 ? Number(x.w) : 0; qsum += q;
+      if (!bset || q > bset.q || (q === bset.q && w > (bset.w || 0))) bset = { q, w: x.w };
+      maxQ = Math.max(maxQ, q);
+      if (q >= T) loadW = loadW == null ? w : Math.max(loadW, w);
+      score = Math.max(score, q * (bwKg + w * mult) / bwKg);
+    }
+    return { ...base, e1: null, bw: bset.w, br: bset.q, maxR: maxQ, reps: qsum, topW: loadW, vol: 0, hold: mode === 'time' ? maxQ : null, holdw: mode === 'time' ? loadW : null, dist: mode === 'distance' ? maxQ : null, distw: mode === 'distance' ? loadW : null, score };
+  }
+  let best = null, topW = null, vol = 0, reps = 0, maxR = 0;
+  for (const x of done) {
+    const r = Number(x.r), w = x.w == null ? null : Number(x.w);
+    reps += r; maxR = Math.max(maxR, r);
+    if (w != null && w > 0) { vol += w * r * (ex && ex.unit === 'kg each' ? 2 : 1); topW = topW == null ? w : Math.max(topW, w); }
+    const v = setE1(p, ex, w, r);
+    if (v != null && (!best || v > best.v)) best = { v, w, r };
+  }
+  return { ...base, e1: best ? best.v : null, bw: best ? best.w : null, br: best ? best.r : null, topW, vol, reps, maxR };
+}
+function finishTrend(t) {
+  t.hasLoad = t.pts.some(q => q.e1 != null);
+  const ms = metricsFor(t); const pm = ms[0], wm = ms.find(m => m === 'holdw' || m === 'distw');
+  const run = {};
+  for (const q of t.pts) {
+    q.pr = false; if (q.off) continue;
+    for (const m of [pm, wm].filter(Boolean)) {
+      const v = METRICS[m].get(q); if (v == null) continue;
+      if (run[m] != null && v > run[m] + (m === 'e1' ? 0.5 : 0.25)) q.pr = true;
+      run[m] = run[m] == null ? v : Math.max(run[m], v);
+    }
+  }
+  t.last = t.pts.length ? t.pts[t.pts.length - 1].date : '';
+  return t;
+}
 function allTrends() {
   const p = S.program; const by = new Map();
   const sessions = [...S.sessions].sort((a, b) => (a.date < b.date ? -1 : 1));
   for (const s of sessions) for (const e of s.entries || []) {
     if (e.skipped) continue;
+    const pt = trendPoint(p, s, e); if (!pt) continue;
     const name = trendName(e); const key = name.toLowerCase();
     const ex = p.exercises[e.exId] || null;
-    const done = workSets(e).filter(x => x.done !== false && Number(x.r) > 0);
-    if (!done.length) continue;
-    let best = null, topW = null, vol = 0, reps = 0, maxR = 0;
-    for (const x of done) {
-      const r = Number(x.r), w = x.w == null ? null : Number(x.w);
-      reps += r; maxR = Math.max(maxR, r);
-      if (w != null && w > 0) { vol += w * r * (ex && ex.unit === 'kg each' ? 2 : 1); topW = topW == null ? w : Math.max(topW, w); }
-      const v = setE1(p, ex, w, r);
-      if (v != null && (!best || v > best.v)) best = { v, w, r };
-    }
     let t = by.get(key);
-    if (!t) { t = { key, name, unit: ex ? ex.unit : (topW != null ? 'kg' : 'bw'), lb: isLb(ex), exIds: new Set(), pts: [] }; by.set(key, t); }
+    if (!t) { t = { key, name, unit: ex ? ex.unit : (pt.topW != null ? 'kg' : 'bw'), lb: isLb(ex), mode: ex ? exMode(ex) : pt.mode, exIds: new Set(), pts: [] }; by.set(key, t); }
     if (e.exId) t.exIds.add(e.exId);
-    const prev = t.pts.find(q => q.sid === s.id);
-    if (prev) continue;
-    t.pts.push({ sid: s.id, date: s.date, tod: todOf(s), time: fmtTime(s), src: s.source === 'strong' ? 'strong' : 'app', e1: best ? best.v : null, bw: best ? best.w : null, br: best ? best.r : null,
-      topW, vol, reps, maxR, sets: done.length, pain: e.pain, sh: e.shoulderPain, note: e.note || '', off: e.unitMix || '' });
+    // a trend shows one mode: points logged another way (before a mode change) stay in History only
+    if (pt.mode !== t.mode) continue;
+    if (t.pts.find(q => q.sid === s.id)) continue;
+    t.pts.push(pt);
   }
-  const list = [...by.values()];
-  for (const t of list) {
-    t.hasLoad = t.pts.some(q => q.e1 != null);
-    let run = null;
-    for (const q of t.pts) { q.pr = false; if (q.e1 != null && !q.off) { if (run != null && q.e1 > run + 0.5) q.pr = true; run = run == null ? q.e1 : Math.max(run, q.e1); } }
-    t.last = t.pts[t.pts.length - 1].date;
-  }
+  const list = [...by.values()].filter(t => t.pts.length).map(finishTrend);
   return list.sort((a, b) => (a.last < b.last ? 1 : -1));
 }
 const METRICS = {
@@ -4376,19 +4963,35 @@ const METRICS = {
   top: { label: 'Heaviest set', short: 'Heaviest set', unit: 'kg', get: q => q.topW },
   vol: { label: 'Volume (kg × reps)', short: 'Volume', unit: 'kg', get: q => (q.vol > 0 ? q.vol : null) },
   reps: { label: 'Most reps in a set', short: 'Best reps', unit: 'reps', get: q => q.maxR },
+  hold: { label: 'Longest hold', short: 'Longest hold', unit: 's', get: q => q.hold },
+  holdw: { label: 'Heaviest hold at the target time', short: 'Weighted hold', unit: 'kg', get: q => q.holdw },
+  dist: { label: 'Longest distance', short: 'Distance', unit: 'm', get: q => q.dist },
+  distw: { label: 'Heaviest load over the target distance', short: 'Load', unit: 'kg', get: q => q.distw },
+  score: { label: 'Score (seconds or metres, scaled up for added weight)', short: 'Score', unit: '', get: q => q.score },
 };
-function metricsFor(t) { return t.hasLoad ? ['e1', 'top', 'vol'] : ['reps']; }
+const COUNT_METRICS = { reps: 1, hold: 1, dist: 1, score: 1 };
+function metricsFor(t) {
+  if (t.mode === 'time') return t.pts.some(q => q.holdw > 0) ? ['hold', 'holdw', 'score'] : ['hold', 'score'];
+  if (t.mode === 'distance') return t.pts.some(q => q.distw > 0) ? ['dist', 'distw', 'score'] : ['dist', 'score'];
+  return t.hasLoad ? ['e1', 'top', 'vol'] : ['reps'];
+}
 /* Trend values are kept in kg; an exercise shown in pounds gets its trends in pounds too. */
-function dispMetric(t, m, v) { return t && t.lb && m !== 'reps' && v != null ? v / KG_PER_LB : v; }
+function dispMetric(t, m, v) { return t && t.lb && !COUNT_METRICS[m] && v != null ? v / KG_PER_LB : v; }
 function fmtMetric(m, v, t) {
   if (v == null) return '–';
   if (m === 'reps') return `${Math.round(v)} reps`;
+  if (m === 'hold') return `${Math.round(v)} s`;
+  if (m === 'dist') return `${Math.round(v)} m`;
+  if (m === 'score') return `${Math.round(v)}`;
+  if ((m === 'holdw' || m === 'distw') && !(v > 0)) return t && t.unit === 'kg added' ? 'Bodyweight' : 'No load';
+  if ((m === 'holdw' || m === 'distw') && t && t.unit === 'kg added') return `+${fmtNum(r05(dispMetric(t, m, v)))} ${t.lb ? 'lb' : 'kg'}`;
   const u = t && t.lb ? 'lb' : 'kg'; v = dispMetric(t, m, v);
   if (m === 'vol') return `${fmtInt(v)} ${u}`;
   if (m === 'top' && t && t.unit === 'kg added') return `+${fmtNum(r05(v))} ${u}`;
   return `${fmtNum(Math.round(v * 2) / 2)} ${u}`;
 }
 function setText(t, q) {
+  if (q.mode && q.mode !== 'reps') { const ex = { unit: t.unit, lb: t.lb }; return setLine(ex, q.mode, q.bw, q.br); }
   if (q.bw == null) return `${q.maxR} reps`;
   return `${t.unit === 'kg added' ? '+' : ''}${fmtNum(Math.round(dispMetric(t, 'top', q.bw) * 10) / 10)} ${t.lb ? 'lb' : 'kg'} × ${q.br}`;
 }
@@ -4396,7 +4999,7 @@ function trendCard(t) {
   const m = metricsFor(t)[0]; const vals = t.pts.map(q => METRICS[m].get(q)).filter(v => v != null);
   const pts = t.pts.filter(q => METRICS[m].get(q) != null).map(q => ({ v: METRICS[m].get(q) }));
   const last = t.pts[t.pts.length - 1]; const delta = vals.length > 1 ? vals[vals.length - 1] - vals[0] : null;
-  const dnum = delta == null ? null : (m === 'reps' ? Math.abs(Math.round(delta)) : Math.abs(Math.round(dispMetric(t, m, delta))));
+  const dnum = delta == null ? null : (COUNT_METRICS[m] ? Math.abs(Math.round(delta)) : Math.abs(Math.round(dispMetric(t, m, delta))));
   const R = exerciseRank(t);
   const card = h('button', { class: 'trend', type: 'button', 'data-name': t.name.toLowerCase(), 'aria-label': `${t.name}: ${fmtMetric(m, vals[vals.length - 1], t)}, ${METRICS[m].short}, ${t.pts.length} session${t.pts.length > 1 ? 's' : ''}. Last: ${setText(t, last)}, ${fmtDate(last.date)}. Open details`, onclick: () => { S.trendKey = t.key; S.trendRange = 'all'; S.trendMetric = null; S.trendTod = 'any'; renderMain(); window.scrollTo(0, 0); } },
     h('div', { class: 'tr-top' }, R ? emblem(R.tierObj, 0, 18, { noDiv: true, label: R.tierObj.name }) : null, h('b', { class: 'tr-name', text: t.name })),
@@ -4424,7 +5027,8 @@ function viewTrendDetail(t) {
   root.append(h('div', { class: 'row' }, h('button', { class: 'link', type: 'button', text: 'All trends', onclick: () => { S.trendKey = null; renderMain(); } })));
   const vals = pts.map(q => METRICS[m].get(q));
   const best = vals.length ? Math.max(...vals) : null;
-  root.append(h('div', {}, h('h2', { text: t.name }),
+  const tex = [...t.exIds].map(id => S.program.exercises[id]).find(Boolean) || null;
+  root.append(h('div', {}, h('h2', { text: t.name }), muscleChips(tex, t.name),
     h('p', { class: 'muted small', text: vals.length ? `${METRICS[m].label}: best ${fmtMetric(m, best, t)}, latest ${fmtMetric(m, vals[vals.length - 1], t)}${vals.length > 1 ? `, ${vals[vals.length - 1] - vals[0] >= 0 ? 'up' : 'down'} ${fmtMetric(m, Math.abs(vals[vals.length - 1] - vals[0]), t).replace('+', '')} over ${pts.length} sessions` : ''}.` : 'Nothing logged in this range.' })));
   root.append(exRankCard(t));
   // filters: one row above the chart
@@ -4446,7 +5050,7 @@ function viewTrendDetail(t) {
     const extra = [q.pain != null ? `back ${q.pain}` : null, q.sh != null ? `shoulder ${q.sh}` : null, q.src === 'strong' ? 'from Strong' : null].filter(Boolean).join(', ');
     rows.append(h('div', { class: 'trow' },
       h('div', {}, h('b', { text: fmtDate(q.date) }), h('div', { class: 'small muted', text: `${q.time ? `${q.time} ${q.tod}. ` : ''}${q.sets} set${q.sets > 1 ? 's' : ''}, best ${setText(t, q)}${extra ? `, ${extra}` : ''}` }), q.note ? h('div', { class: 'small', text: `“${q.note}”` }) : null, q.off ? h('div', { class: 'small muted', text: q.off }) : null),
-      h('div', { class: 'tval' }, h('span', { text: fmtMetric(m, METRICS[m].get(q), t) }), q.pr && m === 'e1' ? h('span', { class: 'pr-flag', text: 'PR' }) : null)));
+      h('div', { class: 'tval' }, h('span', { text: fmtMetric(m, METRICS[m].get(q), t) }), q.pr && m === metricsFor(t)[0] ? h('span', { class: 'pr-flag', text: 'PR' }) : null)));
   }
   tbl.append(rows); root.append(tbl);
   return root;
@@ -4478,7 +5082,7 @@ function trendChart(t, pts, m) {
     svg.append(el('polyline', { points: pts.map((q, i) => `${X(i)},${Y(vals[i])}`).join(' '), class: 'line' }));
   }
   const cross = el('line', { y1: T, y2: H - B, class: 'cross' }); svg.append(cross);
-  const dots = pts.map((q, i) => { const c = el('circle', { cx: X(i), cy: Y(vals[i]), r: 4, class: 'dot' + (q.src === 'strong' ? ' strong' : '') + (q.pr && m === 'e1' ? ' pr' : '') }); svg.append(c); return c; });
+  const dots = pts.map((q, i) => { const c = el('circle', { cx: X(i), cy: Y(vals[i]), r: 4, class: 'dot' + (q.src === 'strong' ? ' strong' : '') + (q.pr && m === metricsFor(t)[0] ? ' pr' : '') }); svg.append(c); return c; });
   const hit = el('rect', { x: 0, y: 0, width: W, height: H, fill: 'transparent' }); svg.append(hit);
   const tip = h('div', { class: 'tip', 'aria-live': 'polite' });
   wrap.append(tip, svg);
@@ -4487,7 +5091,7 @@ function trendChart(t, pts, m) {
     sel = Math.max(0, Math.min(pts.length - 1, i)); const q = pts[sel];
     cross.setAttribute('x1', X(sel)); cross.setAttribute('x2', X(sel));
     dots.forEach((d, k) => { d.classList.toggle('on', k === sel); d.setAttribute('r', k === sel ? 6 : 4); });
-    tip.replaceChildren(...[h('b', { text: fmtMetric(m, raw[sel], t) }), q.pr && m === 'e1' ? h('span', { class: 'pr-flag', text: 'PR' }) : null].filter(Boolean),
+    tip.replaceChildren(...[h('b', { text: fmtMetric(m, raw[sel], t) }), q.pr && m === metricsFor(t)[0] ? h('span', { class: 'pr-flag', text: 'PR' }) : null].filter(Boolean),
       h('span', { class: 'small muted', text: `${fmtDate(q.date)}${q.time ? ` ${q.time}` : ''}, best ${setText(t, q)}${q.src === 'strong' ? ', from Strong' : ''}` }));
   };
   const nearest = ev => {
@@ -4599,7 +5203,7 @@ function trendsCached() { if (trendsCache.s !== S.sessions || trendsCache.p !== 
    about once a week: Gold in about 2 months, Platinum by the end of the 12-week block, Titan in under a year. */
 const EX_TIERS = [{ sess: 1, imp: 0 }, { sess: 3, imp: 0 }, { sess: 5, imp: 0.025 }, { sess: 8, imp: 0.05 }, { sess: 12, imp: 0.10 }, { sess: 20, imp: 0.15 }, { sess: 32, imp: 0.22 }];
 function exerciseRank(t) {
-  const m = t.hasLoad ? 'e1' : 'reps'; const get = METRICS[m].get;
+  const m = t.mode === 'time' || t.mode === 'distance' ? 'score' : t.hasLoad ? 'e1' : 'reps'; const get = METRICS[m].get;
   const all = t.pts.filter(q => q.src === 'app' && get(q) != null);
   if (!all.length) return null;
   // A session logged with the wrong unit still counts as a session, but not as the starting point or the best.
@@ -4611,7 +5215,7 @@ function exerciseRank(t) {
   for (let i = 1; i < EX_TIERS.length; i++) { if (n >= EX_TIERS[i].sess && imp >= EX_TIERS[i].imp - 1e-9) tier = i; else break; }
   const nx = EX_TIERS[tier + 1] || null;
   let target = null;
-  if (nx) target = m === 'reps' ? Math.max(first + (nx.imp > 0 ? 1 : 0), Math.ceil(first * (1 + nx.imp))) : first * (1 + nx.imp);
+  if (nx) target = m === 'reps' || m === 'score' ? Math.max(first + (nx.imp > 0 ? 1 : 0), Math.ceil(first * (1 + nx.imp))) : first * (1 + nx.imp);
   return { m, tier, tierObj: TIERS[tier], n, first, best, imp, next: nx, nextObj: nx ? TIERS[tier + 1] : null, sessLeft: nx ? Math.max(0, nx.sess - n) : 0, target, valLeft: nx ? Math.max(0, target - best) : 0 };
 }
 function exampleSet(t, e1) {
@@ -4638,7 +5242,7 @@ function exRankCard(t) {
       h('p', { class: 'small', text: 'Log it once in this app to get a rank. Ranks come from the progress you make here, measured from your first session.' }));
     return card;
   }
-  const what = R.m === 'reps' ? 'best reps' : 'best estimated 1-rep max';
+  const what = R.m === 'reps' ? 'best reps' : R.m === 'score' ? `best ${t.mode === 'time' ? 'hold' : 'distance'} score` : 'best estimated 1-rep max';
   card.append(h('div', { class: 'exr-head' }, emblem(R.tierObj, 0, 56, { noDiv: true, label: R.tierObj.name }),
     h('div', {}, h('div', { class: 'small muted', text: 'Your rank on this exercise' }), h('div', { class: 'exr-name', text: R.tierObj.name }),
       h('div', { class: 'small muted', text: R.n === 1 ? `1 session here. Your starting point: ${fmtMetric(R.m, R.first, t)} ${what}.` : `${R.n} sessions here, ${what} ${R.imp >= 0 ? 'up' : 'down'} ${Math.abs(Math.round(R.imp * 1000) / 10)}% since your first (${fmtMetric(R.m, R.first, t)} to ${fmtMetric(R.m, R.best, t)})` }))));
@@ -4648,15 +5252,16 @@ function exRankCard(t) {
   box.append(h('div', { class: 'req' }, h('span', { text: 'Sessions logged' }), h('span', { class: 'tnum', text: `${Math.min(R.n, R.next.sess)} of ${R.next.sess}` }), xpBar(Math.min(1, R.n / R.next.sess), 'thin blue')));
   if (R.next.imp > 0) {
     const fr = R.target > R.first ? (R.best - R.first) / (R.target - R.first) : 1;
-    box.append(h('div', { class: 'req' }, h('span', { text: R.m === 'reps' ? 'Best reps' : 'Best est. 1-rep max' }), h('span', { class: 'tnum', text: `${fmtMetric(R.m, R.best, t)} of ${fmtMetric(R.m, R.target, t)}` }), xpBar(Math.max(0, Math.min(1, fr)), 'thin')));
+    box.append(h('div', { class: 'req' }, h('span', { text: R.m === 'reps' ? 'Best reps' : R.m === 'score' ? 'Best score' : 'Best est. 1-rep max' }), h('span', { class: 'tnum', text: `${fmtMetric(R.m, R.best, t)} of ${fmtMetric(R.m, R.target, t)}` }), xpBar(Math.max(0, Math.min(1, fr)), 'thin')));
   }
   const todo = [];
   if (R.sessLeft) todo.push(`log ${R.sessLeft} more session${R.sessLeft > 1 ? 's' : ''} of it`);
   if (R.valLeft > 0.01) {
     if (R.m === 'reps') todo.push(`get ${Math.ceil(R.target)} reps in a set`);
+    else if (R.m === 'score') { const bwKg = S.program.bodyweight || 80; const u = t.mode === 'time' ? 's' : 'm'; todo.push(`reach a score of ${Math.ceil(R.target)}: that’s ${Math.ceil(R.target)} ${u} at bodyweight, or about ${Math.ceil(R.target * bwKg / (bwKg + 10))} ${u} with 10 kg added`); }
     else { const ex = exampleSet(t, R.target); todo.push(`reach about ${fmtMetric('e1', R.target, t)} estimated 1-rep max${ex ? `, for example ${ex}` : ''}`); }
   }
-  box.append(h('p', { class: 'small', text: todo.length ? `To get there: ${todo.join(' and ')}. The plan raises your weights as you hit the top of the rep range, so following it gets you there. There’s no need to test a max.` : 'You’ve met the requirements. It updates after your next session.' }));
+  box.append(h('p', { class: 'small', text: todo.length ? `To get there: ${todo.join(' and ')}. ${R.m === 'score' ? `The score is your ${t.mode === 'time' ? 'seconds' : 'metres'} × (bodyweight + added weight) ÷ bodyweight, so longer and heavier both count.` : 'The plan raises your weights as you hit the top of the rep range, so following it gets you there. There’s no need to test a max.'}` : 'You’ve met the requirements. It updates after your next session.' }));
   card.append(box);
   // strength tier against bodyweight, for the lifts that have one
   const g = getGame(); const L = g && g.lifts.find(x => t.exIds.has(x.exId));
@@ -4730,13 +5335,14 @@ const FORMAT = `Reply with only one JSON object and no other text:
 {"reply": "2 to 5 short, plain sentences to him",
  "changes": [{"type": "weight", "exerciseId": "u_bench", "value": 80, "reason": "why, in one sentence"}],
  "questions": [{"id": "q1", "text": "the question", "options": ["short option", "short option"], "allowText": true}]}
-Change types: "weight" (value = next working weight, in that exercise's own unit: pounds where the program list says "in lb", otherwise kg), "sets" (value), "reps" (lo, hi), "rir" (lo, hi), "swap" (name = new exercise, weight = starting weight or null, cues = 2-4 short form cues for the new exercise), "note" (text = a coaching note shown on the exercise), "cues" (cues = 2-4 short form cues that replace the exercise's current form cues), "max" (value = the heaviest weight he has for that exercise, like the top of the dumbbell rack; the app never prescribes more). Never rewrite "his own cues": those are his. Use only exerciseIds from the program list. At most 4 changes and 3 questions; use [] when none apply. Ask a question only when his answer would change what you recommend, with 2-4 short options; set allowText true when a free answer would help.`;
+Change types: "weight" (value = next working weight, in that exercise's own unit: pounds where the program list says "in lb", otherwise kg), "sets" (value), "reps" (lo, hi), "rir" (lo, hi), "swap" (name = new exercise, weight = starting weight or null, cues = 2-4 short form cues for the new exercise, mode = "reps", "time" or "distance" when the new exercise is measured differently from the old one; for time or distance also send lo and hi in seconds or metres), "note" (text = a coaching note shown on the exercise), "cues" (cues = 2-4 short form cues that replace the exercise's current form cues), "max" (value = the heaviest weight he has for that exercise, like the top of the dumbbell rack; the app never prescribes more). Never rewrite "his own cues": those are his. Use only exerciseIds from the program list. At most 4 changes and 3 questions; use [] when none apply. Ask a question only when his answer would change what you recommend, with 2-4 short options; set allowText true when a free answer would help.`;
 
 function wTxt(ex, w) { return w == null ? 'BW' : `${ex && ex.unit === 'kg added' ? '+' : ''}${fmtD(ex, w)}${isLb(ex) ? 'lb' : ''}`; }
 /* Done sets in order: the W block first, then the rest with a letter after F and D sets, e.g. "W 40x8, 60x4 | 89x10, 89x7 F, 70x9 D". */
 function setsLine(ex, e, x, wSep, mid) {
   const done = (e.sets || []).filter(st => st.done !== false);
-  const one = st => `${wTxt(ex, st.w)}${x}${st.r}`;
+  const md = entMode(e, ex);
+  const one = st => md === 'time' ? `${wTxt(ex, st.w)} ${setQ(st, md)}s` : md === 'distance' ? `${wTxt(ex, st.w)}${x}${setQ(st, md)}m${st.secs ? ` in ${st.secs}s` : ''}` : `${wTxt(ex, st.w)}${x}${st.r}`;
   const w = done.filter(st => setT(st) === 'W').map(one).join(wSep);
   const rest = done.filter(st => setT(st) !== 'W').map(st => one(st) + (setT(st) === 'F' || setT(st) === 'D' ? ` ${setT(st)}` : '')).join(', ');
   return w ? `W ${w}${rest ? mid + rest : ''}` : rest;
@@ -4771,7 +5377,9 @@ function sessionLine(s) {
 }
 function exContext(ex) {
   const cs = cuesOf(ex);
-  return [ex.back ? 'back-monitored' : null, ex.shoulder ? 'left-shoulder-monitored' : null, isLb(ex) ? 'in lb' : null, ex.maxW ? `heaviest he has: ${fmtW(ex, ex.maxW)}` : null,
+  const mu = musclesOf(ex);
+  return [exMode(ex) === 'time' ? 'timed hold: sets are seconds, weight is added load' : exMode(ex) === 'distance' ? 'distance: sets are metres' : null,
+    mu.p.length ? `muscles: ${mu.p.map(id => MUSCLE_NAME[id]).join(', ')}${mu.s.length ? ` (also ${mu.s.map(id => MUSCLE_NAME[id]).join(', ')})` : ''}` : null, ex.back ? 'back-monitored' : null, ex.shoulder ? 'left-shoulder-monitored' : null, isLb(ex) ? 'in lb' : null, ex.maxW ? `heaviest he has: ${fmtW(ex, ex.maxW)}` : null,
     cs.length ? `form cues: ${cs.join('; ')}` : null, ex.note ? `coach note: ${ex.note}` : null, ex.myCues ? `his own cues: ${ex.myCues.replace(/\s+/g, ' ')}` : null].filter(Boolean).join(' | ');
 }
 function buildContext() {
@@ -4781,11 +5389,11 @@ function buildContext() {
   const holds = (p.holds || []).filter(x => x.until >= today);
   if (holds.length) out.push('Temporary step-backs: ' + holds.map(x => `${x.slot} at Phase ${x.phase} until ${x.until}`).join('; '));
   const g = gateStatus(p); if (g) out.push(`Gate to Phase ${g.next}: ${g.weekOk ? 'week reached' : 'week not reached'}; recent leg sessions ${g.count}, ${g.green ? 'all green' : 'not all green'}.`);
-  out.push('Back warm-up (about 6 minutes) runs only before sessions with a back-monitored lift. Sets carry a type: W warm-up (never counted), N working, F to failure, D drop set (extra volume, not counted for progression).');
+  out.push('Back warm-up (about 6 minutes) runs only before sessions with a back-monitored lift. Sets carry a type: W warm-up (never counted), N working, F to failure, D drop set (extra volume, not counted for progression). Exercises are tracked by reps, by time (seconds held, optional added weight, e.g. "+5 40s") or by distance (metres, optional load and time); for timed and distance exercises the rep range is in seconds or metres.');
   out.push('\nPROGRAM (current phase). id | day | exercise | sets x reps | RIR | next weight | flags, cues and notes');
   for (const k of p.rotation) for (const it of dayItems(p, k)) {
     const ex = p.exercises[it.id]; const pr = prescription(p, ex);
-    out.push(`${ex.id} | ${p.days[k].name}${p.days[k].optional ? ' (optional)' : ''} | ${ex.name} | ${pr.sets}x${ex.lo}-${ex.hi}${ex.perSide ? ' per side' : ''} | ${ex.rirLo}-${ex.rirHi} | ${fmtW(ex, ex.weight)} | ${[pr.tag, exContext(ex)].filter(Boolean).join(' | ')}`);
+    out.push(`${ex.id} | ${p.days[k].name}${p.days[k].optional ? ' (optional)' : ''} | ${ex.name} | ${pr.sets}x${ex.lo}-${ex.hi}${Q_UNIT[exMode(ex)]}${ex.perSide ? ' per side' : ''} | ${ex.rirLo}-${ex.rirHi} | ${fmtW(ex, ex.weight)} | ${[pr.tag, exContext(ex)].filter(Boolean).join(' | ')}`);
   }
   const other = [];
   for (const slot of Object.keys(p.slots)) for (const [ph, id] of Object.entries(p.slots[slot].phases)) if (Number(ph) !== p.phase) { const ex = p.exercises[id]; other.push(`${id} = ${ex.name} (Phase ${ph} ${slot})`); }
@@ -4797,7 +5405,7 @@ function buildContext() {
   if (S.active) for (const e of S.active.entries) if (p.exercises[e.exId] && p.exercises[e.exId].custom) usedC.add(e.exId);
   if (usedC.size) {
     out.push('CUSTOM EXERCISES (his own picks from the library; same id rules apply). id | exercise | sets x reps | RIR | next weight | flags');
-    for (const id of usedC) { const ex = p.exercises[id]; if (!ex) continue; out.push(`${ex.id} | ${ex.name} | ${ex.sets}x${ex.lo}-${ex.hi}${ex.repUnit === 's' ? ' s' : ex.repUnit === 'm' ? ' m' : ''} | ${ex.rirLo}-${ex.rirHi} | ${fmtW(ex, ex.weight)} | ${exContext(ex)}`); }
+    for (const id of usedC) { const ex = p.exercises[id]; if (!ex) continue; out.push(`${ex.id} | ${ex.name} | ${ex.sets}x${ex.lo}-${ex.hi}${Q_UNIT[exMode(ex)]} | ${ex.rirLo}-${ex.rirHi} | ${fmtW(ex, ex.weight)} | ${exContext(ex)}`); }
   }
   if (S.active) {
     const a = S.active;
@@ -4838,9 +5446,11 @@ function validateChange(c, opts = {}) {
   switch (c.type) {
     case 'weight': { const v = num(c.value); return v == null || v < 0 || v > 1000 ? null : { ...base, value: toKg(v) }; }
     case 'sets': { const v = Math.round(num(c.value)); return v >= 1 && v <= 8 ? { ...base, value: v } : null; }
-    case 'reps': { const lo = Math.round(num(c.lo)), hi = Math.round(num(c.hi)); return lo >= 1 && hi >= lo && hi <= 60 ? { ...base, lo, hi } : null; }
+    case 'reps': { const lo = Math.round(num(c.lo)), hi = Math.round(num(c.hi)); return lo >= 1 && hi >= lo && hi <= (exMode(ex) === 'reps' ? 60 : 3600) ? { ...base, lo, hi } : null; }
     case 'rir': { const lo = num(c.lo), hi = num(c.hi); return lo == null || hi == null || lo < 0 || hi > 5 || hi < lo ? null : { ...base, lo, hi }; }
-    case 'swap': { const name = String(c.name || '').trim().slice(0, 80); if (!name) return null; const w = c.weight == null ? null : num(c.weight); const cues = cleanCues(c.cues); return { ...base, name, weight: toKg(w), fromName: ex.name, ...(cues.length ? { cues } : {}) }; }
+    case 'swap': { const name = String(c.name || '').trim().slice(0, 80); if (!name) return null; const w = c.weight == null ? null : num(c.weight); const cues = cleanCues(c.cues);
+      const mode = MODES.includes(c.mode) ? c.mode : null; const lo = Math.round(num(c.lo)), hi = Math.round(num(c.hi)); const rng = mode && lo >= 1 && hi >= lo && hi <= 3600 ? { lo, hi } : {};
+      return { ...base, name, weight: toKg(w), fromName: ex.name, ...(cues.length ? { cues } : {}), ...(mode ? { mode } : {}), ...rng }; }
     case 'note': { const t = String(c.text || '').trim().slice(0, 300); return t ? { ...base, text: t } : null; }
     case 'cues': { const cues = cleanCues(c.cues); return cues.length ? { ...base, cues } : null; }
     case 'max': { const v = num(c.value); return v == null || v <= 0 || v > 1000 ? null : { ...base, value: toKg(v) }; }
@@ -4862,7 +5472,7 @@ function describeChange(c) {
   }
 }
 const CHANGE_FIELDS = { weight: ['weight', 'aim', 'missStreak'], sets: ['sets'], reps: ['lo', 'hi', 'aim'], rir: ['rirLo', 'rirHi'],
-  swap: ['name', 'weight', 'aim', 'missStreak', 'prevName', 'video', 'cues'], note: ['note'], cues: ['cues'], max: ['maxW', 'weight'] };
+  swap: ['name', 'weight', 'aim', 'missStreak', 'prevName', 'video', 'cues', 'muscles', 'mode', 'lo', 'hi', 'unit'], note: ['note'], cues: ['cues'], max: ['maxW', 'weight'] };
 /* Form cues for a swapped-in exercise: the coach's, or the library's when the name matches a movement there. */
 function swapCues(c) {
   if (c.cues && c.cues.length) return c.cues;
@@ -4879,7 +5489,11 @@ function applyChangeTo(p, c) {
     case 'sets': ex.sets = c.value; break;
     case 'reps': ex.lo = c.lo; ex.hi = c.hi; ex.aim = Math.min(c.hi, Math.max(c.lo, ex.aim ?? c.hi)); break;
     case 'rir': ex.rirLo = c.lo; ex.rirHi = c.hi; break;
-    case 'swap': ex.prevName = ex.prevName || ex.name; ex.name = c.name; ex.weight = c.weight; ex.aim = ex.hi; ex.missStreak = 0; ex.video = null; ex.cues = swapCues(c); break;
+    case 'swap': ex.prevName = ex.prevName || ex.name; ex.name = c.name; ex.weight = c.weight; ex.missStreak = 0; ex.video = null; ex.cues = swapCues(c);
+      ex.muscles = cleanMuscles(musclesFromName(c.name, exGroups(ex)[0]));
+      if (c.mode) { ex.mode = c.mode; if (c.mode !== 'reps' && ex.unit === 'bw' && !ex.cond) ex.unit = 'kg added'; }
+      if (c.lo && c.hi) { ex.lo = c.lo; ex.hi = c.hi; }
+      ex.aim = ex.hi; break;
     case 'note': ex.note = c.text; break;
     case 'cues': ex.cues = [...c.cues]; break;
     case 'max': ex.maxW = c.value; if (ex.weight > c.value) ex.weight = c.value; break;
@@ -4903,8 +5517,9 @@ function swapInSession(c, undo) {
     if (e.sets.some(x => x.done)) { started = true; continue; }
     if (undo) { if (!e.swappedFrom) continue; e.name = e.swappedFrom; delete e.swappedFrom; }
     else { e.swappedFrom = e.swappedFrom || e.name; e.name = ex.name; if (e.swappedFrom === e.name) delete e.swappedFrom; }
-    e.pres = { ...(e.pres || {}), weight: ex.weight };
-    e.sets = loggedSets(e).map(x => ({ ...x, w: ex.unit === 'bw' ? null : ex.weight }));
+    e.pres = { ...(e.pres || {}), weight: ex.weight, lo: ex.lo, hi: ex.hi };
+    const md = exMode(ex), was = e.mode || 'reps'; e.mode = md;
+    e.sets = loggedSets(e).map(x => { const o = { ...x, w: ex.unit === 'bw' ? null : ex.weight }; if (md !== was) { delete o.r; delete o.secs; delete o.metres; o[qField(md)] = ex.aim ?? ex.hi ?? null; } return o; });
     delete e.warmPlanned; swapped = true;
   }
   if (swapped) { fillWarm(p, a.entries); saveDraftSoon(); }
@@ -5389,7 +6004,7 @@ function viewSettings() {
   if (S.program) {
     const dv = devSettings(S.program);
     const devCard = h('div', { class: 'card', id: 'dev-settings' }, h('h3', { text: 'Next-set prompts' }),
-      h('p', { class: 'small muted', text: 'When a working set lands this far from the plan, a card under it suggests the next set.' }));
+      h('p', { class: 'small muted', text: 'When a working set lands this far from the plan, a card under it suggests the next set. Timed and distance sets use twice the weight figure as a share of the target: 20% by default, so 24 s or less on a 30–40 s hold.' }));
     const numField = (id, label, val, min, max) => {
       const inp = h('input', { type: 'number', id, inputmode: 'numeric', min: String(min), max: String(max), step: '1', value: String(val) });
       inp.addEventListener('change', async () => {
@@ -5406,20 +6021,20 @@ function viewSettings() {
 
   const feel = h('div', { class: 'card', id: 'feel-settings' }, h('h3', { text: 'Sound and feel' }));
   for (const [k, title, sub] of [['sound', 'Sounds', 'Ticks, chimes and the PR fanfare.'], ['haptics', 'Vibration', 'A tick on each set and a longer buzz for PRs and rank-ups, where your phone allows it.'],
-    ['restNotify', 'Rest timer notification', PUSH_URL ? 'When a rest ends, a notification as well as the chime, on the lock screen too. Needs signal when you tick the set; without it you get the chime only while Coach is open.' : 'When a rest ends, a notification as well as the chime, while Coach is open on screen.']])
+    ['restNotify', 'Rest timer notification', PUSH_URL ? 'When you tick a set, a “Resting – back at …” notification on the lock screen, replaced by “Rest over” when the rest ends, as well as the chime. Needs signal when you tick the set; without it you get the chime only while Coach is open.' : 'When a rest ends, a notification as well as the chime, while Coach is open on screen.']])
     feel.append(h('label', { class: 'check', for: 'feel-' + k }, h('input', { type: 'checkbox', id: 'feel-' + k, checked: Settings[k] !== false, onchange: ev => { Settings[k] = ev.target.checked; saveSettings(); if (ev.target.checked && k === 'sound') Fx.snd.done(); if (ev.target.checked && k === 'haptics') Fx.hap(2); if (k === 'restNotify' && ev.target.checked) askNotify(true); if (k === 'restNotify' && !ev.target.checked) Push.cancel(); } }),
       h('span', {}, h('b', { text: title }), h('br'), h('span', { class: 'small muted', text: sub }))));
   if (typeof Notification !== 'undefined' && Notification.permission === 'denied' && Settings.restNotify !== false) feel.append(h('p', { class: 'small muted', text: 'Notifications are blocked for Coach. Turn them on in your phone’s Settings under Notifications, then Coach.' }));
   else if (typeof Notification === 'undefined') feel.append(h('p', { class: 'small muted', text: isStandalone() ? 'This phone doesn’t offer notifications to Coach.' : 'Notifications need Coach opened from its Home Screen icon.' }));
   if (PUSH_URL && Settings.restNotify !== false && typeof Notification !== 'undefined' && 'PushManager' in window) {
     const msg = h('p', { class: 'small muted', 'aria-live': 'polite' });
-    feel.append(h('div', { class: 'row', style: 'align-items:center' }, h('button', { class: 'btn', type: 'button', id: 'push-test', text: 'Test the lock-screen alert', onclick: async ev => {
+    feel.append(h('div', { class: 'row', style: 'align-items:center' }, h('button', { class: 'btn', type: 'button', id: 'push-test', text: 'Test the lock-screen alerts', onclick: async ev => {
       const btn = ev.currentTarget; btn.disabled = true;
       if (Notification.permission === 'default') { const v = await Notification.requestPermission(); if (v !== 'granted') { msg.textContent = 'Allow notifications for Coach first.'; btn.disabled = false; return; } }
       if (Notification.permission !== 'granted') { msg.textContent = 'Notifications are blocked. Turn them on in your phone’s Settings, under Notifications, then Coach.'; btn.disabled = false; return; }
       msg.textContent = 'Setting it up…';
       const ok = await Push.arm(Date.now() + 15000, 'Test: this is how the rest-over alert looks on your lock screen.');
-      msg.textContent = ok ? 'Lock your phone now. The test alert arrives in about 15 seconds.' : 'Couldn’t reach the alert server. Check your signal and try again.';
+      msg.textContent = ok ? 'Lock your phone now. “Resting” arrives straight away, and in about 15 seconds “Rest over” should take its place. If you end up with both, the replace doesn’t work on your phone: say so in the next build chat.' : 'Couldn’t reach the alert server. Check your signal and try again.';
       btn.disabled = false;
     } })), msg);
   }

@@ -15,9 +15,19 @@ export class Timer extends DurableObject {
     return k;
   }
   async schedule(job) {
+    const now = job.now; delete job.now;
     await this.ctx.storage.put('job', job);
     await this.ctx.storage.setAlarm(job.at);
-    return { ok: true, at: job.at };
+    // option A: a "Resting – back at …" notification right away; the alarm's "Rest over" replaces it (same tag)
+    let sent = null;
+    if (now) {
+      try {
+        const keys = await this.env.TIMER.get(this.env.TIMER.idFromName('__keys__')).keys();
+        const r = await sendPush(job.sub, { title: now.title, body: now.body, tag: 'coach-rest', kind: 'resting' }, keys, this.env.SUBJECT);
+        sent = r.status; if (r.status >= 400) console.log('resting push failed', r.status, r.text);
+      } catch (e) { sent = 0; }
+    }
+    return { ok: true, at: job.at, resting: sent };
   }
   async cancel() {
     await this.ctx.storage.deleteAll();
@@ -28,7 +38,7 @@ export class Timer extends DurableObject {
     await this.ctx.storage.deleteAll();
     if (!job || Date.now() - job.at > 60 * 1000) return; // came far too late to be any use
     const keys = await this.env.TIMER.get(this.env.TIMER.idFromName('__keys__')).keys();
-    const r = await sendPush(job.sub, { title: job.title, body: job.body, tag: 'coach-rest' }, keys, this.env.SUBJECT);
+    const r = await sendPush(job.sub, { title: job.title, body: job.body, tag: 'coach-rest', kind: 'over' }, keys, this.env.SUBJECT);
     if (r.status >= 400) console.log('push failed', r.status, r.text);
   }
 }
@@ -67,7 +77,8 @@ export default {
         const now = Date.now(); const at = Number(body.at);
         if (!Number.isFinite(at) || at < now - 5000 || at > now + MAX_AHEAD) return json({ error: 'bad time' }, 400, h);
         const sub = { endpoint, keys: { p256dh: clip(body.sub.keys.p256dh, 200), auth: clip(body.sub.keys.auth, 100) } };
-        return json(await stub.schedule({ sub, at: Math.max(at, now), title: clip(body.title, 60) || 'Rest is over', body: clip(body.body, 160) || 'Time for your next set.' }), 200, h);
+        const nowMsg = body.now && typeof body.now === 'object' && body.now.title ? { title: clip(body.now.title, 60), body: clip(body.now.body, 160) } : null;
+        return json(await stub.schedule({ sub, at: Math.max(at, now), title: clip(body.title, 60) || 'Rest over', body: clip(body.body, 160) || 'Time for your next set.', ...(nowMsg ? { now: nowMsg } : {}) }), 200, h);
       }
       if (url.pathname === '/cancel') return json(await stub.cancel(), 200, h);
       return json({ error: 'not found' }, 404, h);
