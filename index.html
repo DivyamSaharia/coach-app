@@ -931,6 +931,14 @@ html.hold-on,html.hold-on body{overflow:hidden}
 .avc-chip.shrink{background:var(--stop-soft);color:var(--stop)}
 .avc-map{display:inline-flex;align-items:center;gap:3px;font:600 .75rem/1 var(--body);color:var(--muted)}
 .avc-map span{font-size:1.1rem;line-height:.6}
+/* Rank tab: the avatar beside the emblem (round 4) */
+.rank-duo{display:flex;align-items:center;justify-content:center;gap:18px}
+.rank-av{appearance:none;padding:0;cursor:pointer;width:124px;height:178px;border-radius:var(--r-sm);overflow:hidden;flex:none;position:relative;background:#000;
+  border:1px solid color-mix(in srgb,var(--tier) 55%,var(--line))}
+.rank-av:active{transform:scale(.98)}
+.rank-av .av{width:124px;height:178px}
+.rank-av-map{position:absolute;left:6px;bottom:6px;display:inline-flex;align-items:center;gap:3px;font:700 .7rem/1 var(--body);color:var(--ink);background:rgba(14,11,10,.78);padding:4px 7px;border-radius:999px}
+.rank-av-map span{font-size:1rem;line-height:.6}
 .av-view .av-hero{position:relative;border-radius:var(--r);overflow:hidden;border:1px solid var(--line);background:#000}
 .av-big{width:100%;aspect-ratio:2/3;max-height:62vh}
 .av-hero-txt{padding:14px 16px 16px;background:linear-gradient(0deg,var(--surface),color-mix(in srgb,var(--surface) 92%,transparent));display:flex;flex-direction:column;gap:6px}
@@ -5340,10 +5348,13 @@ function restNotify() {
 /* Lock-screen rest alerts. An iPhone pauses a Home Screen app as soon as it leaves the screen, so the app can't fire anything
    itself then. Instead, each rest's end time goes to a small Cloudflare Worker (push/ in the repo), whose alarm sends a Web Push
    at that moment. Only the phone's push address and the alert text are sent: no training data. No signal when a set is ticked?
-   That rest falls back to the in-app chime and notification. */
+   That rest falls back to the in-app chime and notification.
+   Round 4: the same call also carries the live countdown's three lines (la). The Worker passes them to PushWard, which shows a
+   ticking Live Activity on the lock screen; the PushWard key lives only in the Worker, never here. If that fails, the Worker
+   sends the "Resting" push instead (option A). */
 const PUSH_URL = 'https://coach-rest.dsaharia00.workers.dev';
 const Push = {
-  armed: false, seq: 0,
+  armed: false, seq: 0, last: null,
   can() { return !!PUSH_URL && Settings.restNotify !== false && 'serviceWorker' in navigator && 'PushManager' in window && typeof Notification !== 'undefined' && Notification.permission === 'granted'; },
   async key(fresh) {
     if (!fresh && Settings.pushKey && Date.now() - (Settings.pushKeyAt || 0) < 86400000) return Settings.pushKey;
@@ -5372,8 +5383,10 @@ const Push = {
       const sub = await this.sub(); if (!sub) return false;
       const nextTxt = S.restNext || (ex ? ex.name : '');
       const now = Settings.restResting === false ? null : { title: `Resting – back at ${fmtClock(at)}`, body: nextTxt ? nextTxt.charAt(0).toUpperCase() + nextTxt.slice(1) : 'Rest timer running' };
-      const r = await this.post('/schedule', { sub, at, title: 'Rest over', body: text || (nextTxt ? `Time for ${nextTxt.replace(/^next: /, '')}.` : 'Time for your next set.'), ...(now ? { now } : {}) });
-      if (n === this.seq) this.armed = r.ok;
+      const la = Settings.liveCountdown === false ? null : liveLines(nextTxt, at, text);
+      const r = await this.post('/schedule', { sub, at, title: 'Rest over', body: text || (nextTxt ? `Time for ${nextTxt.replace(/^next: /, '')}.` : 'Time for your next set.'), ...(now ? { now } : {}), ...(la ? { la } : {}) });
+      const res = await r.json().catch(() => null);
+      if (n === this.seq) { this.armed = r.ok; this.last = res; }
       return r.ok;
     } catch (e) { return false; }
   },
@@ -5385,6 +5398,13 @@ const Push = {
   /* A skipped or finished rest leaves no stale "Resting" line on the lock screen. */
   clearShown(reg) { try { if (reg && reg.getNotifications) reg.getNotifications({ tag: 'coach-rest' }).then(ns => ns.forEach(n => n.close())).catch(() => {}); } catch (e) {} },
 };
+/* The live countdown's lines: what's next, when he's back, and what it says when the rest ends. */
+function liveLines(nextTxt, at, test) {
+  if (test) return { state: 'Test countdown', subtitle: `Ends at ${fmtClock(at)}`, done: 'Rest over (test)' };
+  const t = String(nextTxt || '');
+  const what = /^next: /.test(t) ? t.slice(6) : t === 'last set done' ? '' : t;
+  return { state: what ? `Up next: ${what}` : t ? 'Last set done' : 'Resting', subtitle: `Back at ${fmtClock(at)}`, done: what ? `Rest over · ${what}` : 'Rest over' };
+}
 /* The moment rest runs out: chime and notification once. Coming back to the app long after (the phone was locked) stays quiet. */
 function restOver(late) {
   if (S.restRang) return; S.restRang = true;
@@ -5698,8 +5718,18 @@ function exRankFrac(R) {
 function viewRank() {
   const p = S.program; const g = getGame(); const r = g.rank;
   const root = h('div', { class: 'stack', style: 'gap:14px' });
+  // round 4: the avatar in its rank pose beside the emblem; tapping it opens the body map
+  const rankAv = (() => {
+    try {
+      const gr = getGrowth(); if (!gr) return null;
+      return h('button', { class: 'rank-av', type: 'button', id: 'rank-avatar', 'aria-label': `Your avatar, ${r.tier.name} look, ${AV_POSE_TEXT[Avatar.TIER[r.tier.key].pose] || ''}. Opens the body map.`,
+        onclick: () => { Fx.snd.tap(); setTab('today'); openAvatarView(); } },
+        avatarEl(gr.body, { tier: r.tier.key, crop: '24 24 152 220', label: `Your avatar, ${r.tier.name} look` }),
+        h('span', { class: 'rank-av-map' }, 'Body map', h('span', { 'aria-hidden': 'true', text: '›' })));
+    } catch (e) { console.error(e); return null; }
+  })();
   root.append(h('section', { class: 'rank-hero', style: tierStyle(r) },
-    emblem(r.tier, r.div, 116),
+    rankAv ? h('div', { class: 'rank-duo' }, rankAv, emblem(r.tier, r.div, 104)) : emblem(r.tier, r.div, 116),
     h('div', { class: 'rank-name', text: rankName(r) }),
     h('div', { class: 'rank-xp' }, h('span', { 'data-count': '1', text: fmtInt(g.xp) }), ' XP'),
     xpBar(r.into / r.need),
@@ -6971,8 +7001,9 @@ function viewSettings() {
 
   const feel = h('div', { class: 'card', id: 'feel-settings' }, h('h3', { text: 'Sound and feel' }));
   for (const [k, title, sub] of [['sound', 'Sounds', 'Ticks, chimes and the PR fanfare.'], ['haptics', 'Vibration', 'A tick on each set and a longer buzz for PRs and rank-ups, where your phone allows it.'],
-    ['restNotify', 'Rest timer notification', PUSH_URL ? 'When you tick a set, a “Resting – back at …” notification on the lock screen, replaced by “Rest over” when the rest ends, as well as the chime. Needs signal when you tick the set; without it you get the chime only while Coach is open.' : 'When a rest ends, a notification as well as the chime, while Coach is open on screen.']])
-    feel.append(h('label', { class: 'check', for: 'feel-' + k }, h('input', { type: 'checkbox', id: 'feel-' + k, checked: Settings[k] !== false, onchange: ev => { Settings[k] = ev.target.checked; saveSettings(); if (ev.target.checked && k === 'sound') Fx.snd.done(); if (ev.target.checked && k === 'haptics') Fx.hap(2); if (k === 'restNotify' && ev.target.checked) askNotify(true); if (k === 'restNotify' && !ev.target.checked) Push.cancel(); } }),
+    ['restNotify', 'Rest timer notification', PUSH_URL ? 'When you tick a set, a “Resting – back at …” notification on the lock screen, replaced by “Rest over” when the rest ends, as well as the chime. Needs signal when you tick the set; without it you get the chime only while Coach is open.' : 'When a rest ends, a notification as well as the chime, while Coach is open on screen.'],
+    ...(PUSH_URL ? [['liveCountdown', 'Live countdown on the lock screen', 'While you rest, a ticking countdown on the lock screen and Dynamic Island with the next set, through the PushWard app. It replaces “Resting”; “Rest over” still buzzes at the end. If PushWard can’t be reached or its free updates run out, you get “Resting” instead.']] : [])])
+    feel.append(h('label', { class: 'check', for: 'feel-' + k }, h('input', { type: 'checkbox', id: 'feel-' + k, checked: Settings[k] !== false, onchange: ev => { Settings[k] = ev.target.checked; saveSettings(); if (ev.target.checked && k === 'sound') Fx.snd.done(); if (ev.target.checked && k === 'haptics') Fx.hap(2); if (k === 'restNotify' && ev.target.checked) askNotify(true); if (k === 'restNotify' && !ev.target.checked) Push.cancel(); if (k === 'liveCountdown' && S.restStart && (Date.now() - S.restStart) / 1000 < S.restTarget) Push.arm(); } }),
       h('span', {}, h('b', { text: title }), h('br'), h('span', { class: 'small muted', text: sub }))));
   if (typeof Notification !== 'undefined' && Notification.permission === 'denied' && Settings.restNotify !== false) feel.append(h('p', { class: 'small muted', text: 'Notifications are blocked for Coach. Turn them on in your phone’s Settings under Notifications, then Coach.' }));
   else if (typeof Notification === 'undefined') feel.append(h('p', { class: 'small muted', text: isStandalone() ? 'This phone doesn’t offer notifications to Coach.' : 'Notifications need Coach opened from its Home Screen icon.' }));
@@ -6984,7 +7015,11 @@ function viewSettings() {
       if (Notification.permission !== 'granted') { msg.textContent = 'Notifications are blocked. Turn them on in your phone’s Settings, under Notifications, then Coach.'; btn.disabled = false; return; }
       msg.textContent = 'Setting it up…';
       const ok = await Push.arm(Date.now() + 15000, 'Test: this is how the rest-over alert looks on your lock screen.');
-      msg.textContent = ok ? 'Lock your phone now. “Resting” arrives straight away, and in about 15 seconds “Rest over” should take its place. If you end up with both, the replace doesn’t work on your phone: say so in the next build chat.' : 'Couldn’t reach the alert server. Check your signal and try again.';
+      const live = Push.last && Push.last.live >= 200 && Push.last.live < 300;
+      msg.textContent = !ok ? 'Couldn’t reach the alert server. Check your signal and try again.'
+        : live ? 'Lock your phone now. A 15-second countdown should be ticking on the lock screen, and “Rest over” buzzes when it ends.'
+        : Settings.liveCountdown !== false ? `The live countdown didn’t start (${Push.last && Push.last.live === 429 ? 'PushWard’s free updates are used up this month' : Push.last && Push.last.live === 0 ? 'the alert server has no PushWard key yet' : 'PushWard couldn’t be reached'}), so this is the fallback: lock your phone, “Resting” arrives now and “Rest over” replaces it in about 15 seconds.`
+        : 'Lock your phone now. “Resting” arrives straight away, and in about 15 seconds “Rest over” should take its place.';
       btn.disabled = false;
     } })), msg);
   }

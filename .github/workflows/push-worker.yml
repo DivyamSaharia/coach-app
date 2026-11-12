@@ -1,6 +1,9 @@
 # Deploys the rest-alert Worker (push/) to Cloudflare. Needs two repository secrets:
 #   CLOUDFLARE_API_TOKEN   a token made from the "Edit Cloudflare Workers" template
 #   CLOUDFLARE_ACCOUNT_ID  your Cloudflare account ID
+# and, for the live lock-screen countdown (round 4), a third one that is copied into the Worker as a secret:
+#   PUSHWARD_KEY           the hlk_ integration key from the PushWard app (scoped to the "coach-rest" activity)
+# Without PUSHWARD_KEY the Worker still deploys and rests use the two-stage push (option A).
 name: Deploy rest alerts
 on:
   push:
@@ -19,11 +22,23 @@ jobs:
           workingDirectory: push
           wranglerVersion: '4.160.1'
           command: deploy
+      - name: Copy the PushWard key into the Worker
+        env:
+          PUSHWARD_KEY: ${{ secrets.PUSHWARD_KEY }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        working-directory: push
+        run: |
+          if [ -z "$PUSHWARD_KEY" ]; then echo "No PUSHWARD_KEY repository secret yet: the live countdown stays off."; exit 0; fi
+          printf '%s' "$PUSHWARD_KEY" | npx --yes wrangler@4.160.1 secret put PUSHWARD_KEY
       - name: Check the live Worker
+        env:
+          HAS_KEY: ${{ secrets.PUSHWARD_KEY != '' }}
         run: |
           sleep 5
           curl -fsS https://coach-rest.dsaharia00.workers.dev/key | tee key.json
           grep -q '"key":"B' key.json
+          if [ "$HAS_KEY" = "true" ]; then grep -q '"live":true' key.json; fi
           code=$(curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/json' -d '{"sub":{"endpoint":"https://evil.example.com/x","keys":{"p256dh":"a","auth":"b"}},"at":0}' https://coach-rest.dsaharia00.workers.dev/schedule)
           echo "bad subscription -> $code"; test "$code" = 400
           curl -fsS -o /dev/null -D - -X OPTIONS -H 'Origin: https://divyamsaharia.github.io' https://coach-rest.dsaharia00.workers.dev/schedule | grep -i 'access-control-allow-origin: https://divyamsaharia.github.io'
