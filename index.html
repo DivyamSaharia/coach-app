@@ -964,6 +964,7 @@ html.hold-on,html.hold-on body{overflow:hidden}
 .av-pair figure{margin:0;display:flex;flex-direction:column;gap:6px;text-align:center}
 .av-pair .av{aspect-ratio:180/284;border-radius:var(--r-sm);overflow:hidden;background:#000}
 .av-pair figcaption{font:600 .78rem/1.2 var(--body);color:var(--muted)}
+#av-share{margin-top:10px;width:100%}
 .av-chart-box{display:flex;flex-direction:column;gap:4px}
 .av-chart{width:100%;height:auto;display:block}
 .av-chart .ln{fill:none;stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round}
@@ -2976,7 +2977,9 @@ function viewAvatar() {
     gr.missDef > 0 ? h('p', { class: 'small', style: 'color:var(--stop)', text: `Missed sessions have taken −${shrinkPct(gr.missDef, gr.block)}% off every region. Each session wins back two missed ones.` }) : null));
   // mirror
   const then = getGrowth(addDays(todayStr(), -28));
-  root.append(h('section', { class: 'card', id: 'av-mirror' }, h('h3', { text: 'Mirror: 4 weeks ago vs now' }), mirrorPair(then, gr, tk), mirrorLine(then, gr)));
+  root.append(h('section', { class: 'card', id: 'av-mirror' }, h('h3', { text: 'Mirror: 4 weeks ago vs now' }), mirrorPair(then, gr, tk), mirrorLine(then, gr),
+    h('button', { class: 'btn', type: 'button', id: 'av-share', text: 'Share image', onclick: () => shareMirror() })));
+  prepMirrorShot();
   // history
   const hs = gr.history;
   const hist = h('section', { class: 'card', id: 'av-history' }, h('h3', { text: 'Growth history' }));
@@ -3010,6 +3013,78 @@ function mirrorLine(then, now) {
   const up = xs.filter(x => x.d > 0).slice(0, 3), down = xs.filter(x => x.d < 0).slice(-2);
   return h('p', { class: 'small' }, up.length ? h('span', { style: 'color:var(--go)', text: up.map(x => gainText(x)).join(', ') }) : null, up.length && down.length ? ' · ' : '',
     down.length ? h('span', { style: 'color:var(--stop)', text: down.map(x => gainText(x, '−')).join(', ') }) : null);
+}
+/* ---------- mirror share image: 4 weeks ago vs now as a 1080 × 1350 PNG, made on the phone ----------
+   Drawn ahead of time when the mirror shows, so tapping Share opens the share sheet straight away
+   (iPhone only allows it right after a tap). Nothing is stored or sent unless he shares it. */
+let mirrorShotCache = null, shotSeq = 0;
+function svgImg(svg) { return new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = () => rej(new Error('avatar image')); im.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg); }); }
+function rrect(ctx, x, y, w, hh, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + hh, r); ctx.arcTo(x + w, y + hh, x, y + hh, r); ctx.arcTo(x, y + hh, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+function mirrorShot(then, now, g) {
+  const today = todayStr(), from = addDays(today, -28); const r = g.rank; const tk = r.tier.key;
+  const key = JSON.stringify([today, tk, r.div, then.body, now.body]);
+  if (mirrorShotCache && mirrorShotCache.key === key) return mirrorShotCache.p;
+  const p = (async () => {
+    const fontsReady = Promise.all(['700 72px "Chakra Petch"', '600 34px "Chakra Petch"', '600 32px Barlow', '500 28px Barlow'].map(f => document.fonts ? document.fonts.load(f) : null)).catch(() => {});
+    await Promise.race([fontsReady, new Promise(res => setTimeout(res, 1500))]);
+    const W = 1080, H = 1350, PW = 470, PH = 742, PY = 236, X1 = 50, X2 = W - 50 - PW;
+    const crop = '10 10 180 284';
+    const [a, b] = await Promise.all([then.body, now.body].map((body, i) => svgImg(Avatar.svg(body, tk, { uid: 'shot' + (++shotSeq), crop, w: PW * 2, h: PH * 2, label: i ? 'You now' : 'You 4 weeks ago' }))));
+    const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const ctx = cv.getContext('2d');
+    ctx.fillStyle = '#0e0b0a'; ctx.fillRect(0, 0, W, H);
+    const glow = ctx.createRadialGradient(W / 2, 0, 40, W / 2, 0, 760); glow.addColorStop(0, 'rgba(255,122,69,.26)'); glow.addColorStop(1, 'rgba(255,122,69,0)');
+    ctx.fillStyle = glow; ctx.fillRect(0, 0, W, H);
+    ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+    ctx.fillStyle = '#ff7a45'; ctx.font = '600 32px Barlow, system-ui, sans-serif'; ctx.fillText('WEEKLY MIRROR CHECK', W / 2, 108);
+    ctx.fillStyle = '#fff4ec'; ctx.font = '700 72px "Chakra Petch", "Arial Narrow", system-ui, sans-serif'; ctx.fillText('4 weeks ago vs now', W / 2, 190);
+    [[a, X1, false], [b, X2, true]].forEach(([im, x, isNow]) => {
+      ctx.save(); rrect(ctx, x, PY, PW, PH, 30); ctx.fillStyle = '#000'; ctx.fill(); ctx.clip(); ctx.drawImage(im, x, PY, PW, PH); ctx.restore();
+      rrect(ctx, x, PY, PW, PH, 30); ctx.lineWidth = isNow ? 4 : 2; ctx.strokeStyle = isNow ? '#ff7a45' : 'rgba(255,244,236,.14)'; ctx.stroke();
+      ctx.fillStyle = '#fff4ec'; ctx.font = '600 36px "Chakra Petch", "Arial Narrow", system-ui, sans-serif'; ctx.fillText(isNow ? 'Now' : '4 weeks ago', x + PW / 2, PY + PH + 52);
+      ctx.fillStyle = '#b8a69c'; ctx.font = '500 28px Barlow, system-ui, sans-serif'; ctx.fillText(fmtDate(isNow ? today : from), x + PW / 2, PY + PH + 90);
+    });
+    // what grew (green) and what shrank (red), as pills, wrapped over up to two rows
+    const xs = bodyGains(then, now, now.block);
+    const up = xs.filter(x => x.d > 0).slice(0, 3), down = xs.filter(x => x.d < 0).slice(-2);
+    const pills = [...up.map(x => [gainText(x), '#4ce3a1', 'rgba(76,227,161,.14)']), ...down.map(x => [gainText(x, '−'), '#ff6b6b', 'rgba(255,107,107,.14)'])];
+    let y = PY + PH + 160;
+    if (!pills.length) { ctx.fillStyle = '#b8a69c'; ctx.font = '500 32px Barlow, system-ui, sans-serif'; ctx.fillText('Same size as 4 weeks ago', W / 2, y); }
+    else {
+      ctx.font = '600 32px Barlow, system-ui, sans-serif';
+      const sized = pills.map(([t, c, bgc]) => ({ t, c, bgc, w: ctx.measureText(t).width + 48 }));
+      const rows = [[]]; let rw = 0;
+      for (const s of sized) { if (rows[rows.length - 1].length && rw + s.w + 14 > W - 100) { rows.push([]); rw = 0; } rows[rows.length - 1].push(s); rw += s.w + 14; }
+      if (rows.length > 1) y -= 30;
+      for (const row of rows) {
+        let x = (W - (row.reduce((t, s) => t + s.w, 0) + 14 * (row.length - 1))) / 2;
+        for (const s of row) { rrect(ctx, x, y - 40, s.w, 56, 28); ctx.fillStyle = s.bgc; ctx.fill(); ctx.fillStyle = s.c; ctx.fillText(s.t, x + s.w / 2, y - 1); x += s.w + 14; }
+        y += 68;
+      }
+    }
+    ctx.fillStyle = '#b8a69c'; ctx.font = '500 28px Barlow, system-ui, sans-serif';
+    ctx.fillText(`${rankName(r)}${now.started ? ` · block ${now.block + 1}, week ${Math.min(now.week, 12)} of 12` : ''} · Coach`, W / 2, H - 44);
+    const blob = await new Promise((res, rej) => cv.toBlob(bl => bl ? res(bl) : rej(new Error('png')), 'image/png'));
+    return new File([blob], `${today}_coach-mirror.png`, { type: 'image/png' });
+  })();
+  mirrorShotCache = { key, p };
+  p.catch(() => { if (mirrorShotCache && mirrorShotCache.p === p) mirrorShotCache = null; });
+  return p;
+}
+function mirrorNow() { const g = getGame(); return { g, now: getGrowth(), then: getGrowth(addDays(todayStr(), -28)) }; }
+function prepMirrorShot() { setTimeout(() => { try { const m = mirrorNow(); mirrorShot(m.then, m.now, m.g).catch(() => {}); } catch (e) {} }, 300); }
+async function shareMirror() {
+  let file;
+  try { const m = mirrorNow(); file = await mirrorShot(m.then, m.now, m.g); } catch (e) { toast('Couldn’t make the image. Try again.'); return; }
+  try {
+    if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: '4 weeks ago vs now' }); return; }
+  } catch (e) {
+    if (e && e.name === 'AbortError') return;
+    if (e && e.name === 'NotAllowedError') { toast('Image ready. Tap Share again.'); return; }
+  }
+  const url = URL.createObjectURL(file);
+  const a = h('a', { href: url, download: file.name }); document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+  toast(`Saved ${file.name}.`);
 }
 /* Overall size (the average of the drawn regions) after each session. */
 function sizeChart(hs) {
@@ -3094,7 +3169,8 @@ function mirrorBeat(then, now, tk) {
   Fx.beat({ cls: 'av-beat mirror', label: 'Weekly mirror check: you 4 weeks ago and now', run(c, t, T, endFn) {
     c.replaceChildren(h('div', { class: 'av-in' }, h('p', { class: 'ce-eye', text: 'Weekly mirror check' }), h('h2', { class: 'av-title', text: '4 weeks ago vs now' }),
       mirrorPair(then, now, tk), h('div', { class: 'late' }, mirrorLine(then, now)),
-      beatButtons(c, t, endFn, [['Nice', null, 'primary'], ['See body map', () => { S.tab = 'today'; openAvatarView(); }]])));
+      beatButtons(c, t, endFn, [['Nice', null, 'primary'], ['Share', () => shareMirror()], ['See body map', () => { S.tab = 'today'; openAvatarView(); }]])));
+    prepMirrorShot();
     Fx.snd.whoosh();
     const figs = c.querySelectorAll('.av-pair figure');
     if (!CALM()) figs.forEach((fg, i) => fg.animate([{ opacity: 0, transform: `translateX(${i ? 30 : -30}px)` }, { opacity: 1, transform: 'none' }], { duration: 500, delay: 150 + i * 350, fill: 'backwards', easing: 'cubic-bezier(.2,.8,.2,1)' }));
@@ -7067,7 +7143,7 @@ function start() {
   markTab(); renderTop(); enterMain(); renderMain(); updateSyncDot();
   applyIncoming();
   try { avatarChecks(); } catch (e) { console.error(e); }
-  if (lsGet('coach-test')) window.__coach = { S, Avatar, GROW, computeGrowth, getGrowth, getGame, growthBeat, rankLookBeat, shrinkBeat, mirrorBeat, avatarChecks, Fx, TIERS, LEGEND };
+  if (lsGet('coach-test')) window.__coach = { S, Avatar, GROW, computeGrowth, getGrowth, getGame, growthBeat, rankLookBeat, shrinkBeat, mirrorBeat, mirrorShot, shareMirror, avatarChecks, Fx, TIERS, LEGEND };
   if (Store.sync.url) Sync.run();
   window.addEventListener('online', () => Sync.run());
   window.addEventListener('offline', updateSyncDot);
